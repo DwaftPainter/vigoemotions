@@ -1,0 +1,2 @@
+model,split,threshold,macro_f1,micro_f1,hamming_loss,lrap,parameter_count,train_seconds
+phobert,val,0.5,0.4393197443318677,0.5160449584622903,0.053260908536803986,0.7157668799684033,135019035,3047.109203147

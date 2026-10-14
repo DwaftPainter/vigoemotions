@@ -1,0 +1,20 @@
+{
+  "python": "3.13.15",
+  "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+  "processor": "x86_64",
+  "packages": {
+    "numpy": "2.1.3",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.6.1",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.0",
+    "torch": "2.11.0+cu130",
+    "transformers": "4.57.3",
+    "py-vncorenlp": "0.1.4"
+  },
+  "data_sha256": {
+    "train": "9abcb2b7d9fadd9da043a3af43e8ee569f7099d87d20daf39a69e7e1a76c5624",
+    "val": "d3a473a65bf10d3d07423306a4324e94c9979d42d58f6a05cceb4cc1cc4fcab0",
+    "test": "620814a67ad5297cdcdac6369dbb223b4e95030b7b525d4466302f0288418e33"
+  }
+}

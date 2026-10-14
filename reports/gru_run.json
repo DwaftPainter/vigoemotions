@@ -1,0 +1,184 @@
+{
+  "config": {
+    "seed": 42,
+    "label_count": 27,
+    "neutral_id": 27,
+    "threshold": 0.5,
+    "split_policy": "Preserve supplied val/test; remove normalized train overlaps; audit label prevalence",
+    "frequency_tiers": {
+      "method": "descending training frequency rank; tie by label ID",
+      "head_ranks": [
+        1,
+        9
+      ],
+      "mid_ranks": [
+        10,
+        18
+      ],
+      "tail_ranks": [
+        19,
+        27
+      ]
+    },
+    "tfidf": {
+      "max_features": 40000,
+      "ngram_range": [
+        1,
+        2
+      ],
+      "min_df": 2,
+      "sublinear_tf": true,
+      "lowercase": true,
+      "token_pattern": "(?u)\\b\\w+\\b"
+    },
+    "logistic_regression": {
+      "C": 1.0,
+      "solver": "liblinear",
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "gru": {
+      "max_vocab": 30000,
+      "embedding_dim": 128,
+      "hidden_dim": 128,
+      "dropout": 0.3,
+      "max_length": 128,
+      "epochs": 10,
+      "batch_size": 64,
+      "learning_rate": 0.001
+    },
+    "phobert": {
+      "checkpoint": "vinai/phobert-base-v2",
+      "max_length": 256,
+      "epochs": 4,
+      "batch_size": 16,
+      "learning_rate": 2e-05,
+      "weight_decay": 0.01,
+      "revision": "86cd7fd4c148980922ac11a2cf5e257f2ba639e1"
+    },
+    "checkpoint_selection": "Highest validation Macro-F1 at threshold 0.5; ties keep earliest epoch",
+    "threshold_sweep": {
+      "start": 0.05,
+      "stop": 0.8,
+      "step": 0.05,
+      "split": "val"
+    }
+  },
+  "environment": {
+    "python": "3.13.15",
+    "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+    "processor": "x86_64",
+    "packages": {
+      "numpy": "2.1.3",
+      "pandas": "2.2.3",
+      "scikit-learn": "1.6.1",
+      "scipy": "1.16.3",
+      "matplotlib": "3.10.0",
+      "torch": "2.11.0+cu130",
+      "transformers": "4.57.3",
+      "py-vncorenlp": "0.1.4"
+    },
+    "data_sha256": {
+      "train": "9abcb2b7d9fadd9da043a3af43e8ee569f7099d87d20daf39a69e7e1a76c5624",
+      "val": "d3a473a65bf10d3d07423306a4324e94c9979d42d58f6a05cceb4cc1cc4fcab0",
+      "test": "620814a67ad5297cdcdac6369dbb223b4e95030b7b525d4466302f0288418e33"
+    }
+  },
+  "device": "Tesla T4",
+  "best_epoch": 10,
+  "history": [
+    {
+      "epoch": 1,
+      "loss": 0.27273018645180114,
+      "macro_f1": 0.03555485700722091,
+      "micro_f1": 0.05021340697966357,
+      "hamming_loss": 0.06781757556200925,
+      "lrap": 0.43555806570508115
+    },
+    {
+      "epoch": 2,
+      "loss": 0.2065822219206792,
+      "macro_f1": 0.17834929375776645,
+      "micro_f1": 0.2425156149041568,
+      "hamming_loss": 0.06304901222616614,
+      "lrap": 0.5648334368173931
+    },
+    {
+      "epoch": 3,
+      "loss": 0.17905382400956646,
+      "macro_f1": 0.27129847835997006,
+      "micro_f1": 0.34738682727802606,
+      "hamming_loss": 0.060216557312394677,
+      "lrap": 0.6024996917573717
+    },
+    {
+      "epoch": 4,
+      "loss": 0.16171961634071105,
+      "macro_f1": 0.3152110421763484,
+      "micro_f1": 0.391425908667288,
+      "hamming_loss": 0.058531425907998993,
+      "lrap": 0.619651950683619
+    },
+    {
+      "epoch": 5,
+      "loss": 0.14778557262021128,
+      "macro_f1": 0.3439695478465623,
+      "micro_f1": 0.4115942028985507,
+      "hamming_loss": 0.058226668100821055,
+      "lrap": 0.6299632642860445
+    },
+    {
+      "epoch": 6,
+      "loss": 0.13532600640277032,
+      "macro_f1": 0.3581291253857337,
+      "micro_f1": 0.41612670986321093,
+      "hamming_loss": 0.058154960381485064,
+      "lrap": 0.6311716149088632
+    },
+    {
+      "epoch": 7,
+      "loss": 0.12335996441385347,
+      "macro_f1": 0.3853785214853275,
+      "micro_f1": 0.44037639007698887,
+      "hamming_loss": 0.058638987487002976,
+      "lrap": 0.6323754960976745
+    },
+    {
+      "epoch": 8,
+      "loss": 0.11200506860605529,
+      "macro_f1": 0.39855954892202233,
+      "micro_f1": 0.44704701355194915,
+      "hamming_loss": 0.05924850310135886,
+      "lrap": 0.633132163204797
+    },
+    {
+      "epoch": 9,
+      "loss": 0.10173878180515528,
+      "macro_f1": 0.39756731225522407,
+      "micro_f1": 0.44691071724366405,
+      "hamming_loss": 0.05985801871571474,
+      "lrap": 0.6309899819482964
+    },
+    {
+      "epoch": 10,
+      "loss": 0.09271323949423113,
+      "macro_f1": 0.40600230091633666,
+      "micro_f1": 0.4526093318159649,
+      "hamming_loss": 0.06035997275106665,
+      "lrap": 0.6322362281898861
+    }
+  ],
+  "preprocessing": {
+    "vocab_size": 15025,
+    "tokenization": "NFC + lower + whitespace",
+    "truncation_rate": {
+      "train": 0.001572897761645493,
+      "val": 0.001936108422071636
+    }
+  },
+  "prep_seconds": 0.966421438999987,
+  "time_definition": "Training loop including per-epoch validation and checkpoint writes; excludes preprocessing/download",
+  "deterministic_note": "Fixed seeds and deterministic cuDNN; exact equality across GPU types not guaranteed",
+  "parameter_count": 2128283,
+  "train_seconds": 37.49550335899994
+}
