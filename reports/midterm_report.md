@@ -254,6 +254,42 @@ Chênh lệch lớn nhất trong các nhóm khảo sát: teencode, delta Macro-F
 
 Không gọi 0,15 là ngưỡng tối ưu tổng quát: nó chỉ tốt nhất trên lưới và validation đã dùng để chọn. Cần khóa ngưỡng rồi kiểm tra trên test ở Final.
 
+### 5.5. Ablation xử lý nhãn mixed-neutral
+
+**Câu hỏi bổ sung cho Midterm:** Giữ lại nhãn cảm xúc của các mẫu mixed-neutral trong train có cải thiện hiệu năng so với loại bỏ hoàn toàn các mẫu đó không?
+
+Neutral (ID 27) đôi khi xuất hiện cùng cảm xúc, tạo mâu thuẫn theo quy ước 27 đầu ra của project. Thí nghiệm A giữ toàn bộ 16.530 mẫu train đã loại trùng, bỏ ID 27 và giữ nhãn cảm xúc. Thí nghiệm B xuất phát từ cùng tập train nhưng loại đúng 251 mẫu mixed-neutral, còn 16.279 mẫu. Cả hai giữ mẫu neutral-only với vector 27 chiều bằng 0. Đây là kiểm tra bổ sung cho quyết định tiền xử lý tại mục 2.
+
+Giữ cố định chuẩn hóa, cấu hình TF-IDF + OvR Logistic Regression từ configs/midterm.json, seed 42 và threshold 0,5. Mỗi điều kiện fit vocabulary và IDF riêng, chỉ trên train tương ứng. Hai điều kiện dùng chính xác cùng 2.066 ID và vector nhãn validation, giữ nguyên cả 19 mẫu mixed-neutral. Không tìm ngưỡng và không đánh giá, tuning hay chọn mô hình bằng test; test chỉ tham gia kiểm tra trùng lặp sẵn có. CSV gốc không thay đổi.
+
+| Chỉ số | A | B | B − A |
+| --- | --- | --- | --- |
+| macro_f1 | 0.238825 | 0.240414 | +0.001588 |
+| micro_f1 | 0.271238 | 0.272904 | +0.001666 |
+| hamming_loss | 0.060593 | 0.060468 | -0.000125 |
+| lrap | 0.640745 | 0.640218 | -0.000527 |
+| train_seconds | 3.145404 | 2.976026 | -0.169378 |
+| training_samples | 16530 | 16279 | -251 |
+| tfidf_features | 34837 | 34403 | -434 |
+
+B − A là chênh lệch trên thang đo gốc, không phải tỷ lệ phần trăm tương đối. F1/LRAP càng cao càng tốt; Hamming Loss càng thấp càng tốt. Thời gian tính bằng giây, gồm fit TF-IDF và classifier, không gồm tải dữ liệu hay dự đoán validation; chỉ là một lượt đo trên máy chạy ablation. A tái lập cả bốn metric baseline hiện có, nhưng thời gian đo mới không thay thế thời gian baseline ở mục 5.
+
+**Diễn giải:** Loại mixed-neutral làm Macro-F1 tăng khoảng 0.159 điểm phần trăm; Micro-F1 và Hamming Loss cũng cải thiện nhẹ, trong khi LRAP giảm nhẹ. Vì vậy kết quả không ủng hộ giả thuyết rằng giữ các mẫu này cải thiện F1 trong cấu hình đang xét, nhưng cũng chưa cho thấy loại mẫu tốt hơn trên mọi chỉ số. Giữ nguyên baseline chính để so sánh ba mô hình; không thay đổi quy tắc tiền xử lý chung từ thí nghiệm nhỏ này.
+
+| Nhóm | A Macro-F1 | B Macro-F1 | B − A |
+| --- | --- | --- | --- |
+| head | 0.251232 | 0.255629 | +0.004397 |
+| mid | 0.307083 | 0.307450 | +0.000367 |
+| tail | 0.158161 | 0.158161 | +0.000000 |
+| mixed_neutral | 0.051852 | 0.051852 | +0.000000 |
+| non_mixed_neutral | 0.239235 | 0.240823 | +0.001587 |
+
+Head/mid/tail được cố định theo tần suất train của A: xếp giảm dần, hòa theo ID, chín nhãn mỗi nhóm. Head và mid tăng nhẹ Macro-F1, tail không đổi. Phân tích validation tách 19 mẫu mixed-neutral và 2.047 mẫu còn lại; F1 và Hamming Loss trên nhóm 19 mẫu không đổi. Nhóm nhỏ này chỉ mang tính bổ sung, không đủ cơ sở cho kết luận thống kê. Bảng đầy đủ theo tier/nhóm và precision, recall, F1 từng nhãn nằm trong reports/ablation_mixed_neutral/.
+
+**Giới hạn:** Chỉ một split, một seed, một mô hình và một ngưỡng; chưa kiểm định ý nghĩa thống kê. Loại mẫu đồng thời giảm lượng dữ liệu, thay đổi tần suất nhãn và vocabulary. Chưa chạy random-exclusion control nên chưa tách được ảnh hưởng của mâu thuẫn nhãn khỏi ảnh hưởng giảm dữ liệu. Ground truth validation vẫn dùng quy ước ưu tiên cảm xúc. Điểm dự đoán tốt hơn không chứng minh nhãn gốc nào đúng. Ablation này không thay thế câu hỏi nghiên cứu Final về tối ưu ngưỡng tại mục 7.
+
+**Tái lập:** Chạy .venv/bin/python scripts/ablate_mixed_neutral.py --output reports/ablation_mixed_neutral/rerun_01 với thư mục đầu ra chưa tồn tại. Cấu hình, checksum dữ liệu, ID train và xác suất validation liên tục được lưu cùng kết quả; không xuất bình luận gốc. Chi tiết tại reports/ablation_mixed_neutral/experiment_summary.md.
+
 ## 6. Phân tích lỗi và trường hợp biên
 
 File tfidf_lr_error_cases_val.csv chứa 20 FN có xác suất thấp nhất và 20 FP có xác suất cao nhất, kèm ID, nhãn thật, nhãn dự đoán, xác suất, cardinality và style flags. Một mẫu có thể xuất hiện nhiều lần vì lỗi tính theo cặp mẫu–nhãn. Mẫu này ưu tiên lỗi tự tin, không đại diện ngẫu nhiên cho toàn bộ lỗi. Đã đọc thủ công 10 bình luận khác nhau trong danh sách; bảng dưới dùng mô tả trừu tượng, không chép nguyên bình luận.
