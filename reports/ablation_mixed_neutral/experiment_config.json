@@ -1,0 +1,136 @@
+{
+  "status": "completed",
+  "config": {
+    "seed": 42,
+    "label_count": 27,
+    "neutral_id": 27,
+    "threshold": 0.5,
+    "split_policy": "Preserve supplied val/test; remove normalized train overlaps; audit label prevalence",
+    "frequency_tiers": {
+      "method": "descending training frequency rank; tie by label ID",
+      "head_ranks": [
+        1,
+        9
+      ],
+      "mid_ranks": [
+        10,
+        18
+      ],
+      "tail_ranks": [
+        19,
+        27
+      ]
+    },
+    "tfidf": {
+      "max_features": 40000,
+      "ngram_range": [
+        1,
+        2
+      ],
+      "min_df": 2,
+      "sublinear_tf": true,
+      "lowercase": true,
+      "token_pattern": "(?u)\\b\\w+\\b"
+    },
+    "logistic_regression": {
+      "C": 1.0,
+      "solver": "liblinear",
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "gru": {
+      "max_vocab": 30000,
+      "embedding_dim": 128,
+      "hidden_dim": 128,
+      "dropout": 0.3,
+      "max_length": 128,
+      "epochs": 10,
+      "batch_size": 64,
+      "learning_rate": 0.001
+    },
+    "phobert": {
+      "checkpoint": "vinai/phobert-base-v2",
+      "max_length": 256,
+      "epochs": 4,
+      "batch_size": 16,
+      "learning_rate": 2e-05,
+      "weight_decay": 0.01,
+      "revision": "86cd7fd4c148980922ac11a2cf5e257f2ba639e1"
+    },
+    "checkpoint_selection": "Highest validation Macro-F1 at threshold 0.5; ties keep earliest epoch",
+    "threshold_sweep": {
+      "start": 0.05,
+      "stop": 0.8,
+      "step": 0.05,
+      "split": "val"
+    }
+  },
+  "environment": {
+    "python": "3.14.7",
+    "platform": "macOS-15.7.7-x86_64-i386-64bit-Mach-O",
+    "processor": "i386",
+    "packages": {
+      "numpy": "2.5.4",
+      "pandas": "3.0.6",
+      "scikit-learn": "1.9.1",
+      "scipy": "1.18.1",
+      "matplotlib": "3.11.2"
+    },
+    "data_sha256": {
+      "train": "9abcb2b7d9fadd9da043a3af43e8ee569f7099d87d20daf39a69e7e1a76c5624",
+      "val": "d3a473a65bf10d3d07423306a4324e94c9979d42d58f6a05cceb4cc1cc4fcab0",
+      "test": "620814a67ad5297cdcdac6369dbb223b4e95030b7b525d4466302f0288418e33"
+    }
+  },
+  "threshold": 0.5,
+  "conditions": {
+    "A": "emotion_priority",
+    "B": "exclude_mixed_neutral"
+  },
+  "excluded_mixed_neutral": 251,
+  "removed_overlap_ids": [
+    "1698"
+  ],
+  "validation_samples": 2066,
+  "validation_mixed_neutral": 19,
+  "tiers": {
+    "head": [
+      0,
+      21,
+      25,
+      2,
+      24,
+      20,
+      23,
+      3,
+      6
+    ],
+    "mid": [
+      5,
+      26,
+      11,
+      19,
+      8,
+      14,
+      1,
+      7,
+      9
+    ],
+    "tail": [
+      4,
+      22,
+      16,
+      17,
+      18,
+      12,
+      15,
+      13,
+      10
+    ]
+  },
+  "tiers_reference": "A cleaned training frequencies, frozen across experiments",
+  "test_usage": "existing leakage audit only; no evaluation, tuning, or selection",
+  "input_hashes_unchanged": true,
+  "optional_control": "not run",
+  "time_definition": "TF-IDF fit + OvR fit; excludes data loading and validation"
+}
