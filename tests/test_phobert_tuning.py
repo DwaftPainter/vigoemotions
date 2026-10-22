@@ -4,10 +4,12 @@ from copy import deepcopy
 import io
 from pathlib import Path
 import shutil
+import subprocess
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import numpy as np
 import pandas as pd
@@ -82,19 +84,33 @@ class PhoBERTTuningTests(unittest.TestCase):
         with checkpoint.open('xb') as stream:
             stream.write(b'new checkpoint fixture')
 
-    def run_cli(self, resume=True, runtime=None, device='synthetic GPU fixture', train=None):
+    def run_cli(self, resume=True, runtime=None, device='synthetic GPU fixture', train=None, summary_fn=None):
         arguments = ['tune_phobert.py', 'run', '--output', str(self.output)]
         if resume:
             arguments.append('--resume')
+        launch = Mock(side_effect=train or self.train_missing)
         with patch.object(sys, 'argv', arguments), \
              patch.object(tuning, 'gpu_device', return_value=device), \
              patch.object(tuning, 'ROOT', Path(self.temp.name)), \
              patch.object(tuning, 'environment', return_value=runtime or self.runtime, create=True), \
-             patch.object(tuning.subprocess, 'run', side_effect=train or self.train_missing) as launch, \
-             patch.object(tuning, 'summarize', wraps=summarize) as summary:
+             patch.object(tuning, 'subprocess', SimpleNamespace(run=launch)), \
+             patch.object(tuning, 'summarize', wraps=summary_fn or summarize) as summary:
             self.last_launch, self.last_summary = launch, summary
             tuning.main()
         return launch, summary
+
+    def test_training_mock_does_not_intercept_plotting_subprocesses(self):
+        def summarize_with_process_probe(output):
+            # Matplotlib can use check_output(['fc-list', ...]) on a cold font cache.
+            # Probe that path portably, even when the local cache is already warm.
+            result = subprocess.check_output([sys.executable, '-c', 'print("font-probe")'], text=True)
+            self.assertEqual(result.strip(), 'font-probe')
+            return summarize(output)
+
+        launch, summary = self.run_cli(summary_fn=summarize_with_process_probe)
+        launch.assert_not_called()
+        summary.assert_called_once()
+        self.assertEqual(self.training_calls, [])
 
     def assert_resume_refused(self, explanation, **kwargs):
         before = self.snapshot(Path(self.temp.name))
@@ -224,8 +240,8 @@ class PhoBERTTuningTests(unittest.TestCase):
         self.make_missing('lr_2e-5'); self.make_missing('lr_3e-5')
         first = self.snapshot(self.output/'lr_1e-5')
         def fail(arguments, **kwargs):
-            raise tuning.subprocess.CalledProcessError(1, arguments)
-        with self.assertRaises(tuning.subprocess.CalledProcessError):
+            raise subprocess.CalledProcessError(1, arguments)
+        with self.assertRaises(subprocess.CalledProcessError):
             self.run_cli(train=fail)
         self.last_summary.assert_not_called()
         self.assertEqual(first, self.snapshot(self.output/'lr_1e-5'))
