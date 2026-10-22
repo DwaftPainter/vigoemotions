@@ -106,8 +106,18 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model',choices=['gru','phobert'],required=True)
     parser.add_argument('--vncorenlp-dir',type=Path,default=ROOT/'data/vncorenlp')
+    parser.add_argument('--config',type=Path,default=ROOT/'configs/midterm.json')
+    parser.add_argument('--output-dir',type=Path,help='New directory for an isolated experiment')
+    parser.add_argument('--checkpoint',type=Path,help='New private checkpoint path for an isolated experiment')
     args = parser.parse_args()
-    config = json.loads((ROOT/'configs/midterm.json').read_text())
+    if bool(args.output_dir) != bool(args.checkpoint):
+        parser.error('--output-dir and --checkpoint must be supplied together')
+    if args.output_dir:
+        if args.checkpoint.exists():
+            parser.error('Checkpoint already exists; use a new experiment path')
+        args.output_dir.mkdir(parents=True,exist_ok=False)
+    out = args.output_dir or ROOT/'reports'
+    config = json.loads(args.config.read_text())
     seed = config['seed']
     random.seed(seed);np.random.seed(seed);torch.manual_seed(seed)
     if torch.cuda.is_available():
@@ -126,7 +136,7 @@ def main():
                                  weight_decay=settings.get('weight_decay',0.0))
     loss_fn = nn.BCEWithLogitsLoss()
     history,best_score = [],-1.0
-    checkpoint = ROOT/'data/checkpoints'/f'{args.model}_best.pt'
+    checkpoint = args.checkpoint or ROOT/'data/checkpoints'/f'{args.model}_best.pt'
     checkpoint.parent.mkdir(parents=True,exist_ok=True)
     started = time.perf_counter()
     for epoch in range(1,settings['epochs']+1):
@@ -153,11 +163,12 @@ def main():
     model.load_state_dict(torch.load(checkpoint,map_location=device,weights_only=True))
     p = predict(model,args.model,loaders['val'],device)
     meta = {'parameter_count':sum(v.numel() for v in model.parameters()),'train_seconds':seconds}
-    save_evaluation(args.model,frames,{'val':p},meta)
-    write_json(ROOT/'reports'/f'{args.model}_run.json',dict(config=config,environment=environment(),
+    save_evaluation(args.model,frames,{'val':p},meta,output_dir=out)
+    write_json(out/f'{args.model}_run.json',dict(config=config,environment=environment(),
         device=torch.cuda.get_device_name(0) if device.type=='cuda' else str(device),
         best_epoch=best_epoch,history=history,preprocessing=prep_meta,prep_seconds=prep_seconds,
         time_definition='Training loop including per-epoch validation and checkpoint writes; excludes preprocessing/download',
+        checkpoint_path=str(checkpoint),
         deterministic_note='Fixed seeds and deterministic cuDNN; exact equality across GPU types not guaranteed',**meta))
 
 

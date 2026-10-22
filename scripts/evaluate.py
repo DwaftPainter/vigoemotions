@@ -12,8 +12,8 @@ from sklearn.metrics import f1_score, precision_recall_fscore_support
 from common import ROOT, LABELS, targets, scores, style_masks, write_json
 
 
-def save_evaluation(name, frames, probabilities, metadata):
-    out = ROOT/'reports'
+def save_evaluation(name, frames, probabilities, metadata, output_dir=None):
+    out = ROOT/'reports' if output_dir is None else output_dir
     for folder in ('tables', 'figures', 'predictions'):
         (out/folder).mkdir(parents=True, exist_ok=True)
     rows, label_rows, style_rows = [], [], []
