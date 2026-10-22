@@ -2,6 +2,8 @@
 
 Đây là nơi lưu **kết quả đo, bằng chứng thực nghiệm và bản trình bày**. Bắt đầu từ trang này thay vì mở lần lượt mọi CSV.
 
+Buổi **pre-midterm 23/10/2026**: [báo cáo tiến độ 6 trang](pre_midterm_progress_2026-10-23.pdf), [slide trình bày 12 trang](pre_midterm_slides_2026-10-23.pdf), [lời dẫn từng slide](pre_midterm_speaker_notes_2026-10-23.md) và [nguồn báo cáo sửa được](pre_midterm_progress_2026-10-23.md). Snapshot ngày 22/10 phân biệt kết quả baseline lịch sử với lượt Colab mới đang chạy; mỗi phần có đường dẫn minh chứng. Các tài liệu này không tự cập nhật sau khi có kết quả mới.
+
 ## Nên đọc theo thứ tự nào?
 
 1. [Bảng so sánh ba baseline](tables/model_comparison.csv): mô hình nào tốt hơn trên validation, số tham số và thời gian.
