@@ -112,7 +112,36 @@ Ghi chú thuyết trình: Cặp được chọn từ train trước, rồi đo t
 
 Ghi chú thuyết trình: Style groups chồng lấn và có heuristic nhiễu. Không chép comment thô lên slide; mã ca lỗi trong báo cáo giúp kiểm tra nội bộ.
 
-## 13. RQ Final: một ngưỡng có đủ?
+## 13. Fine-tune PhoBERT như thế nào?
+
+- Cập nhật toàn bộ pretrained backbone và head 27 logits.
+- VnCoreNLP → BPE; tối đa 256 tokens; BCE + sigmoid.
+- AdamW: lr 2e-5, batch 16, weight decay 0,01; 4 epoch.
+- Chọn checkpoint bằng validation Macro-F1 tại 0,5.
+- Fine-tuning đã chạy; tìm hyperparameter là bước bổ sung.
+
+Ghi chú thuyết trình: Mở configs/midterm.json, train_neural.py và phobert_run.json. BiGRU huấn luyện từ đầu.
+
+## 14. Điều chỉnh learning rate | trạng thái
+
+- Grid: 1e-5 / 2e-5 / 3e-5; chạy lại 2e-5 làm đối chứng.
+- Giữ seed, split, batch, số epoch và threshold 0,5.
+- Code + notebook 05 đã có; sweep GPU chưa chạy.
+- Chưa chọn cấu hình hay kết luận ảnh hưởng learning rate.
+
+Ghi chú thuyết trình: Notebook 05 chạy ba lượt riêng, không ghi đè baseline. Chỉ điền kết quả khi sweep đã hoàn tất.
+
+## 15. Insight hiện có & việc cần kiểm chứng
+
+- PhoBERT hơn BiGRU 3,33 điểm phần trăm Macro-F1 validation.
+- Trong các nhóm style, teencode có delta lớn nhất: +9,41 điểm.
+- Đây là so sánh baseline, chưa tách riêng tác động của pretraining.
+- Đọc đường học, per-label/style delta và ca lỗi của sweep.
+- Ghi quan sát thủ công; không coi xuất CSV là đã audit.
+
+Ghi chú thuyết trình: Insight baseline và insight tuning phải ghi đúng nguồn. Không suy ra cơ chế hoặc overfitting chỉ từ một điểm F1.
+
+## 16. RQ Final: một ngưỡng có đủ?
 
 - Chọn neural backbone tốt nhất từ midterm; giữ nguyên trọng số.
 - So sánh fixed 0,5 / global tuned / per-label tuned.
@@ -121,7 +150,7 @@ Ghi chú thuyết trình: Style groups chồng lấn và có heuristic nhiễu. 
 
 Ghi chú thuyết trình: Bằng chứng TF-IDF tạo động lực, nhưng đề yêu cầu Final dùng neural architecture tốt nhất.
 
-## 14. Việc cần chốt trước khi nộp
+## 17. Việc cần chốt trước khi nộp
 
 - Đã kiểm chứng kết quả Colab; lưu riêng checkpoint và vocab.
 - Đối chiếu ID-to-label với metadata nguồn; xác nhận split protocol.
@@ -130,7 +159,7 @@ Ghi chú thuyết trình: Bằng chứng TF-IDF tạo động lực, nhưng đ�
 
 Ghi chú thuyết trình: Nêu trạng thái thật và công việc cụ thể còn lại. Nếu đã chạy Colab, chuyển trọng tâm sang rà soát nội dung.
 
-## 15. Nguồn & tái lập
+## 18. Nguồn & tái lập
 
 - Đề ViGoEmotions và student-guide: tiêu chí đánh giá.
 - Hung et al., EACL 2026: doi.org/10.18653/v1/2026.eacl-long.129.

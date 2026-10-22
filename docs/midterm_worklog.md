@@ -10,8 +10,8 @@ Xem [kiểm tra kết quả Colab](colab_results_check.md). Còn xác minh mappi
 
 ## 1. Đọc đề và xác định sản phẩm phải nộp
 
-Đọc [đề ViGoEmotions](../02-vigoemotions-vietnamese-emotion.pdf) và
-[student guide](../student-guide.pdf) để xác định bài toán, giới hạn dữ liệu và tiêu chí giữa kỳ.
+Đọc [đề ViGoEmotions](02-vigoemotions-vietnamese-emotion.pdf) và
+[student guide](student-guide.pdf) để xác định bài toán, giới hạn dữ liệu và tiêu chí giữa kỳ.
 Midterm là checkpoint thuyết trình, chiếm 30% điểm; cần có bằng chứng thực nghiệm tái lập được.
 
 Bài toán là **phân loại đa nhãn**: một bình luận có thể có nhiều cảm xúc cùng lúc. Nhóm cần khảo sát
@@ -201,6 +201,7 @@ neutral/mixed-neutral, rò rỉ văn bản train–held-out và metric trên ví
 
 Danh sách còn lại trước khi nộp:
 
+- [ ] Chạy sweep learning rate PhoBERT trên Colab, so sánh cùng-runtime và viết insight từ kết quả mới.
 - [ ] Đối chiếu mapping ID–nhãn với metadata dataset được cấp quyền.
 - [ ] Xác nhận việc giữ split gốc có đáp ứng yêu cầu phân tầng đa nhãn trong đề hay không.
 - [x] Chạy BiGRU/PhoBERT; nhập và kiểm chứng run metadata, probabilities.
@@ -214,3 +215,14 @@ Khi cần tự đi qua project, đọc tài liệu này rồi mở notebook **01
 README dành cho cách chạy; báo cáo dành cho giải thích phương pháp và kết quả chi tiết.
 Các trạng thái và số liệu trong tài liệu này là bản tổng hợp tại ngày cập nhật; sau lượt chạy mới,
 đối chiếu lại `reports/tables/` và `reports/*_run.json` trước khi trình bày.
+
+## 11. Bổ sung cho pre-midterm: điều chỉnh hyperparameter
+
+Đã chuẩn bị script tune_phobert.py và notebook 05 để so sánh learning rate 1e-5/2e-5/3e-5;
+chạy lại cấu hình 2e-5 trong cùng runtime làm đối chứng. Chỉ thay learning rate, chọn bằng validation
+Macro-F1 tại threshold 0,5; baseline gốc được giữ riêng. Chưa chạy sweep GPU trong lần cập nhật này.
+
+Report có mục 5.6 và slide được mở rộng thành 18 trang, trong giới hạn 20 theo hướng dẫn bổ sung.
+Phân biệt rõ fine-tune PhoBERT đã chạy với hyperparameter sweep còn chờ kết quả. Hướng dẫn chạy,
+nhập kết quả và viết insight tại [phobert_tuning.md](phobert_tuning.md). Danh sách lỗi neural tự sinh
+vẫn cần audit thủ công; chưa điền quan sát hoặc kết quả thí nghiệm chưa thực hiện.

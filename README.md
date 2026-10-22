@@ -5,17 +5,28 @@ Báo cáo/slide viết tiếng Việt; kết quả đo trên **validation**, tes
 
 ## Mở nội dung
 
+- [README cho buổi pre-midterm](README_PRE_MIDTERM.md) — kịch bản báo cáo tiến độ và đường dẫn đến từng minh chứng.
 - [Các công việc từ bắt đầu đến midterm](docs/midterm_worklog.md) — thứ tự thực hiện, lý do, bằng chứng và việc còn lại.
 - [Báo cáo PDF](reports/midterm_report.pdf) / [Markdown có thể sửa](reports/midterm_report.md).
-- [15 slide PDF](reports/midterm_slides.pdf) / [Nội dung và lời dẫn](reports/midterm_slides.md).
+- [18 slide PDF (tối đa 20)](reports/midterm_slides.pdf) / [Nội dung và lời dẫn](reports/midterm_slides.md).
 - [Notebook Colab GPU](notebooks/04_colab_neural_baselines.ipynb).
 - [Bảng ba mô hình](reports/tables/model_comparison.csv).
+- [Điều chỉnh learning rate PhoBERT](docs/phobert_tuning.md) / [Notebook Colab 05](notebooks/05_colab_phobert_tuning.ipynb) — đã chuẩn bị, chưa chạy sweep GPU.
 
 **Trạng thái (14/10/2026):** Đã nhập và kiểm chứng kết quả Colab của đủ ba mô hình.
 BiGRU chạy 10 epoch (37,50 giây); PhoBERT chạy 4 epoch (3.047,11 giây), trên Tesla T4.
 Macro-F1 validation tại 0,5 lần lượt là 0,2388 / 0,4060 / 0,4393 cho TF-IDF / BiGRU / PhoBERT.
 Xem [kiểm tra kết quả Colab](docs/colab_results_check.md). Còn cần xác minh mapping/split, đọc lỗi neural
 và bổ sung tên, MSSV, phân công nhóm trước khi nộp.
+
+**Bổ sung cho pre-midterm:** đã fine-tune PhoBERT với cấu hình baseline; sweep hyperparameter là bước tiếp theo.
+Đã thêm quy trình so sánh learning rate `1e-5 / 2e-5 / 3e-5`, chạy lại `2e-5` trong cùng runtime làm đối chứng.
+Mỗi lượt lưu kết quả/checkpoint riêng; giữ bảng ba baseline ban đầu. Chọn cấu hình bằng validation tại 0,5.
+**Chưa có số liệu sweep mới**; report/slide ghi rõ trạng thái chờ GPU.
+
+Để chạy: tạo ZIP bằng `.venv/bin/python scripts/package_colab.py --include-results`, mở notebook 05 trên Colab T4,
+upload ZIP và ba CSV riêng rồi chạy các cell. Notebook xuất ZIP kết quả và tải riêng checkpoint được chọn.
+Xem [hướng dẫn tuning](docs/phobert_tuning.md) để nhập kết quả, audit lỗi và tạo lại report/slide.
 
 ## Dữ liệu và quyền sử dụng
 
@@ -76,8 +87,14 @@ Không diễn giải điểm đã tune này là điểm test hoặc kết quả 
    các file neural error cases là danh sách ứng viên audit, không phải bằng chứng đã đọc thủ công.
 
 Không dùng `test.csv` để chọn epoch, hyperparameter hay threshold. Mã chỉ suy luận validation trong midterm.
-Colab cần kết nối mạng khi cài dependencies/tải pretrained resources; các cell dùng `check=True` để dừng khi lỗi.
+Colab cần kết nối mạng khi cài dependencies/tải pretrained resources; các bước chạy script kiểm tra exit code để dừng khi lỗi.
 Đã có kết quả chạy end-to-end trên Colab Tesla T4; run JSON ghi Python 3.13.15 và package versions thực tế.
+
+Notebook 04 hiện vừa in output vừa lưu log từng bước ở `reports/logs/`; có bảng history đánh dấu checkpoint
+được chọn, `reports/tables/{gru,phobert}_history.csv` và `reports/figures/neural_learning_curves.png`.
+Cuối notebook tải **hai ZIP**: `vigoemotions_results.zip` chứa kết quả/log và
+`vigoemotions_baseline_private.zip` chứa checkpoint, vocabulary và config/run metadata.
+Lưu ZIP riêng tư trước khi đóng runtime; checkpoint chỉ có trọng số, không có optimizer state để resume giữa chừng.
 
 Nếu runtime hết RAM/VRAM, giảm batch trong `configs/midterm.json`, giữ nguyên các lựa chọn khác,
 ghi nhận thay đổi và chạy lại mô hình từ đầu. Không hứa thời gian chạy neural khi chưa có phép đo.

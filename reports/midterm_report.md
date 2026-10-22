@@ -290,6 +290,16 @@ Head/mid/tail được cố định theo tần suất train của A: xếp giả
 
 **Tái lập:** Chạy .venv/bin/python scripts/ablate_mixed_neutral.py --output reports/ablation_mixed_neutral/rerun_01 với thư mục đầu ra chưa tồn tại. Cấu hình, checksum dữ liệu, ID train và xác suất validation liên tục được lưu cùng kết quả; không xuất bình luận gốc. Chi tiết tại reports/ablation_mixed_neutral/experiment_summary.md.
 
+### 5.6. Fine-tuning và thử nghiệm learning rate PhoBERT
+
+**Đã thực hiện:** PhoBERT pretrained được fine-tune toàn bộ backbone cùng head 27 logits trên train; AdamW lr=2e-5, batch=16, weight_decay=0,01, 4 epoch, max_length=256 BPE tokens, BCEWithLogitsLoss. Chọn checkpoint bằng Macro-F1 validation tại ngưỡng 0,5. BiGRU được huấn luyện từ đầu. Fine-tuning pretrained và tìm kiếm hyperparameter là hai công việc khác nhau.
+
+**Thiết kế bổ sung:** So sánh learning rate 1e-5, 2e-5 và 3e-5; giữ nguyên seed 42, split, preprocessing, checkpoint revision, batch size, số epoch, optimizer và loss. Chạy lại cả 2e-5 trong cùng runtime làm đối chứng; kết quả baseline gốc ở mục 5 được giữ riêng. Chọn learning rate bằng Macro-F1 validation tại 0,5, hòa chọn learning rate nhỏ hơn; checkpoint trong mỗi lượt hòa chọn epoch sớm hơn. Không chọn learning rate bằng điểm đã tune threshold. Không đánh giá hay điều chỉnh bằng test.
+
+**Trạng thái: đã chuẩn bị code/notebook, chưa có kết quả GPU của sweep.** Cả ba learning rate đang chờ chạy; chưa chọn được cấu hình tốt nhất và chưa có insight về tác động của learning rate. Chạy notebook 05 trên Colab; script lưu config, run JSON, xác suất, biểu đồ train loss/validation F1, bảng per-label/style và mẫu ca lỗi riêng cho từng lượt.
+
+Sau khi chạy, cần đọc đường học và chênh lệch từng nhãn/phong cách, điền neural_error_review.csv bằng quan sát thủ công rồi viết insight. Không coi danh sách lỗi tự sinh là đã audit. Một seed và bốn epoch không đủ để kết luận ý nghĩa thống kê hoặc hội tụ. Chi tiết và cách chạy: docs/phobert_tuning.md.
+
 ## 6. Phân tích lỗi và trường hợp biên
 
 File tfidf_lr_error_cases_val.csv chứa 20 FN có xác suất thấp nhất và 20 FP có xác suất cao nhất, kèm ID, nhãn thật, nhãn dự đoán, xác suất, cardinality và style flags. Một mẫu có thể xuất hiện nhiều lần vì lỗi tính theo cặp mẫu–nhãn. Mẫu này ưu tiên lỗi tự tin, không đại diện ngẫu nhiên cho toàn bộ lỗi. Đã đọc thủ công 10 bình luận khác nhau trong danh sách; bảng dưới dùng mô tả trừu tượng, không chép nguyên bình luận.

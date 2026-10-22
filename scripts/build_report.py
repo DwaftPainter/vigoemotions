@@ -102,6 +102,8 @@ def render_report(markdown):
 
 
 def render_slides(slides):
+    if len(slides) > 20:
+        raise ValueError('Midterm presentation must contain at most 20 slides')
     c=canvas.Canvas(str(REPORTS/'midterm_slides.pdf'),pagesize=(960,540))
     c.setTitle('ViGoEmotions — Midterm presentation')
     md=['# ViGoEmotions — Nội dung thuyết trình giữa kỳ','']
@@ -178,6 +180,46 @@ Head/mid/tail được cố định theo tần suất train của A: xếp giả
 '''
 
 
+def tuning_content():
+    folder = REPORTS/'phobert_tuning'
+    path = folder/'study.json'
+    completed = path.exists() and json.loads(path.read_text()).get('status') == 'completed'
+    intro = '''### 5.6. Fine-tuning và thử nghiệm learning rate PhoBERT
+
+**Đã thực hiện:** PhoBERT pretrained được fine-tune toàn bộ backbone cùng head 27 logits trên train; AdamW lr=2e-5, batch=16, weight_decay=0,01, 4 epoch, max_length=256 BPE tokens, BCEWithLogitsLoss. Chọn checkpoint bằng Macro-F1 validation tại ngưỡng 0,5. BiGRU được huấn luyện từ đầu. Fine-tuning pretrained và tìm kiếm hyperparameter là hai công việc khác nhau.
+
+**Thiết kế bổ sung:** So sánh learning rate 1e-5, 2e-5 và 3e-5; giữ nguyên seed 42, split, preprocessing, checkpoint revision, batch size, số epoch, optimizer và loss. Chạy lại cả 2e-5 trong cùng runtime làm đối chứng; kết quả baseline gốc ở mục 5 được giữ riêng. Chọn learning rate bằng Macro-F1 validation tại 0,5, hòa chọn learning rate nhỏ hơn; checkpoint trong mỗi lượt hòa chọn epoch sớm hơn. Không chọn learning rate bằng điểm đã tune threshold. Không đánh giá hay điều chỉnh bằng test.
+
+'''
+    if not completed:
+        section = intro + '''**Trạng thái: đã chuẩn bị code/notebook, chưa có kết quả GPU của sweep.** Cả ba learning rate đang chờ chạy; chưa chọn được cấu hình tốt nhất và chưa có insight về tác động của learning rate. Chạy notebook 05 trên Colab; script lưu config, run JSON, xác suất, biểu đồ train loss/validation F1, bảng per-label/style và mẫu ca lỗi riêng cho từng lượt.
+
+Sau khi chạy, cần đọc đường học và chênh lệch từng nhãn/phong cách, điền neural_error_review.csv bằng quan sát thủ công rồi viết insight. Không coi danh sách lỗi tự sinh là đã audit. Một seed và bốn epoch không đủ để kết luận ý nghĩa thống kê hoặc hội tụ. Chi tiết và cách chạy: docs/phobert_tuning.md.
+
+'''
+        return section, ['Grid: 1e-5 / 2e-5 / 3e-5; chạy lại 2e-5 làm đối chứng.',
+            'Giữ seed, split, batch, số epoch và threshold 0,5.',
+            'Code + notebook 05 đã có; sweep GPU chưa chạy.',
+            'Chưa chọn cấu hình hay kết luận ảnh hưởng learning rate.'], None
+    from tune_phobert import summarize
+    comparison, winner = summarize(folder)
+    display = comparison.copy()
+    display['learning_rate'] = display.learning_rate.map(lambda rate: f'{rate:.0e}')
+    section = intro + table(display) + f'''
+
+Đã kiểm tra cấu hình, cùng ID/nhãn validation, checksum/môi trường và tính lại metric từ xác suất. Learning rate được chọn: {winner.learning_rate:.0e}; Macro-F1={winner.macro_f1:.4f}, chênh lệch so với đối chứng 2e-5 trong sweep là {winner.delta_macro_f1_vs_control:+.4f}. Đây là lựa chọn trên validation của một seed, chưa kiểm chứng tổng quát hóa test.
+
+![Train loss và validation Macro-F1 theo epoch, từng learning rate.](phobert_tuning/learning_curves.png)
+
+Bảng chi tiết per-label/style nằm trong reports/phobert_tuning/. File neural_error_review.csv là danh sách ca lỗi với cột review; nhóm cần tự đọc và diễn giải trước khi kết luận cơ chế cải thiện. Điểm tốt hơn không tự chứng minh learning rate là nguyên nhân của một loại lỗi cụ thể, và checkpoint cuối chưa chứng minh hội tụ.
+
+'''
+    return section, [f'Đã chạy đủ ba learning rate; chọn {winner.learning_rate:.0e}.',
+        f'Macro-F1 validation: {winner.macro_f1:.4f} tại threshold 0,5.',
+        f'Delta so với 2e-5 cùng runtime: {winner.delta_macro_f1_vs_control:+.4f}.',
+        'Một seed; chưa đánh giá test. Cần đọc thêm lỗi neural.'], 'phobert_tuning/learning_curves.png'
+
+
 def main():
     summary=pd.read_csv(TABLES/'dataset_summary.csv')
     freq=pd.read_csv(TABLES/'label_frequency.csv')
@@ -240,6 +282,7 @@ def main():
             "tại ngưỡng 0,5. Cả hai chọn epoch cuối, nên chưa khẳng định đã hội tụ. "
             "Kết quả Colab đã được đối chiếu checksum dữ liệu, ID, nhãn và tính lại metric từ xác suất; "
             "không huấn luyện lại khi nhập kết quả. ZIP không chứa checkpoint/vocab nên cần lưu riêng chúng.")
+    tuning_section, tuning_bullets, tuning_figure = tuning_content()
     text=f'''# ViGoEmotions — Báo cáo giữa kỳ
 
 ATI Course Project 2026 • Nhận diện đa nhãn cảm xúc tiếng Việt
@@ -381,7 +424,7 @@ TF-IDF có Macro-F1 thấp hơn trên emoji-heavy và teencode so với toàn va
 
 Không gọi 0,15 là ngưỡng tối ưu tổng quát: nó chỉ tốt nhất trên lưới và validation đã dùng để chọn. Cần khóa ngưỡng rồi kiểm tra trên test ở Final.
 
-{mixed_neutral_section()}## 6. Phân tích lỗi và trường hợp biên
+{mixed_neutral_section()}{tuning_section}## 6. Phân tích lỗi và trường hợp biên
 
 File tfidf_lr_error_cases_val.csv chứa 20 FN có xác suất thấp nhất và 20 FP có xác suất cao nhất, kèm ID, nhãn thật, nhãn dự đoán, xác suất, cardinality và style flags. Một mẫu có thể xuất hiện nhiều lần vì lỗi tính theo cặp mẫu–nhãn. Mẫu này ưu tiên lỗi tự tin, không đại diện ngẫu nhiên cho toàn bộ lỗi. Đã đọc thủ công 10 bình luận khác nhau trong danh sách; bảng dưới dùng mô tả trừu tượng, không chép nguyên bình luận.
 
@@ -462,6 +505,23 @@ Mã và tài liệu có hỗ trợ AI trong phiên hoàn thiện; số liệu TF
         ('RQ Final: một ngưỡng có đủ?',['Chọn neural backbone tốt nhất từ midterm; giữ nguyên trọng số.','So sánh fixed 0,5 / global tuned / per-label tuned.','Tune validation → khóa ngưỡng → test đúng một lần.','Phân tích theo tier/cardinality, profile ngưỡng và val–test gap.'],None,'Bằng chứng TF-IDF tạo động lực, nhưng đề yêu cầu Final dùng neural architecture tốt nhất.'),
         ('Việc cần chốt trước khi nộp',[('Đã kiểm chứng kết quả Colab; lưu riêng checkpoint và vocab.' if neural_done else 'Chạy notebook 04 trên Colab GPU.'),'Đối chiếu ID-to-label với metadata nguồn; xác nhận split protocol.','Đọc error analysis neural; bổ sung tên/MSSV/phân công nhóm.','Gói nộp: PDF, slide, code, README, config, ID, bảng/hình, probabilities.'],None,'Nêu trạng thái thật và công việc cụ thể còn lại. Nếu đã chạy Colab, chuyển trọng tâm sang rà soát nội dung.'),
         ('Nguồn & tái lập',['Đề ViGoEmotions và student-guide: tiêu chí đánh giá.','Hung et al., EACL 2026: doi.org/10.18653/v1/2026.eacl-long.129.','PhoBERT: Nguyen & Nguyen, 2020; vinai/phobert-base-v2.','scikit-learn, Transformers, VnCoreNLP: dẫn nguồn trong báo cáo.','Seed 42; package versions, checksum, hardware lưu trong run JSON.'],None,'Các thư viện và pretrained checkpoint phải được trích dẫn. Điểm paper không phải điểm chạy của nhóm.')]
+    slides[12:12] = [
+        ('Fine-tune PhoBERT như thế nào?', [
+            'Cập nhật toàn bộ pretrained backbone và head 27 logits.',
+            'VnCoreNLP → BPE; tối đa 256 tokens; BCE + sigmoid.',
+            'AdamW: lr 2e-5, batch 16, weight decay 0,01; 4 epoch.',
+            'Chọn checkpoint bằng validation Macro-F1 tại 0,5.',
+            'Fine-tuning đã chạy; tìm hyperparameter là bước bổ sung.'], None,
+            'Mở configs/midterm.json, train_neural.py và phobert_run.json. BiGRU huấn luyện từ đầu.'),
+        ('Điều chỉnh learning rate | trạng thái', tuning_bullets, tuning_figure,
+            'Notebook 05 chạy ba lượt riêng, không ghi đè baseline. Chỉ điền kết quả khi sweep đã hoàn tất.'),
+        ('Insight hiện có & việc cần kiểm chứng', [
+            'PhoBERT hơn BiGRU 3,33 điểm phần trăm Macro-F1 validation.',
+            'Trong các nhóm style, teencode có delta lớn nhất: +9,41 điểm.',
+            'Đây là so sánh baseline, chưa tách riêng tác động của pretraining.',
+            'Đọc đường học, per-label/style delta và ca lỗi của sweep.',
+            'Ghi quan sát thủ công; không coi xuất CSV là đã audit.'], None,
+            'Insight baseline và insight tuning phải ghi đúng nguồn. Không suy ra cơ chế hoặc overfitting chỉ từ một điểm F1.')]
     register_fonts();render_report(text);render_slides(slides)
     print('Wrote midterm_report.md/pdf, midterm_slides.md/pdf, model comparison tables')
 
