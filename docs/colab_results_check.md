@@ -36,7 +36,7 @@ Python Unicode regex đếm 307 nhưng backend mặc định của pandas local 
 ## Việc còn lại
 
 - Đọc và diễn giải ca lỗi neural; danh sách 20 FN/20 FP tự sinh không thay thế việc audit thủ công.
-- Xác minh mapping nhãn và giao thức split theo yêu cầu đề.
+- Mapping khớp ảnh dataset card đã đối chiếu ngày 22/10; xem [nguồn](label_mapping.md). Paper nêu 8:1:1 nhưng không mô tả thuật toán; cần làm rõ yêu cầu stratification với giảng viên.
 - Lưu riêng checkpoint và vocabulary từ Colab: ZIP này không chứa chúng, nên chưa kiểm tra được
   trọng số checkpoint hoặc suy luận lại từ trọng số.
 - Bổ sung thông tin nhóm, rà soát báo cáo/slide; chưa đánh giá test hoặc thực hiện RQ Final.

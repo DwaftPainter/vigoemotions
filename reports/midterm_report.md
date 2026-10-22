@@ -26,7 +26,7 @@ Có 306 mẫu neutral + cảm xúc (251 train, 19 validation, 36 test), 725 mẫ
 | val | 2066 | 1.8703 | 5 | 75 | 19 | 0 |
 | test | 2067 | 1.8510 | 5 | 80 | 36 | 1 |
 
-Thứ tự ID 0–26 được kế thừa từ notebook kiểm tra dữ liệu ban đầu; ID 27 là neutral. Dataset card đang yêu cầu quyền truy cập nên vẫn cần người sở hữu dữ liệu đối chiếu mapping này với metadata gốc được cấp quyền. Không sắp nhãn lại theo alphabet.
+Mapping ID 0–26 đã đối chiếu ngày 22/10/2026 với ảnh bảng nhãn Hugging Face do người dùng cung cấp và khớp code; ID 27 là neutral. Nguồn và bảng đầy đủ: docs/label_mapping.md. Paper mục 5.1, trang PDF 6 (2810), nêu split 8:1:1 nhưng không mô tả thuật toán; nhóm giữ split được cấp, chưa xác nhận stratification. Không sắp nhãn lại theo alphabet.
 
 ### 2.1. Danh mục đủ 27 nhãn và tần suất
 
@@ -346,7 +346,7 @@ Chạy README theo thứ tự: tests → analyze_data.py → train_tfidf.py → 
 | D: năm câu hỏi | Q1–Q3/Q5 có bằng chứng TF-IDF; Q4 có bảng chênh lệch neural |
 | E: slide, code, EDA, error analysis, RQ, README | Đã tạo; cần rà soát ca lỗi neural và điền thông tin nhóm khi nộp |
 
-Giới hạn chính: một seed, validation đã dùng chọn cấu hình/ngưỡng, chưa đo tổng quát hóa test, heuristic style chưa được gán nhãn thủ công, mapping ID cần đối chiếu metadata gốc, nguồn split chưa xác minh stratification. Quy ước 27 output khác thiết lập 28 output có neutral riêng trong bài báo gốc; không so sánh trực tiếp số điểm hai giao thức. Các nhãn cùng mẫu phụ thuộc nhau nên F1 theo nhãn và kiểm định tương quan cần được diễn giải thận trọng.
+Giới hạn chính: một seed, validation đã dùng chọn cấu hình/ngưỡng, chưa đo tổng quát hóa test, heuristic style chưa được gán nhãn thủ công, mapping ID đã khớp ảnh dataset card cung cấp ngày 22/10, paper nêu 8:1:1 nhưng chưa có bằng chứng stratification. Quy ước 27 output khác thiết lập 28 output có neutral riêng trong bài báo gốc; không so sánh trực tiếp số điểm hai giao thức. Các nhãn cùng mẫu phụ thuộc nhau nên F1 theo nhãn và kiểm định tương quan cần được diễn giải thận trọng.
 
 ## Tài liệu tham khảo
 

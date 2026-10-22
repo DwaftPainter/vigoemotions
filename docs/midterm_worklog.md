@@ -6,7 +6,7 @@ Mục đích là giúp thành viên mới hiểu **đã làm gì, vì sao làm, 
 
 Đã chạy đủ TF-IDF, BiGRU và PhoBERT; kết quả Colab đã được nhập và kiểm chứng ngày 14/10/2026.
 BiGRU: 10 epoch, 37,50 giây; PhoBERT: 4 epoch, khoảng 50 phút 47 giây trên Tesla T4.
-Xem [kiểm tra kết quả Colab](colab_results_check.md). Còn xác minh mapping/split và audit lỗi neural trước khi nộp.
+Xem [kiểm tra kết quả Colab](colab_results_check.md). Mapping đã đối chiếu ảnh nguồn ngày 22/10; còn làm rõ stratification và audit lỗi neural trước khi nộp.
 
 ## 1. Đọc đề và xác định sản phẩm phải nộp
 
@@ -64,8 +64,7 @@ giá trị thiếu, ID trùng, văn bản trùng và tính hợp lệ của nhã
 Quy ước xử lý chung nằm ở [common.py](../scripts/common.py), giải thích chi tiết ở
 [dataset_check.md](dataset_check.md).
 
-**Còn cần xác nhận:** mapping ID → tên nhãn được kế thừa từ notebook gốc; người có quyền truy cập
-dataset cần đối chiếu với metadata nguồn. Không tự đổi thứ tự nhãn theo alphabet.
+**Đã đối chiếu ngày 22/10:** mapping ID 0–26 khớp ảnh dataset card do người dùng cung cấp; ID 27 là neutral. Xem [bảng và nguồn](label_mapping.md). Không đổi thứ tự đầu ra.
 
 ## 4. Thống nhất nhãn, split và tiền xử lý
 
@@ -202,7 +201,7 @@ neutral/mixed-neutral, rò rỉ văn bản train–held-out và metric trên ví
 Danh sách còn lại trước khi nộp:
 
 - [ ] Chạy sweep learning rate PhoBERT trên Colab, so sánh cùng-runtime và viết insight từ kết quả mới.
-- [ ] Đối chiếu mapping ID–nhãn với metadata dataset được cấp quyền.
+- [x] Đối chiếu mapping ID–nhãn với ảnh dataset card do người dùng cung cấp ngày 22/10; đủ 28 ID khớp.
 - [ ] Xác nhận việc giữ split gốc có đáp ứng yêu cầu phân tầng đa nhãn trong đề hay không.
 - [x] Chạy BiGRU/PhoBERT; nhập và kiểm chứng run metadata, probabilities.
 - [ ] Lưu riêng checkpoint/vocab từ Colab (không có trong ZIP kết quả).

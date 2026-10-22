@@ -153,7 +153,7 @@ Ghi chú thuyết trình: Bằng chứng TF-IDF tạo động lực, nhưng đ�
 ## 17. Việc cần chốt trước khi nộp
 
 - Đã kiểm chứng kết quả Colab; lưu riêng checkpoint và vocab.
-- Đối chiếu ID-to-label với metadata nguồn; xác nhận split protocol.
+- Mapping đã khớp ảnh nguồn; làm rõ yêu cầu stratification với giảng viên.
 - Đọc error analysis neural; bổ sung tên/MSSV/phân công nhóm.
 - Gói nộp: PDF, slide, code, README, config, ID, bảng/hình, probabilities.
 

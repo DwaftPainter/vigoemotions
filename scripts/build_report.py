@@ -319,7 +319,7 @@ Có 306 mẫu neutral + cảm xúc (251 train, 19 validation, 36 test), 725 mẫ
 
 {table(summary)}
 
-Thứ tự ID 0–26 được kế thừa từ notebook kiểm tra dữ liệu ban đầu; ID 27 là neutral. Dataset card đang yêu cầu quyền truy cập nên vẫn cần người sở hữu dữ liệu đối chiếu mapping này với metadata gốc được cấp quyền. Không sắp nhãn lại theo alphabet.
+Mapping ID 0–26 đã đối chiếu ngày 22/10/2026 với ảnh bảng nhãn Hugging Face do người dùng cung cấp và khớp code; ID 27 là neutral. Nguồn và bảng đầy đủ: docs/label_mapping.md. Paper mục 5.1, trang PDF 6 (2810), nêu split 8:1:1 nhưng không mô tả thuật toán; nhóm giữ split được cấp, chưa xác nhận stratification. Không sắp nhãn lại theo alphabet.
 
 ### 2.1. Danh mục đủ 27 nhãn và tần suất
 
@@ -482,7 +482,7 @@ Chạy README theo thứ tự: tests → analyze_data.py → train_tfidf.py → 
 | D: năm câu hỏi | Q1–Q3/Q5 có bằng chứng TF-IDF; Q4 {'có bảng chênh lệch neural' if neural_done else 'chưa có bằng chứng neural'} |
 | E: slide, code, EDA, error analysis, RQ, README | Đã tạo; cần rà soát ca lỗi neural và điền thông tin nhóm khi nộp |
 
-Giới hạn chính: một seed, validation đã dùng chọn cấu hình/ngưỡng, chưa đo tổng quát hóa test, heuristic style chưa được gán nhãn thủ công, mapping ID cần đối chiếu metadata gốc, nguồn split chưa xác minh stratification. Quy ước 27 output khác thiết lập 28 output có neutral riêng trong bài báo gốc; không so sánh trực tiếp số điểm hai giao thức. Các nhãn cùng mẫu phụ thuộc nhau nên F1 theo nhãn và kiểm định tương quan cần được diễn giải thận trọng.
+Giới hạn chính: một seed, validation đã dùng chọn cấu hình/ngưỡng, chưa đo tổng quát hóa test, heuristic style chưa được gán nhãn thủ công, mapping ID đã khớp ảnh dataset card cung cấp ngày 22/10, paper nêu 8:1:1 nhưng chưa có bằng chứng stratification. Quy ước 27 output khác thiết lập 28 output có neutral riêng trong bài báo gốc; không so sánh trực tiếp số điểm hai giao thức. Các nhãn cùng mẫu phụ thuộc nhau nên F1 theo nhãn và kiểm định tương quan cần được diễn giải thận trọng.
 
 ## Tài liệu tham khảo
 
@@ -515,7 +515,7 @@ Mã và tài liệu có hỗ trợ AI trong phiên hoàn thiện; số liệu TF
         ('Baseline giữ được cặp nhãn?',[f'Disappointment–sadness: {int(pair.joint_true_positive)}/{int(pair.val_true_count)} ca validation đúng đủ cặp.',f'Joint recall = {pair.joint_recall*100:.2f}% tại ngưỡng 0,5.','OvR không có cơ chế học cấu trúc nhãn trực tiếp.','Cần phân biệt phụ thuộc nhãn với vấn đề ngưỡng bỏ sót.'],None,'Cặp được chọn từ train trước, rồi đo trên validation; không xây ma trận test.'),
         ('Phong cách & lỗi biên',[f'TF-IDF Macro-F1: short {styles.set_index("style").loc["short_le_5","macro_f1"]:.4f}; emoji-heavy {styles.set_index("style").loc["emoji_heavy_ge_2","macro_f1"]:.4f}; teencode {styles.set_index("style").loc["teencode","macro_f1"]:.4f}.','Emoji bị bỏ bởi word-token TF-IDF; giả thuyết cho FN amusement.','Câu hỏi giúp đỡ có thể bị FP curiosity.','Audit thủ công 10 ca thuộc lượt baseline 14/10/2026.','Q4 PhoBERT vs GRU: '+(f'{top["style"]} có delta cao nhất: {top.delta_macro_f1*100:+.2f} điểm phần trăm.' if neural_done else 'chờ kết quả Colab.')],None,'Style groups chồng lấn và có heuristic nhiễu. Sau khi chạy lại cần kiểm tra ca lỗi mới. Không chép comment thô lên slide.'),
         ('RQ Final: một ngưỡng có đủ?',['Chọn neural backbone tốt nhất từ midterm; giữ nguyên trọng số.','So sánh fixed 0,5 / global tuned / per-label tuned.','Tune validation → khóa ngưỡng → test đúng một lần.','Phân tích theo tier/cardinality, profile ngưỡng và val–test gap.'],None,'Bằng chứng TF-IDF tạo động lực, nhưng đề yêu cầu Final dùng neural architecture tốt nhất.'),
-        ('Việc cần chốt trước khi nộp',[('Đã kiểm chứng kết quả Colab; lưu riêng checkpoint và vocab.' if neural_done else 'Chạy notebook 04 trên Colab GPU.'),'Đối chiếu ID-to-label với metadata nguồn; xác nhận split protocol.','Đọc error analysis neural; bổ sung tên/MSSV/phân công nhóm.','Gói nộp: PDF, slide, code, README, config, ID, bảng/hình, probabilities.'],None,'Nêu trạng thái thật và công việc cụ thể còn lại. Nếu đã chạy Colab, chuyển trọng tâm sang rà soát nội dung.'),
+        ('Việc cần chốt trước khi nộp',[('Đã kiểm chứng kết quả Colab; lưu riêng checkpoint và vocab.' if neural_done else 'Chạy notebook 04 trên Colab GPU.'),'Mapping đã khớp ảnh nguồn; làm rõ yêu cầu stratification với giảng viên.','Đọc error analysis neural; bổ sung tên/MSSV/phân công nhóm.','Gói nộp: PDF, slide, code, README, config, ID, bảng/hình, probabilities.'],None,'Nêu trạng thái thật và công việc cụ thể còn lại. Nếu đã chạy Colab, chuyển trọng tâm sang rà soát nội dung.'),
         ('Nguồn & tái lập',['Đề ViGoEmotions và student-guide: tiêu chí đánh giá.','Hung et al., EACL 2026: doi.org/10.18653/v1/2026.eacl-long.129.','PhoBERT: Nguyen & Nguyen, 2020; vinai/phobert-base-v2.','scikit-learn, Transformers, VnCoreNLP: dẫn nguồn trong báo cáo.','Seed 42; package versions, checksum, hardware lưu trong run JSON.'],None,'Các thư viện và pretrained checkpoint phải được trích dẫn. Điểm paper không phải điểm chạy của nhóm.')]
     slides[12:12] = [
         ('Fine-tune PhoBERT như thế nào?', [

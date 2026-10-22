@@ -14,11 +14,9 @@ Theo quy ước đánh giá 27 cảm xúc của đề: ID 27 không là đầu r
 neutral + emotion giữ emotion, bỏ ID 27; các ID cảm xúc lặp được gộp. Đây là quyết định xử lý của
 project, không khẳng định là sửa đúng ý định người gán nhãn. Chưa tái gán nhãn thủ công.
 
-Thứ tự ID kế thừa bảng nhãn trong notebook gốc. Dataset card trên Hugging Face yêu cầu quyền truy cập;
-người sở hữu dữ liệu cần đối chiếu mapping với metadata được cấp quyền trước bản nộp cuối.
-Không suy ra thứ tự ID từ danh sách theo alphabet.
+Ngày 22/10/2026 đã đối chiếu toàn bộ mapping trong ảnh dataset card Hugging Face do người dùng cung cấp: ID 0–26 khớp `scripts/common.py`, ID 27 là neutral. Không đổi mapping hay chạy lại mô hình vì mapping. Xem [nguồn và bảng đầy đủ](label_mapping.md).
 
-Giữ split được cung cấp, xuất `splits/*.csv` và audit tỷ lệ từng nhãn.
+Giữ split được cung cấp, xuất `splits/*.csv` và audit tỷ lệ từng nhãn. Paper gốc mục 5.1, trang PDF 6 (2810), xác nhận tỷ lệ 8:1:1 nhưng không mô tả thuật toán chia tập; xem [đối chiếu nguồn](label_mapping.md#paper-xác-nhận-gì-về-split).
 Chưa có bằng chứng thuật toán tạo split gốc là iterative multilabel stratification;
 không gọi split này là đã được chứng minh stratified. Không dùng nhãn test để xây ma trận đồng xuất hiện,
 chọn siêu tham số hay ngưỡng. EDA phân bố biên theo split chỉ phục vụ kiểm tra mô tả.

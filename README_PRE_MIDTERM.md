@@ -43,8 +43,8 @@ Không cần chạy lại mô hình trong lúc thuyết trình. Các notebook ch
 ## Phần còn thiếu cần nói thẳng
 
 - Chạy notebook 05 trên Colab GPU để hoàn tất sweep PhoBERT; nhập ZIP kết quả rồi cập nhật insight từ số liệu mới. Chi tiết tại [phobert_tuning.md](docs/phobert_tuning.md). Không đợi test để chỉnh hyperparameter.
-- Xác minh mapping ID–tên nhãn với metadata của bộ dữ liệu được cấp quyền.
-- Xác nhận nguồn tạo split gốc có đáp ứng yêu cầu phân tầng đa nhãn trong đề hay không; hiện mới giữ split và audit phân bố, chưa chứng minh thuật toán tạo split.
+- Mapping đã đối chiếu ngày 22/10 với ảnh dataset card người dùng cung cấp: đủ ID 0–26 khớp code, ID 27 là neutral. Xem [bảng và nguồn](docs/label_mapping.md). Không còn là hạng mục chờ đối chiếu trong phạm vi nguồn này.
+- Paper mục 5.1 (trang PDF 6 / 2810) nêu tỷ lệ 8:1:1, không mô tả thuật toán chia tập. Giữ split được cấp và audit phân bố; cần làm rõ yêu cầu stratification với giảng viên, không khẳng định split đã stratified. Xem [đối chiếu paper](docs/label_mapping.md).
 - Đọc thủ công các ca lỗi BiGRU/PhoBERT và bổ sung diễn giải. Các CSV hiện tại là danh sách ca lỗi để xem xét; phần đọc thủ công trong báo cáo mới dành cho TF-IDF.
 - Lưu riêng checkpoint và vocabulary Colab nếu cần tái sử dụng cho Final; ZIP kết quả đã nhập không chứa chúng.
 - Bổ sung tên, MSSV, phân công nhóm và rà lại báo cáo/slide trước khi nộp.

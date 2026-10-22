@@ -63,3 +63,7 @@ Từ project root, dùng môi trường local đã cài dependency và dữ li�
 - Local không có checkpoint baseline hoặc PyTorch/GPU; chỉ kiểm chứng đầu ra đã lưu, không xác nhận suy luận lại từ trọng số hoặc tái đo thời gian train.
 - Một seed, heuristic style và validation đã dùng chọn checkpoint/ngưỡng hạn chế khả năng khái quát. Đây không phải kiểm định ý nghĩa thống kê hoặc chứng nhận các nhãn gốc đều đúng.
 - Report có phần mô tả thiết kế cố định của project và phần audit viết tay. Số liệu tự sinh đã được cập nhật theo artifact; nhóm vẫn cần rà diễn giải sau khi đổi giao thức, dữ liệu hoặc config.
+
+## Bổ sung nguồn ngày 22/10 sau audit
+
+Mapping ID–nhãn đã khớp ảnh dataset card người dùng cung cấp; hạng mục mapping ở snapshot audit phía trên được giải quyết trong phạm vi nguồn này. Paper mục 5.1, trang PDF 6 (2810), xác nhận 8:1:1 nhưng không mô tả thuật toán chia tập. Chưa có bằng chứng stratification. Xem [bảng mapping và đối chiếu paper](label_mapping.md). Không thay config, split, mô hình hay kết quả đo.
