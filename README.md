@@ -5,6 +5,8 @@ Báo cáo/slide viết tiếng Việt; kết quả đo trên **validation**, tes
 
 ## Mở nội dung
 
+- [Mục lục reports và ý nghĩa từng file](reports/README.md) — thứ tự đọc, quy ước tên, metric và trạng thái thí nghiệm.
+- [Kết quả audit toàn project](docs/project_audit.md) — đã kiểm tra gì, lỗi đã sửa và giới hạn còn lại.
 - [README cho buổi pre-midterm](README_PRE_MIDTERM.md) — kịch bản báo cáo tiến độ và đường dẫn đến từng minh chứng.
 - [Các công việc từ bắt đầu đến midterm](docs/midterm_worklog.md) — thứ tự thực hiện, lý do, bằng chứng và việc còn lại.
 - [Báo cáo PDF](reports/midterm_report.pdf) / [Markdown có thể sửa](reports/midterm_report.md).
@@ -90,7 +92,7 @@ Không dùng `test.csv` để chọn epoch, hyperparameter hay threshold. Mã ch
 Colab cần kết nối mạng khi cài dependencies/tải pretrained resources; các bước chạy script kiểm tra exit code để dừng khi lỗi.
 Đã có kết quả chạy end-to-end trên Colab Tesla T4; run JSON ghi Python 3.13.15 và package versions thực tế.
 
-Notebook 04 hiện vừa in output vừa lưu log từng bước ở `reports/logs/`; có bảng history đánh dấu checkpoint
+Sau khi chạy notebook 04 mới, output được ghi vào `reports/logs/`; có bảng history đánh dấu checkpoint
 được chọn, `reports/tables/{gru,phobert}_history.csv` và `reports/figures/neural_learning_curves.png`.
 Cuối notebook tải **hai ZIP**: `vigoemotions_results.zip` chứa kết quả/log và
 `vigoemotions_baseline_private.zip` chứa checkpoint, vocabulary và config/run metadata.
@@ -126,7 +128,9 @@ scripts/train_tfidf.py       CPU baseline
 scripts/train_neural.py      BiGRU / PhoBERT trên GPU
 scripts/evaluate.py          evaluator dùng chung và lưu xác suất
 scripts/build_report.py      tạo báo cáo/slide từ kết quả hiện có
-notebooks/01..04             validation → EDA → baseline → Colab GPU
+notebooks/01..05             validation → EDA → baseline → Colab GPU → tuning
+scripts/audit_reports.py     kiểm tra EDA/split/metric từ dữ liệu và xác suất, không huấn luyện
+reports/README.md            mục lục và hướng dẫn đọc từng nhóm kết quả
 splits/*.csv                fixed IDs + excluded train ID
 reports/tables/*.csv         thống kê và kết quả thật
 reports/figures/*.png        hình sinh bằng mã
@@ -140,13 +144,22 @@ Probabilities được lưu trước threshold. NPZ chỉ chứa ID, vector nhã
 tune global/per-label thresholds trên validation, khóa decoder rồi inference test một lần.
 Chưa có implementation/chạy thí nghiệm Final trong phạm vi gói midterm này.
 
+Sau khi nhập kết quả Colab, kiểm tra tính nhất quán mà không huấn luyện lại:
+
+```bash
+.venv/bin/python scripts/audit_reports.py
+```
+
+Lệnh cần ba CSV nguồn được cấp quyền và đủ các artifact của project hiện tại; tạo bảng/hình đối chiếu trong
+thư mục tạm, không ghi đè `reports/`. Xem [audit](docs/project_audit.md) để biết phạm vi kiểm tra.
+
 `scripts/build_report.py` tự thêm các dòng neural và bảng Q4 khi có file kết quả; nội dung phân tích TF-IDF
 giữ rõ mô hình và ngưỡng. Sau khi chạy neural cần người thực hiện đọc thêm các ca lỗi và viết diễn giải
 cụ thể, không coi tự sinh bảng là đã hoàn thành audit thủ công.
 
 ## Nguồn
 
-- Đề project và student-guide PDF trong root.
+- [Đề project](docs/02-vigoemotions-vietnamese-emotion.pdf) và [student guide](docs/student-guide.pdf) trong `docs/`.
 - [ViGoEmotions, EACL 2026](https://aclanthology.org/2026.eacl-long.129/).
 - [PhoBERT paper](https://aclanthology.org/2020.findings-emnlp.92/),
   [model card](https://huggingface.co/vinai/phobert-base-v2).
