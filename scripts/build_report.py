@@ -220,6 +220,19 @@ Bảng chi tiết per-label/style nằm trong reports/phobert_tuning/. File neur
         'Một seed; chưa đánh giá test. Cần đọc thêm lỗi neural.'], 'phobert_tuning/learning_curves.png'
 
 
+def neural_result_summary(comparison, gr, ph):
+    available = comparison.dropna(subset=['macro_f1'])
+    winners = available[available.macro_f1 == available.macro_f1.max()].model.tolist()
+    return (f"BiGRU chạy {len(gr['history'])} epoch, checkpoint tốt nhất epoch {gr['best_epoch']}, "
+        f"thời gian {gr['train_seconds']:.2f} giây. PhoBERT chạy {len(ph['history'])} epoch, "
+        f"checkpoint tốt nhất epoch {ph['best_epoch']}, thời gian {ph['train_seconds']/60:.2f} phút. "
+        f"Thiết bị BiGRU/PhoBERT: {gr['device']} / {ph['device']}. "
+        f"Macro-F1 validation cao nhất tại ngưỡng 0,5: {', '.join(winners)}. "
+        "Checkpoint được chọn theo validation; vị trí epoch tốt nhất chưa đủ chứng minh hội tụ. "
+        "Số liệu lấy từ run JSON và xác suất đã lưu; không huấn luyện lại khi build report. "
+        "ZIP kết quả không chứa checkpoint/vocab nên cần lưu riêng chúng.")
+
+
 def main():
     summary=pd.read_csv(TABLES/'dataset_summary.csv')
     freq=pd.read_csv(TABLES/'label_frequency.csv')
@@ -250,8 +263,13 @@ def main():
     lr=comparison.iloc[0];analysis=json.loads((REPORTS/'tfidf_lr_analysis.json').read_text())
     per=pd.read_csv(TABLES/'tfidf_lr_per_label.csv')
     pairs=pd.read_csv(TABLES/'tfidf_lr_pair_preservation_val.csv')
+    per_sorted = per.sort_values(['f1', 'label'], ascending=[False, True])
+    best_label, worst_label = per_sorted.iloc[0], per_sorted.iloc[-1]
+    pair = pairs[(pairs.label_a == 'disappointment') & (pairs.label_b == 'sadness')].iloc[0]
     sweep=pd.read_csv(TABLES/'tfidf_lr_thresholds_val.csv')
     best=sweep.sort_values(['macro_f1','threshold'],ascending=[False,False]).iloc[0]
+    hamming_change = best.hamming_loss - lr.hamming_loss
+    hamming_direction = 'tăng' if hamming_change > 0 else 'giảm' if hamming_change < 0 else 'không đổi'
     styles=pd.read_csv(TABLES/'tfidf_lr_styles.csv')
     cards=pd.read_csv(TABLES/'tfidf_lr_cardinality_val.csv')
     run=json.loads((REPORTS/'tfidf_lr_run.json').read_text())
@@ -275,13 +293,7 @@ def main():
     if neural_done:
         gr = json.loads((REPORTS/'gru_run.json').read_text())
         ph = json.loads((REPORTS/'phobert_run.json').read_text())
-        neural_summary = (f"BiGRU chạy {len(gr['history'])} epoch, checkpoint tốt nhất epoch {gr['best_epoch']}, "
-            f"thời gian {gr['train_seconds']:.2f} giây. PhoBERT chạy {len(ph['history'])} epoch, "
-            f"checkpoint tốt nhất epoch {ph['best_epoch']}, thời gian {ph['train_seconds']/60:.2f} phút. "
-            f"Thiết bị neural: {ph['device']}. PhoBERT có Macro-F1 validation cao nhất trong ba baseline "
-            "tại ngưỡng 0,5. Cả hai chọn epoch cuối, nên chưa khẳng định đã hội tụ. "
-            "Kết quả Colab đã được đối chiếu checksum dữ liệu, ID, nhãn và tính lại metric từ xác suất; "
-            "không huấn luyện lại khi nhập kết quả. ZIP không chứa checkpoint/vocab nên cần lưu riêng chúng.")
+        neural_summary = neural_result_summary(comparison, gr, ph)
     tuning_section, tuning_bullets, tuning_figure = tuning_content()
     text=f'''# ViGoEmotions — Báo cáo giữa kỳ
 
@@ -388,9 +400,9 @@ Tất cả dòng baseline dưới đây dùng threshold=0,5. Dấu “—” ngh
 
 {table(per,['label','support','precision','recall','f1'])}
 
-**Q1 — Nhãn tốt nhất/kém nhất:** gratitude có F1={per.set_index('label').loc['gratitude','f1']:.4f}; tiếp theo embarrassment và pride. Realization có F1=0, rồi disapproval và disappointment ở mức rất thấp. Disappointment khá phổ biến nhưng recall rất thấp, cho thấy chỉ có nhiều dữ liệu chưa đảm bảo mô hình tuyến tính nhận diện tốt.
+**Q1 — Nhãn tốt nhất/kém nhất:** {best_label['label']} có F1 cao nhất ({best_label.f1:.4f}); {worst_label['label']} có F1 thấp nhất ({worst_label.f1:.4f}). Các nhãn có thể đồng hạng; xem toàn bộ bảng để tránh bỏ sót các trường hợp cùng điểm. Đây là kết quả TF-IDF tại ngưỡng 0,5.
 
-**Q2 — Tần suất liên hệ với hiệu năng thế nào?** Spearman giữa số mẫu dương train và F1 validation trên 27 nhãn là rho={analysis['frequency_f1_spearman']:.3f}, p={analysis['spearman_pvalue']:.3f}. Quan hệ dương yếu; với thiết kế này chưa có bằng chứng thống kê mạnh về quan hệ đơn điệu. Đây là tương quan mô tả trên 27 nhãn phụ thuộc nhau, không phải chứng minh quan hệ nhân quả.
+**Q2 — Tần suất liên hệ với hiệu năng thế nào?** Spearman giữa số mẫu dương train và F1 validation trên 27 nhãn là rho={analysis['frequency_f1_spearman']:.3f}, p={analysis['spearman_pvalue']:.3f}. Cần đọc cả dấu, độ lớn và p-value của lượt chạy này. Đây là tương quan mô tả trên 27 nhãn phụ thuộc nhau, không phải chứng minh quan hệ nhân quả.
 
 ### 5.2. Phụ thuộc nhãn và cardinality
 
@@ -398,7 +410,7 @@ Tất cả dòng baseline dưới đây dùng threshold=0,5. Dấu “—” ngh
 
 {table(pairs.head(6))}
 
-Disappointment–sadness có 904 mẫu train; trên validation chỉ 2/122 ca thật được dự đoán đủ hai nhãn. OvR có thể tạo phụ thuộc gián tiếp qua đặc trưng chung nhưng không tối ưu cấu trúc nhãn; ngưỡng 0,5 đang bỏ sót nhiều cặp. Không kết luận mô hình “không học được bất kỳ phụ thuộc nào” chỉ từ thống kê này.
+Disappointment–sadness có {int(pair.train_count)} mẫu train; trên validation có {int(pair.joint_true_positive)}/{int(pair.val_true_count)} ca thật được dự đoán đủ hai nhãn tại ngưỡng 0,5. OvR có thể tạo phụ thuộc gián tiếp qua đặc trưng chung nhưng không tối ưu cấu trúc nhãn. Không kết luận mô hình “không học được bất kỳ phụ thuộc nào” chỉ từ thống kê này.
 
 {table(cards,['cardinality','n','macro_f1','micro_f1','hamming_loss'])}
 
@@ -408,7 +420,7 @@ Nhóm ≥4 cảm xúc chỉ có 55 mẫu validation, nên kết quả biến đ�
 
 {table(styles,['style','n','macro_f1','micro_f1','hamming_loss','lrap'])}
 
-TF-IDF có Macro-F1 thấp hơn trên emoji-heavy và teencode so với toàn validation. Đây là mô tả theo nhóm, chưa chứng minh các đặc trưng này là nguyên nhân vì phân bố nhãn/cỡ mẫu giữa các nhóm khác nhau. Tập short lại đạt điểm cao hơn tổng thể, nên không nên mặc định mọi câu ngắn đều khó.
+So sánh Macro-F1 của từng nhóm với dòng all để xác định nhóm nào tốt/kém hơn trong lượt chạy hiện tại. Đây là mô tả theo nhóm, chưa chứng minh các đặc trưng này là nguyên nhân vì phân bố nhãn/cỡ mẫu giữa các nhóm khác nhau. Không nên mặc định mọi câu ngắn đều khó.
 
 **Q4 — PhoBERT vượt GRU rõ nhất ở nhóm nào?**
 
@@ -416,17 +428,17 @@ TF-IDF có Macro-F1 thấp hơn trên emoji-heavy và teencode so với toàn va
 
 ### 5.4. Độ nhạy của ngưỡng
 
-**Q5 — Threshold 0,5 có nhạy không?** Thử lưới 0,05–0,80, bước 0,05 trên cùng xác suất validation, không huấn luyện lại. Trong lưới này, Macro-F1 tốt nhất tại {best.threshold:.2f}: {best.macro_f1:.4f} thay vì {lr.macro_f1:.4f}, tăng {(best.macro_f1-lr.macro_f1)*100:.2f} điểm phần trăm. Micro-F1 là {best.micro_f1:.4f}; Hamming Loss tăng từ {lr.hamming_loss:.4f} lên {best.hamming_loss:.4f}. Hạ ngưỡng cải thiện F1 nhưng đánh đổi thêm quyết định nhãn sai. LRAP giữ nguyên vì thứ hạng xác suất không đổi.
+**Q5 — Threshold 0,5 có nhạy không?** Thử lưới 0,05–0,80, bước 0,05 trên cùng xác suất validation, không huấn luyện lại. Trong lưới này, Macro-F1 tốt nhất tại {best.threshold:.2f}: {best.macro_f1:.4f} thay vì {lr.macro_f1:.4f}, chênh lệch {(best.macro_f1-lr.macro_f1)*100:+.2f} điểm phần trăm. Micro-F1 là {best.micro_f1:.4f}; Hamming Loss {hamming_direction} từ {lr.hamming_loss:.4f} đến {best.hamming_loss:.4f}. Cần đọc sự đánh đổi trên từng metric. LRAP giữ nguyên vì thứ hạng xác suất không đổi.
 
 {table(sweep[sweep.threshold.isin([.1,.15,.2,.35,.5])])}
 
 ![Khảo sát ngưỡng và quan hệ tần suất–F1, chỉ validation.](figures/tfidf_lr_diagnostics.png)
 
-Không gọi 0,15 là ngưỡng tối ưu tổng quát: nó chỉ tốt nhất trên lưới và validation đã dùng để chọn. Cần khóa ngưỡng rồi kiểm tra trên test ở Final.
+Không gọi {best.threshold:.2f} là ngưỡng tối ưu tổng quát: nó chỉ tốt nhất trên lưới và validation đã dùng để chọn. Cần khóa ngưỡng rồi kiểm tra trên test ở Final.
 
 {mixed_neutral_section()}{tuning_section}## 6. Phân tích lỗi và trường hợp biên
 
-File tfidf_lr_error_cases_val.csv chứa 20 FN có xác suất thấp nhất và 20 FP có xác suất cao nhất, kèm ID, nhãn thật, nhãn dự đoán, xác suất, cardinality và style flags. Một mẫu có thể xuất hiện nhiều lần vì lỗi tính theo cặp mẫu–nhãn. Mẫu này ưu tiên lỗi tự tin, không đại diện ngẫu nhiên cho toàn bộ lỗi. Đã đọc thủ công 10 bình luận khác nhau trong danh sách; bảng dưới dùng mô tả trừu tượng, không chép nguyên bình luận.
+File tfidf_lr_error_cases_val.csv chứa 20 FN có xác suất thấp nhất và 20 FP có xác suất cao nhất, kèm ID, nhãn thật, nhãn dự đoán, xác suất, cardinality và style flags. Một mẫu có thể xuất hiện nhiều lần vì lỗi tính theo cặp mẫu–nhãn. Mẫu này ưu tiên lỗi tự tin, không đại diện ngẫu nhiên cho toàn bộ lỗi. Đã đọc thủ công 10 bình luận khác nhau trong danh sách của lượt baseline đã kiểm chứng ngày 14/10/2026; bảng dưới dùng mô tả trừu tượng, không chép nguyên bình luận. Các quan sát thủ công này không tự cập nhật khi huấn luyện lại: nhóm cần đối chiếu CSV ca lỗi mới trước khi dùng chúng để mô tả lượt chạy mới.
 
 | ID validation | Lỗi quan sát | Diễn giải thận trọng |
 | --- | --- | --- |
@@ -498,10 +510,10 @@ Mã và tài liệu có hỗ trợ AI trong phiên hoàn thiện; số liệu TF
         ('Split & preprocessing',['Giữ split đã cấp; fit vocab/IDF trên train.','NFC + gom khoảng trắng; giữ dấu và phủ định.','GRU: whitespace; PhoBERT: VnCoreNLP + BPE.','Có audit prevalence; chưa chứng minh split gốc được stratified.','Test giữ cho Final; midterm phân tích validation.'],None,'Phân biệt dữ liệu mô tả test với sử dụng test chọn mô hình. Nêu giới hạn nguồn thuật toán split một cách rõ ràng.'),
         ('Ba baseline theo đề',['TF-IDF (1–2 grams) + OvR Logistic Regression.','BiGRU: embedding 128, hidden 128 mỗi hướng, 10 epoch.','PhoBERT base-v2: revision cố định, 4 epoch.','Neural: 27 logits + BCE; sigmoid khi dự đoán.','Chọn checkpoint theo validation Macro-F1 ở 0,5.'],None,'Không dùng softmax. Nêu trạng thái Colab của hai neural model.'),
         ('Kết quả baseline | validation',[f'TF-IDF Macro-F1: {lr.macro_f1:.4f}; Micro-F1: {lr.micro_f1:.4f}.',f'Hamming Loss: {lr.hamming_loss:.4f}; LRAP: {lr.lrap:.4f}.',f'{int(lr.parameter_count):,} hệ số + bias; train {lr.train_seconds:.2f} giây CPU.',(f'BiGRU Macro-F1: {comparison.iloc[1].macro_f1:.4f}; PhoBERT: {comparison.iloc[2].macro_f1:.4f}.' if neural_done else 'GRU/PhoBERT chưa chạy.'),'Subset accuracy không là metric chính.'],None,'Thời gian TF-IDF gồm vectorizer + LR, không so tốc độ tuyệt đối với GPU. LRAP trên mẫu all-zero có quy ước đặc biệt.'),
-        ('Nhãn nào tốt, nhãn nào khó?',['Gratitude F1 0,6797; embarrassment 0,6311; pride 0,5500.','Realization F1 0; disapproval 0,0160; disappointment 0,0280.',f'Tần suất–F1: Spearman rho {analysis["frequency_f1_spearman"]:.3f}, p {analysis["spearman_pvalue"]:.3f}.','Tần suất cao chưa đủ; disappointment là ví dụ.'],None,'Các số ở đây chỉ nói về TF-IDF 0,5. Không khái quát các kết luận riêng của TF-IDF sang PhoBERT.'),
-        ('Ngưỡng 0,5 ảnh hưởng mạnh',[f'Khảo sát 0,05–0,80 trên validation.',f'Ngưỡng {best.threshold:.2f}: Macro-F1 {best.macro_f1:.4f}.',f'Tăng {(best.macro_f1-lr.macro_f1)*100:.2f} điểm phần trăm.',f'Hamming tăng lên {best.hamming_loss:.4f}.','Chưa chứng minh cải thiện trên test.'],'figures/tfidf_lr_diagnostics.png','LRAP không đổi khi đổi threshold. Tăng F1 không đồng nghĩa mọi metric cùng tốt hơn.'),
-        ('Baseline giữ được cặp nhãn?',['Disappointment–sadness: chỉ 2/122 ca validation đúng đủ cặp.','Joint recall = 1,64% tại ngưỡng 0,5.','OvR không có cơ chế học cấu trúc nhãn trực tiếp.','Cần phân biệt phụ thuộc nhãn với vấn đề ngưỡng bỏ sót.'],None,'Cặp được chọn từ train trước, rồi đo trên validation; không xây ma trận test.'),
-        ('Phong cách & lỗi biên',[f'TF-IDF Macro-F1: short 0,3310; emoji-heavy 0,1690; teencode {styles.set_index("style").loc["teencode","macro_f1"]:.4f}.','Emoji bị bỏ bởi word-token TF-IDF; giả thuyết cho FN amusement.','Câu hỏi giúp đỡ có thể bị FP curiosity.','Có 20 FN + 20 FP; đã đọc thủ công 10 ca khác nhau.','Q4 PhoBERT vs GRU: '+(f'teencode có delta cao nhất: {top.delta_macro_f1*100:.2f} điểm phần trăm.' if neural_done else 'chờ kết quả Colab.')],None,'Style groups chồng lấn và có heuristic nhiễu. Không chép comment thô lên slide; mã ca lỗi trong báo cáo giúp kiểm tra nội bộ.'),
+        ('Nhãn nào tốt, nhãn nào khó?',[f'Cao nhất: {best_label["label"]}, F1 {best_label.f1:.4f}.',f'Thấp nhất: {worst_label["label"]}, F1 {worst_label.f1:.4f}.',f'Tần suất–F1: Spearman rho {analysis["frequency_f1_spearman"]:.3f}, p {analysis["spearman_pvalue"]:.3f}.','Xem đầy đủ 27 nhãn; có thể có nhãn đồng hạng.'],None,'Các số ở đây chỉ nói về TF-IDF 0,5. Không khái quát các kết luận riêng của TF-IDF sang PhoBERT.'),
+        ('Ngưỡng 0,5 ảnh hưởng mạnh',[f'Khảo sát 0,05–0,80 trên validation.',f'Ngưỡng {best.threshold:.2f}: Macro-F1 {best.macro_f1:.4f}.',f'Delta {(best.macro_f1-lr.macro_f1)*100:+.2f} điểm phần trăm.',f'Hamming {hamming_direction}: {best.hamming_loss:.4f}.','Chưa chứng minh cải thiện trên test.'],'figures/tfidf_lr_diagnostics.png','LRAP không đổi khi đổi threshold. Tăng F1 không đồng nghĩa mọi metric cùng tốt hơn.'),
+        ('Baseline giữ được cặp nhãn?',[f'Disappointment–sadness: {int(pair.joint_true_positive)}/{int(pair.val_true_count)} ca validation đúng đủ cặp.',f'Joint recall = {pair.joint_recall*100:.2f}% tại ngưỡng 0,5.','OvR không có cơ chế học cấu trúc nhãn trực tiếp.','Cần phân biệt phụ thuộc nhãn với vấn đề ngưỡng bỏ sót.'],None,'Cặp được chọn từ train trước, rồi đo trên validation; không xây ma trận test.'),
+        ('Phong cách & lỗi biên',[f'TF-IDF Macro-F1: short {styles.set_index("style").loc["short_le_5","macro_f1"]:.4f}; emoji-heavy {styles.set_index("style").loc["emoji_heavy_ge_2","macro_f1"]:.4f}; teencode {styles.set_index("style").loc["teencode","macro_f1"]:.4f}.','Emoji bị bỏ bởi word-token TF-IDF; giả thuyết cho FN amusement.','Câu hỏi giúp đỡ có thể bị FP curiosity.','Audit thủ công 10 ca thuộc lượt baseline 14/10/2026.','Q4 PhoBERT vs GRU: '+(f'{top["style"]} có delta cao nhất: {top.delta_macro_f1*100:+.2f} điểm phần trăm.' if neural_done else 'chờ kết quả Colab.')],None,'Style groups chồng lấn và có heuristic nhiễu. Sau khi chạy lại cần kiểm tra ca lỗi mới. Không chép comment thô lên slide.'),
         ('RQ Final: một ngưỡng có đủ?',['Chọn neural backbone tốt nhất từ midterm; giữ nguyên trọng số.','So sánh fixed 0,5 / global tuned / per-label tuned.','Tune validation → khóa ngưỡng → test đúng một lần.','Phân tích theo tier/cardinality, profile ngưỡng và val–test gap.'],None,'Bằng chứng TF-IDF tạo động lực, nhưng đề yêu cầu Final dùng neural architecture tốt nhất.'),
         ('Việc cần chốt trước khi nộp',[('Đã kiểm chứng kết quả Colab; lưu riêng checkpoint và vocab.' if neural_done else 'Chạy notebook 04 trên Colab GPU.'),'Đối chiếu ID-to-label với metadata nguồn; xác nhận split protocol.','Đọc error analysis neural; bổ sung tên/MSSV/phân công nhóm.','Gói nộp: PDF, slide, code, README, config, ID, bảng/hình, probabilities.'],None,'Nêu trạng thái thật và công việc cụ thể còn lại. Nếu đã chạy Colab, chuyển trọng tâm sang rà soát nội dung.'),
         ('Nguồn & tái lập',['Đề ViGoEmotions và student-guide: tiêu chí đánh giá.','Hung et al., EACL 2026: doi.org/10.18653/v1/2026.eacl-long.129.','PhoBERT: Nguyen & Nguyen, 2020; vinai/phobert-base-v2.','scikit-learn, Transformers, VnCoreNLP: dẫn nguồn trong báo cáo.','Seed 42; package versions, checksum, hardware lưu trong run JSON.'],None,'Các thư viện và pretrained checkpoint phải được trích dẫn. Điểm paper không phải điểm chạy của nhóm.')]
@@ -516,8 +528,8 @@ Mã và tài liệu có hỗ trợ AI trong phiên hoàn thiện; số liệu TF
         ('Điều chỉnh learning rate | trạng thái', tuning_bullets, tuning_figure,
             'Notebook 05 chạy ba lượt riêng, không ghi đè baseline. Chỉ điền kết quả khi sweep đã hoàn tất.'),
         ('Insight hiện có & việc cần kiểm chứng', [
-            'PhoBERT hơn BiGRU 3,33 điểm phần trăm Macro-F1 validation.',
-            'Trong các nhóm style, teencode có delta lớn nhất: +9,41 điểm.',
+            (f'PhoBERT − BiGRU: {ns.set_index("style").loc["all", "delta_macro_f1"]*100:+.2f} điểm Macro-F1 validation.' if neural_done else 'Chưa đủ kết quả neural để so sánh.'),
+            (f'Delta lớn nhất theo style: {top["style"]}, {top.delta_macro_f1*100:+.2f} điểm.' if neural_done else 'Chờ bảng kết quả theo phong cách.'),
             'Đây là so sánh baseline, chưa tách riêng tác động của pretraining.',
             'Đọc đường học, per-label/style delta và ca lỗi của sweep.',
             'Ghi quan sát thủ công; không coi xuất CSV là đã audit.'], None,

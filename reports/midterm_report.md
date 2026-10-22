@@ -153,7 +153,7 @@ Tất cả dòng baseline dưới đây dùng threshold=0,5. Dấu “—” ngh
 | BiGRU | Đã chạy | 0.4060 | 0.4526 | 0.0604 | 0.6322 | 2,128,283 | 37.4955 |
 | PhoBERT | Đã chạy | 0.4393 | 0.5160 | 0.0533 | 0.7158 | 135,019,035 | 3047.1092 |
 
-BiGRU chạy 10 epoch, checkpoint tốt nhất epoch 10, thời gian 37.50 giây. PhoBERT chạy 4 epoch, checkpoint tốt nhất epoch 4, thời gian 50.79 phút. Thiết bị neural: Tesla T4. PhoBERT có Macro-F1 validation cao nhất trong ba baseline tại ngưỡng 0,5. Cả hai chọn epoch cuối, nên chưa khẳng định đã hội tụ. Kết quả Colab đã được đối chiếu checksum dữ liệu, ID, nhãn và tính lại metric từ xác suất; không huấn luyện lại khi nhập kết quả. ZIP không chứa checkpoint/vocab nên cần lưu riêng chúng.
+BiGRU chạy 10 epoch, checkpoint tốt nhất epoch 10, thời gian 37.50 giây. PhoBERT chạy 4 epoch, checkpoint tốt nhất epoch 4, thời gian 50.79 phút. Thiết bị BiGRU/PhoBERT: Tesla T4 / Tesla T4. Macro-F1 validation cao nhất tại ngưỡng 0,5: PhoBERT. Checkpoint được chọn theo validation; vị trí epoch tốt nhất chưa đủ chứng minh hội tụ. Số liệu lấy từ run JSON và xác suất đã lưu; không huấn luyện lại khi build report. ZIP kết quả không chứa checkpoint/vocab nên cần lưu riêng chúng.
 
 ### 5.1. Per-label F1: TF-IDF tại 0,5
 
@@ -187,9 +187,9 @@ BiGRU chạy 10 epoch, checkpoint tốt nhất epoch 10, thời gian 37.50 giây
 | annoyance | 331 | 0.6535 | 0.1994 | 0.3056 |
 | disapproval | 123 | 0.5000 | 0.0081 | 0.0160 |
 
-**Q1 — Nhãn tốt nhất/kém nhất:** gratitude có F1=0.6797; tiếp theo embarrassment và pride. Realization có F1=0, rồi disapproval và disappointment ở mức rất thấp. Disappointment khá phổ biến nhưng recall rất thấp, cho thấy chỉ có nhiều dữ liệu chưa đảm bảo mô hình tuyến tính nhận diện tốt.
+**Q1 — Nhãn tốt nhất/kém nhất:** gratitude có F1 cao nhất (0.6797); realization có F1 thấp nhất (0.0000). Các nhãn có thể đồng hạng; xem toàn bộ bảng để tránh bỏ sót các trường hợp cùng điểm. Đây là kết quả TF-IDF tại ngưỡng 0,5.
 
-**Q2 — Tần suất liên hệ với hiệu năng thế nào?** Spearman giữa số mẫu dương train và F1 validation trên 27 nhãn là rho=0.242, p=0.223. Quan hệ dương yếu; với thiết kế này chưa có bằng chứng thống kê mạnh về quan hệ đơn điệu. Đây là tương quan mô tả trên 27 nhãn phụ thuộc nhau, không phải chứng minh quan hệ nhân quả.
+**Q2 — Tần suất liên hệ với hiệu năng thế nào?** Spearman giữa số mẫu dương train và F1 validation trên 27 nhãn là rho=0.242, p=0.223. Cần đọc cả dấu, độ lớn và p-value của lượt chạy này. Đây là tương quan mô tả trên 27 nhãn phụ thuộc nhau, không phải chứng minh quan hệ nhân quả.
 
 ### 5.2. Phụ thuộc nhãn và cardinality
 
@@ -204,7 +204,7 @@ BiGRU chạy 10 epoch, checkpoint tốt nhất epoch 10, thời gian 37.50 giây
 | annoyance | disapproval | 469 | 67 | 2 | 1 | 0.0149 |
 | joy | love | 395 | 50 | 9 | 6 | 0.1200 |
 
-Disappointment–sadness có 904 mẫu train; trên validation chỉ 2/122 ca thật được dự đoán đủ hai nhãn. OvR có thể tạo phụ thuộc gián tiếp qua đặc trưng chung nhưng không tối ưu cấu trúc nhãn; ngưỡng 0,5 đang bỏ sót nhiều cặp. Không kết luận mô hình “không học được bất kỳ phụ thuộc nào” chỉ từ thống kê này.
+Disappointment–sadness có 904 mẫu train; trên validation có 2/122 ca thật được dự đoán đủ hai nhãn tại ngưỡng 0,5. OvR có thể tạo phụ thuộc gián tiếp qua đặc trưng chung nhưng không tối ưu cấu trúc nhãn. Không kết luận mô hình “không học được bất kỳ phụ thuộc nào” chỉ từ thống kê này.
 
 | cardinality | n | macro_f1 | micro_f1 | hamming_loss |
 | --- | --- | --- | --- | --- |
@@ -225,7 +225,7 @@ Nhóm ≥4 cảm xúc chỉ có 55 mẫu validation, nên kết quả biến đ�
 | emoji_heavy_ge_2 | 199 | 0.1690 | 0.1938 | 0.0681 | 0.5839 |
 | teencode | 307 | 0.1671 | 0.2558 | 0.0660 | 0.6033 |
 
-TF-IDF có Macro-F1 thấp hơn trên emoji-heavy và teencode so với toàn validation. Đây là mô tả theo nhóm, chưa chứng minh các đặc trưng này là nguyên nhân vì phân bố nhãn/cỡ mẫu giữa các nhóm khác nhau. Tập short lại đạt điểm cao hơn tổng thể, nên không nên mặc định mọi câu ngắn đều khó.
+So sánh Macro-F1 của từng nhóm với dòng all để xác định nhóm nào tốt/kém hơn trong lượt chạy hiện tại. Đây là mô tả theo nhóm, chưa chứng minh các đặc trưng này là nguyên nhân vì phân bố nhãn/cỡ mẫu giữa các nhóm khác nhau. Không nên mặc định mọi câu ngắn đều khó.
 
 **Q4 — PhoBERT vượt GRU rõ nhất ở nhóm nào?**
 
@@ -240,7 +240,7 @@ Chênh lệch lớn nhất trong các nhóm khảo sát: teencode, delta Macro-F
 
 ### 5.4. Độ nhạy của ngưỡng
 
-**Q5 — Threshold 0,5 có nhạy không?** Thử lưới 0,05–0,80, bước 0,05 trên cùng xác suất validation, không huấn luyện lại. Trong lưới này, Macro-F1 tốt nhất tại 0.15: 0.4844 thay vì 0.2388, tăng 24.55 điểm phần trăm. Micro-F1 là 0.4827; Hamming Loss tăng từ 0.0606 lên 0.0867. Hạ ngưỡng cải thiện F1 nhưng đánh đổi thêm quyết định nhãn sai. LRAP giữ nguyên vì thứ hạng xác suất không đổi.
+**Q5 — Threshold 0,5 có nhạy không?** Thử lưới 0,05–0,80, bước 0,05 trên cùng xác suất validation, không huấn luyện lại. Trong lưới này, Macro-F1 tốt nhất tại 0.15: 0.4844 thay vì 0.2388, chênh lệch +24.55 điểm phần trăm. Micro-F1 là 0.4827; Hamming Loss tăng từ 0.0606 đến 0.0867. Cần đọc sự đánh đổi trên từng metric. LRAP giữ nguyên vì thứ hạng xác suất không đổi.
 
 | threshold | macro_f1 | micro_f1 | hamming_loss | lrap |
 | --- | --- | --- | --- | --- |
@@ -252,7 +252,7 @@ Chênh lệch lớn nhất trong các nhóm khảo sát: teencode, delta Macro-F
 
 ![Khảo sát ngưỡng và quan hệ tần suất–F1, chỉ validation.](figures/tfidf_lr_diagnostics.png)
 
-Không gọi 0,15 là ngưỡng tối ưu tổng quát: nó chỉ tốt nhất trên lưới và validation đã dùng để chọn. Cần khóa ngưỡng rồi kiểm tra trên test ở Final.
+Không gọi 0.15 là ngưỡng tối ưu tổng quát: nó chỉ tốt nhất trên lưới và validation đã dùng để chọn. Cần khóa ngưỡng rồi kiểm tra trên test ở Final.
 
 ### 5.5. Ablation xử lý nhãn mixed-neutral
 
@@ -302,7 +302,7 @@ Sau khi chạy, cần đọc đường học và chênh lệch từng nhãn/phon
 
 ## 6. Phân tích lỗi và trường hợp biên
 
-File tfidf_lr_error_cases_val.csv chứa 20 FN có xác suất thấp nhất và 20 FP có xác suất cao nhất, kèm ID, nhãn thật, nhãn dự đoán, xác suất, cardinality và style flags. Một mẫu có thể xuất hiện nhiều lần vì lỗi tính theo cặp mẫu–nhãn. Mẫu này ưu tiên lỗi tự tin, không đại diện ngẫu nhiên cho toàn bộ lỗi. Đã đọc thủ công 10 bình luận khác nhau trong danh sách; bảng dưới dùng mô tả trừu tượng, không chép nguyên bình luận.
+File tfidf_lr_error_cases_val.csv chứa 20 FN có xác suất thấp nhất và 20 FP có xác suất cao nhất, kèm ID, nhãn thật, nhãn dự đoán, xác suất, cardinality và style flags. Một mẫu có thể xuất hiện nhiều lần vì lỗi tính theo cặp mẫu–nhãn. Mẫu này ưu tiên lỗi tự tin, không đại diện ngẫu nhiên cho toàn bộ lỗi. Đã đọc thủ công 10 bình luận khác nhau trong danh sách của lượt baseline đã kiểm chứng ngày 14/10/2026; bảng dưới dùng mô tả trừu tượng, không chép nguyên bình luận. Các quan sát thủ công này không tự cập nhật khi huấn luyện lại: nhóm cần đối chiếu CSV ca lỗi mới trước khi dùng chúng để mô tả lượt chạy mới.
 
 | ID validation | Lỗi quan sát | Diễn giải thận trọng |
 | --- | --- | --- |

@@ -76,10 +76,10 @@ Ghi chú thuyết trình: Thời gian TF-IDF gồm vectorizer + LR, không so t�
 
 ## 9. Nhãn nào tốt, nhãn nào khó?
 
-- Gratitude F1 0,6797; embarrassment 0,6311; pride 0,5500.
-- Realization F1 0; disapproval 0,0160; disappointment 0,0280.
+- Cao nhất: gratitude, F1 0.6797.
+- Thấp nhất: realization, F1 0.0000.
 - Tần suất–F1: Spearman rho 0.242, p 0.223.
-- Tần suất cao chưa đủ; disappointment là ví dụ.
+- Xem đầy đủ 27 nhãn; có thể có nhãn đồng hạng.
 
 Ghi chú thuyết trình: Các số ở đây chỉ nói về TF-IDF 0,5. Không khái quát các kết luận riêng của TF-IDF sang PhoBERT.
 
@@ -87,16 +87,16 @@ Ghi chú thuyết trình: Các số ở đây chỉ nói về TF-IDF 0,5. Không
 
 - Khảo sát 0,05–0,80 trên validation.
 - Ngưỡng 0.15: Macro-F1 0.4844.
-- Tăng 24.55 điểm phần trăm.
-- Hamming tăng lên 0.0867.
+- Delta +24.55 điểm phần trăm.
+- Hamming tăng: 0.0867.
 - Chưa chứng minh cải thiện trên test.
 
 Ghi chú thuyết trình: LRAP không đổi khi đổi threshold. Tăng F1 không đồng nghĩa mọi metric cùng tốt hơn.
 
 ## 11. Baseline giữ được cặp nhãn?
 
-- Disappointment–sadness: chỉ 2/122 ca validation đúng đủ cặp.
-- Joint recall = 1,64% tại ngưỡng 0,5.
+- Disappointment–sadness: 2/122 ca validation đúng đủ cặp.
+- Joint recall = 1.64% tại ngưỡng 0,5.
 - OvR không có cơ chế học cấu trúc nhãn trực tiếp.
 - Cần phân biệt phụ thuộc nhãn với vấn đề ngưỡng bỏ sót.
 
@@ -104,13 +104,13 @@ Ghi chú thuyết trình: Cặp được chọn từ train trước, rồi đo t
 
 ## 12. Phong cách & lỗi biên
 
-- TF-IDF Macro-F1: short 0,3310; emoji-heavy 0,1690; teencode 0.1671.
+- TF-IDF Macro-F1: short 0.3310; emoji-heavy 0.1690; teencode 0.1671.
 - Emoji bị bỏ bởi word-token TF-IDF; giả thuyết cho FN amusement.
 - Câu hỏi giúp đỡ có thể bị FP curiosity.
-- Có 20 FN + 20 FP; đã đọc thủ công 10 ca khác nhau.
-- Q4 PhoBERT vs GRU: teencode có delta cao nhất: 9.41 điểm phần trăm.
+- Audit thủ công 10 ca thuộc lượt baseline 14/10/2026.
+- Q4 PhoBERT vs GRU: teencode có delta cao nhất: +9.41 điểm phần trăm.
 
-Ghi chú thuyết trình: Style groups chồng lấn và có heuristic nhiễu. Không chép comment thô lên slide; mã ca lỗi trong báo cáo giúp kiểm tra nội bộ.
+Ghi chú thuyết trình: Style groups chồng lấn và có heuristic nhiễu. Sau khi chạy lại cần kiểm tra ca lỗi mới. Không chép comment thô lên slide.
 
 ## 13. Fine-tune PhoBERT như thế nào?
 
@@ -133,8 +133,8 @@ Ghi chú thuyết trình: Notebook 05 chạy ba lượt riêng, không ghi đè 
 
 ## 15. Insight hiện có & việc cần kiểm chứng
 
-- PhoBERT hơn BiGRU 3,33 điểm phần trăm Macro-F1 validation.
-- Trong các nhóm style, teencode có delta lớn nhất: +9,41 điểm.
+- PhoBERT − BiGRU: +3.33 điểm Macro-F1 validation.
+- Delta lớn nhất theo style: teencode, +9.41 điểm.
 - Đây là so sánh baseline, chưa tách riêng tác động của pretraining.
 - Đọc đường học, per-label/style delta và ca lỗi của sweep.
 - Ghi quan sát thủ công; không coi xuất CSV là đã audit.
