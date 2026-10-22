@@ -37,6 +37,14 @@ class DataContractTests(unittest.TestCase):
         self.assertAlmostEqual(m['hamming_loss'], .25)
         self.assertAlmostEqual(m['lrap'], .75)
 
+    def test_lrap_matches_float64_reference_for_float32_predictions(self):
+        from sklearn.metrics import label_ranking_average_precision_score
+        rng = np.random.default_rng(42)
+        y = (rng.random((2066, 27)) < .07).astype(int)
+        p = rng.random((2066, 27)).astype(np.float32)
+        reference = label_ranking_average_precision_score(y, p.astype(np.float64))
+        self.assertAlmostEqual(scores(y, p)['lrap'], reference, places=12)
+
     def test_training_has_no_heldout_text(self):
         frames, excluded = load_data()
         self.assertEqual(sum(map(len, frames.values())) + len(excluded), 20664)

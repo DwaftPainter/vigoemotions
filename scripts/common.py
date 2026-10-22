@@ -73,7 +73,9 @@ def scores(y, probabilities, threshold=0.5):
     return dict(macro_f1=float(f1_score(y, pred, average='macro', zero_division=0)),
                 micro_f1=float(f1_score(y, pred, average='micro', zero_division=0)),
                 hamming_loss=float(hamming_loss(y, pred)),
-                lrap=float(label_ranking_average_precision_score(y, probabilities)))
+                # Accumulate ranking precision in float64 across sklearn/SciPy versions.
+                # Casting preserves the ordering/ties of saved float32 probabilities.
+                lrap=float(label_ranking_average_precision_score(y, np.asarray(probabilities, dtype=np.float64))))
 
 
 def style_masks(df):
