@@ -4,3 +4,5 @@ __pycache__/
 .DS_Store
 .ipynb_checkpoints/
 *.zip
+reports/neutral_28_labels/
+.neutral28_smoke_cache/
