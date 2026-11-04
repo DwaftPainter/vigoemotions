@@ -49,7 +49,7 @@
   "phobert": {
     "checkpoint": "vinai/phobert-base-v2",
     "max_length": 256,
-    "epochs": 4,
+    "epochs": 12,
     "batch_size": 16,
     "learning_rate": 2e-05,
     "weight_decay": 0.01,
