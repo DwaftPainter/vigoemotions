@@ -1,4 +1,5 @@
 """Build Kaggle entry notebooks from the maintained Colab workflows."""
+import argparse
 import ast
 from copy import deepcopy
 import json
@@ -100,7 +101,68 @@ def build(number, suffix):
     print('Created:', target.name)
 
 
+def build_neutral28(target=None):
+    """Adapt notebook 06 I/O while preserving its isolated study and training cells."""
+    source = ROOT / 'notebooks/06_colab_neutral_28_labels.ipynb'
+    notebook = json.loads(source.read_text(encoding='utf-8'))
+    cells = notebook['cells']
+    replace(cells[0], (
+        '# ViGoEmotions — Kaggle: 28 nhãn, gồm Neutral\n\n'
+        'So sánh TF-IDF + OvR LR, BiGRU và PhoBERT với baseline 27 nhãn.\n'
+        'Attach hai Dataset Private: ZIP code 28 nhãn và ba CSV train/val/test.\n'
+        'Trong Settings/Session options, bật GPU + Internet; không chọn TPU.\n'
+        'Chạy từng cell từ trên xuống; dừng khi có lỗi. Hướng dẫn: docs/neutral_28_labels.md.\n'
+        'Artifact ở /kaggle/working/ViGoEmotions28/reports/neutral_28_labels/.\n'
+        'Model hoàn tất được giữ; không hỗ trợ resume giữa epoch.\n'
+    ))
+    replace(cells[1], (
+        '## 1. Nạp project từ Kaggle Input\n\n'
+        'Attach Dataset chứa **vigoemotions_neutral28_colab.zip** mới, không dùng ZIP 04/05.\n'
+        'Hỗ trợ cả ZIP và Dataset đã được Kaggle giải nén. Code tự tìm đường dẫn.\n'
+        'Cell dưới chỉ chạy một lần trong workspace mới; không giải nén đè kết quả.\n'
+        'Sau restart kernel, bỏ qua cell giải nén nếu project còn và chạy cell nối workspace.\n'
+    ))
+    bootstrap = BOOTSTRAP.replace('ViGoEmotions', 'ViGoEmotions28')
+    bootstrap = bootstrap.replace('vigoemotions_colab.zip', 'vigoemotions_neutral28_colab.zip')
+    bootstrap = bootstrap.replace('scripts/common.py', 'scripts/neutral_28_labels.py')
+    replace(cells[2], bootstrap)
+    replace(cells[8], DATA.replace('next(csv.reader(handle))', 'next(csv.reader(handle), None)')
+            + "\nDATA = ROOT / 'data'\n")
+    replace(cells[7], ''.join(cells[7]['source']).replace(
+        'Upload riêng `train.csv`, `val.csv`, `test.csv` có quyền truy cập.',
+        'Attach Dataset Private chứa `train.csv`, `val.csv`, `test.csv` có quyền truy cập.'))
+    replace(cells[27], (
+        '## 12. Lưu kết quả và checkpoint riêng tư\n\n'
+        'Chạy sau inference/report. ZIP toàn bộ study gồm CSV, NPZ, config, checkpoint,\n'
+        'tokenizer, vocabulary và segmenter; không chứa CSV/comment nguồn từ data/.\n'
+        'Tải ZIP từ file browser/Output trong /kaggle/working trước khi kết thúc session.\n'
+        'Giữ ZIP và notebook Private. Save & Run All sẽ chạy lại toàn bộ trong session mới.\n'
+    ))
+    for cell in cells:
+        text = ''.join(cell['source']).replace('/content/', '/kaggle/working/')
+        text = text.replace('  # Sửa nếu dùng project trên Drive.', '')
+        text = text.replace('from google.colab import files\n', '')
+        text = text.replace('files.download(str(archive_path))',
+                            "print('Tải ZIP từ file browser/Output:', archive_path)")
+        replace(cell, text)
+        if cell['cell_type'] == 'code':
+            ast.parse(text)
+            cell['outputs'] = []
+            cell['execution_count'] = None
+    notebook.get('metadata', {}).pop('colab', None)
+    target = Path(target) if target is not None else ROOT / 'notebooks/06_kaggle_neutral_28_labels.ipynb'
+    target.write_text(json.dumps(notebook, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
+    print('Created:', target.name)
+    return target
+
+
 if __name__ == '__main__':
-    build('04', 'neural_baselines')
-    build('05', 'phobert_tuning')
-    subprocess.run([sys.executable, str(ROOT / 'scripts/package_colab.py'), '--include-results'], check=True)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--neutral28', action='store_true', help='Build/package only notebook 06 (28 labels)')
+    args = parser.parse_args()
+    if args.neutral28:
+        subprocess.run([sys.executable, str(ROOT / 'scripts/package_neutral28.py')], check=True)
+    else:
+        build('04', 'neural_baselines')
+        build('05', 'phobert_tuning')
+        subprocess.run([sys.executable, str(ROOT / 'scripts/package_colab.py'), '--include-results'], check=True)

@@ -79,3 +79,14 @@ Không dùng `--resume` để nối sweep Colab vào Kaggle khi khác GPU, Pytho
 Sau khi sửa project local, chạy `python scripts/prepare_kaggle.py` để tái tạo hai notebook và ZIP. Tạo version mới cho Dataset code trên Kaggle và kiểm tra notebook đang dùng đúng version.
 
 Tài liệu Kaggle: https://www.kaggle.com/docs/notebooks và https://www.kaggle.com/docs/datasets.
+
+## 10. Notebook 06 — thí nghiệm 28 nhãn gồm Neutral
+
+Chạy `python3 scripts/prepare_kaggle.py --neutral28` để tạo riêng notebook 06 và ZIP code mới.
+Import `notebooks/06_kaggle_neutral_28_labels.ipynb`; attach Dataset Private chứa
+`vigoemotions_neutral28_colab.zip` cùng Dataset ba CSV, bật GPU + Internet rồi chạy từ trên xuống.
+Không dùng ZIP của notebook 04/05. Epoch lấy từ config trong ZIP, được in sau init.
+
+Project chạy tại `/kaggle/working/ViGoEmotions28`; ZIP cuối là
+`/kaggle/working/vigoemotions_neutral28_private_results.zip`, gồm cả kết quả và checkpoint riêng tư.
+Hướng dẫn đầy đủ và cách chạy lại workspace: [neutral_28_labels.md](neutral_28_labels.md#chạy-kaggle-gpu--notebook-06).

@@ -16,15 +16,16 @@ Checkpoint, vocabulary và kết quả riêng của study được Git ignore; c
 - BiGRU dùng lại class/forward từ `train_neural.py`, thay đúng linear head sang 28; vocabulary chỉ xây từ train.
 - PhoBERT giữ checkpoint/revision, VnCoreNLP, tokenizer và fine-tune toàn bộ backbone/head. Dùng lại
   `segmented_texts`, `logits`, `predict`; BCE, AdamW và gradient clipping như baseline.
-- Config 28 được sao chép riêng từ `configs/midterm.json`: mặc định GRU 10/PhoBERT 4 epoch, seed 42.
-  Không lấy 20/15 từ notebook Kaggle khác. Muốn đổi phải tạo study mới và nêu rõ khác biệt với baseline.
+- Config 28 được sao chép riêng từ `configs/midterm.json` đi kèm ZIP; kiểm tra epoch trong config
+  in ra sau init. Không lấy epoch từ notebook khác hay suy ra từ reports cũ. Muốn đổi phải tạo study mới
+  và nêu rõ khác biệt với baseline.
 - Chọn checkpoint bằng validation Macro-F1 trên 28 nhãn tại 0.5 (khác tập nhãn chọn epoch của baseline 27).
   Không đổi threshold; không tuning trên test. Test tùy chọn sau khi hoàn tất cả ba model và khóa checksum.
 - Study từ chối ghi lên các thư mục gốc; model hoàn tất được giữ, model dở dang không bị xóa hoặc tự train đè.
 
 ## Chạy Google Colab
 
-1. Trên máy chạy `python scripts/package_neutral28.py` (ZIP đã được tạo kèm lần triển khai này).
+1. Trên máy chạy `python scripts/package_neutral28.py` để tạo ZIP mới theo code/config hiện tại.
 2. Mở `notebooks/06_colab_neutral_28_labels.ipynb` bằng Colab. Chọn Runtime > Change runtime type > GPU.
 3. Chạy cell upload, chọn **vigoemotions_neutral28_colab.zip** mới, không chọn ZIP notebook 04 cũ.
 4. Chạy cell nối workspace, dependency, kiểm tra GPU/Java. Upload riêng ba CSV được cấp quyền.
@@ -37,6 +38,40 @@ Nếu kernel restart nhưng filesystem còn, chạy cell nối workspace, depend
 và init (idempotent khi config/data/môi trường khớp). Không extract ZIP đè lên kết quả đang có.
 Model đã hoàn tất có thể reload để inference mà không train lại. PhoBERT inference cần Java/VnCoreNLP;
 tokenizer và model backbone/head được nạp từ checkpoint local.
+
+## Chạy Kaggle GPU — notebook 06
+
+1. Từ project root chạy `python3 scripts/prepare_kaggle.py --neutral28` hoặc
+   `python3 scripts/package_neutral28.py`. Cả hai đều tạo lại
+   `notebooks/06_kaggle_neutral_28_labels.ipynb` và `vigoemotions_neutral28_colab.zip`.
+   Tên ZIP được giữ để dùng chung Colab/Kaggle; không dùng `vigoemotions_colab.zip` của 04/05.
+2. Tạo hai Dataset **Private**: một chứa ZIP code vừa tạo, một chứa ba file
+   `train.csv`, `val.csv`, `test.csv` có cột đúng thứ tự `id,text,labels`.
+3. Import **06_kaggle_neutral_28_labels.ipynb** vào Kaggle, giữ notebook Private.
+   Trong Input > Add Input, attach cả hai Dataset. Chỉ attach một bộ CSV/code để tránh tên trùng.
+4. Trong Settings/Session options, bật **GPU + Internet**. Không dùng TPU.
+   Nếu có hai GPU, code hiện tại chỉ dùng GPU thứ nhất.
+5. Chạy từ trên xuống: nạp project → nối workspace → dependency → GPU/Java → CSV → init
+   → smoke tests → TF-IDF → BiGRU → PhoBERT → report/inference → ZIP. Dừng khi cell lỗi.
+   Phải thấy `CUDA available: True` trước neural. Internet cần cho pip, PhoBERT và VnCoreNLP.
+6. Sau init, đọc config được in ra: epoch thực dùng lấy từ `configs/midterm.json` trong ZIP.
+   Muốn chỉnh hyperparameters thì chỉnh file trước init; study đã init phải dùng OUT mới.
+   Giữ `RUN_FINAL_TEST = False` nếu chưa khóa các lựa chọn hoặc vẫn giữ test cho Final.
+7. Chạy cell ZIP cuối; tải **/kaggle/working/vigoemotions_neutral28_private_results.zip**
+   từ file browser/Output trước khi kết thúc session. ZIP gồm toàn bộ study/checkpoint, giữ Private.
+   Save Version > Save & Run All chạy lại từ đầu trong session mới; tải bản sao trước khi chọn.
+
+Code tự tìm ZIP hoặc project đã được Kaggle giải nén bên trong `/kaggle/input`, rồi copy sang
+`/kaggle/working/ViGoEmotions28`. CSV cũng được copy sang `data/` trong project.
+Artifact nằm trong `reports/neutral_28_labels/` của project mới. Không cần sửa đường dẫn slug Dataset.
+
+Nếu project đã tồn tại trong cùng session, bỏ qua cell giải nén. Sau restart kernel mà filesystem còn,
+chạy lại cell nối workspace, import/setup cần thiết, CSV và helper/init. Model hoàn tất được giữ;
+model dở dang không hỗ trợ resume giữa epoch, hãy giữ bản sao và dùng study mới để chạy lại.
+Đừng dùng `--resume` của notebook 05 cho study 28 nhãn.
+
+Đã kiểm tra nhập/xuất trên filesystem tạm và cú pháp cell; chưa chạy toàn bộ GPU trên Kaggle.
+Nguồn giao diện/runtime: https://www.kaggle.com/docs/notebooks.
 
 ## CLI local / cloud
 

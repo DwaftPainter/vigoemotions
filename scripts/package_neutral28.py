@@ -2,14 +2,18 @@
 from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
 
+from prepare_kaggle import build_neutral28
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def package():
+    build_neutral28()
     paths = [ROOT/name for name in (
         'scripts/common.py', 'scripts/train_neural.py', 'scripts/evaluate.py',
         'scripts/neutral_28_labels.py', 'tests/test_neutral_28_labels.py',
         'configs/midterm.json', 'notebooks/06_colab_neutral_28_labels.ipynb',
+        'notebooks/06_kaggle_neutral_28_labels.ipynb',
         'docs/neutral_28_labels.md')]
     paths.extend((ROOT/'splits').glob('*.csv'))  # IDs only, not dataset CSVs.
     for name in ('tfidf_lr', 'gru', 'phobert'):
