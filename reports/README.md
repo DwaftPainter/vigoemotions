@@ -4,6 +4,8 @@
 
 Buổi **pre-midterm 23/10/2026**: [báo cáo tiến độ 6 trang](pre_midterm_progress_2026-10-23.pdf), [slide trình bày 12 trang](pre_midterm_slides_2026-10-23.pdf), [lời dẫn từng slide](pre_midterm_speaker_notes_2026-10-23.md) và [nguồn báo cáo sửa được](pre_midterm_progress_2026-10-23.md). Snapshot ngày 22/10 phân biệt kết quả baseline lịch sử với lượt Colab mới đang chạy; mỗi phần có đường dẫn minh chứng. Các tài liệu này không tự cập nhật sau khi có kết quả mới.
 
+**Lời thoại cập nhật ngày 23/10:** [script đọc trình bày PDF](pre_midterm_2026-10-23/presentation_script.pdf), [bản Markdown có link minh chứng](pre_midterm_2026-10-23/presentation_script.md). Script dùng lượt 04 mới đã kiểm chứng (PhoBERT Macro-F1 0,4679), kèm [bảng nguồn riêng](pre_midterm_2026-10-23/evidence/README.md), câu hỏi thường gặp và các số cần sửa khi dùng lại slide snapshot cũ ở trên. Baseline gốc vẫn được giữ nguyên; chưa có kết quả study 05 mới được kiểm chứng.
+
 ## Nên đọc theo thứ tự nào?
 
 1. [Bảng so sánh ba baseline](tables/model_comparison.csv): mô hình nào tốt hơn trên validation, số tham số và thời gian.

@@ -1,0 +1,4 @@
+split,samples,cardinality_mean,cardinality_max,neutral_only,neutral_mixed,repeated_label_rows
+train,16530,1.8586206896551725,5,570,251,0
+val,2066,1.8702807357212003,5,75,19,0
+test,2067,1.8509917755200773,5,80,36,1
