@@ -97,6 +97,29 @@ class KaggleNeutral28Tests(unittest.TestCase):
             self.execute(8)
         self.assertFalse((self.root / 'data/train.csv').exists())
 
+    def test_extracted_code_split_ids_do_not_shadow_source_csvs(self):
+        self.archive()
+        self.csvs()
+        splits = self.input / 'code/splits'
+        splits.mkdir(parents=True)
+        for name in ('train.csv', 'val.csv', 'test.csv'):
+            (splits / name).write_text('id\nfixture-id\n')
+        self.execute(2)
+        self.execute(8)
+        for name in ('train.csv', 'val.csv', 'test.csv'):
+            self.assertEqual((self.root / 'data' / name).read_bytes(), (self.input / name).read_bytes())
+            self.assertEqual((splits / name).read_text(), 'id\nfixture-id\n')
+
+    def test_source_csvs_can_live_in_directory_named_splits(self):
+        self.archive()
+        splits = self.input / 'data/splits'
+        splits.mkdir(parents=True)
+        for name in ('train.csv', 'val.csv', 'test.csv'):
+            (splits / name).write_text('id,text,labels\n1,fixture,[27]\n')
+        self.execute(2)
+        self.execute(8)
+        self.assertTrue((self.root / 'data/train.csv').is_file())
+
     def test_export_includes_study_checkpoint_but_excludes_source_data(self):
         out = self.root / 'reports/neutral_28_labels'
         (out / 'models/gru').mkdir(parents=True)

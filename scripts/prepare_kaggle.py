@@ -40,12 +40,18 @@ import csv, shutil
 
 sources = {}
 for name in ('train.csv', 'val.csv', 'test.csv'):
-    candidates = list(Path('/kaggle/input').rglob(name))
+    candidates = []
+    for path in Path('/kaggle/input').rglob(name):
+        with path.open(encoding='utf-8-sig', newline='') as handle:
+            header = next(csv.reader(handle), None)
+        # ZIP code có splits/*.csv chỉ chứa ID, không phải dữ liệu nguồn.
+        if path.parent.name == 'splits' and header == ['id']:
+            continue
+        if header != ['id', 'text', 'labels']:
+            raise ValueError(f'{path}: schema phải là id,text,labels')
+        candidates.append(path)
     if len(candidates) != 1:
-        raise RuntimeError(f'Cần đúng một {name} trong Input; tìm thấy {len(candidates)}. Kiểm tra Dataset đã attach.')
-    with candidates[0].open(encoding='utf-8-sig', newline='') as handle:
-        if next(csv.reader(handle)) != ['id', 'text', 'labels']:
-            raise ValueError(f'{name}: schema phải là id,text,labels')
+        raise RuntimeError(f'Cần đúng một {name} dữ liệu (id,text,labels) trong Input; tìm thấy {len(candidates)}. Kiểm tra Dataset đã attach.')
     sources[name] = candidates[0]
 (ROOT / 'data').mkdir(exist_ok=True)
 for name, source in sources.items():
@@ -126,8 +132,7 @@ def build_neutral28(target=None):
     bootstrap = bootstrap.replace('vigoemotions_colab.zip', 'vigoemotions_neutral28_colab.zip')
     bootstrap = bootstrap.replace('scripts/common.py', 'scripts/neutral_28_labels.py')
     replace(cells[2], bootstrap)
-    replace(cells[8], DATA.replace('next(csv.reader(handle))', 'next(csv.reader(handle), None)')
-            + "\nDATA = ROOT / 'data'\n")
+    replace(cells[8], DATA + "\nDATA = ROOT / 'data'\n")
     replace(cells[7], ''.join(cells[7]['source']).replace(
         'Upload riêng `train.csv`, `val.csv`, `test.csv` có quyền truy cập.',
         'Attach Dataset Private chứa `train.csv`, `val.csv`, `test.csv` có quyền truy cập.'))

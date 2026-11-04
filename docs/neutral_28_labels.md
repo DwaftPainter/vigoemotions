@@ -64,6 +64,11 @@ tokenizer và model backbone/head được nạp từ checkpoint local.
 Code tự tìm ZIP hoặc project đã được Kaggle giải nén bên trong `/kaggle/input`, rồi copy sang
 `/kaggle/working/ViGoEmotions28`. CSV cũng được copy sang `data/` trong project.
 Artifact nằm trong `reports/neutral_28_labels/` của project mới. Không cần sửa đường dẫn slug Dataset.
+Cell nạp CSV bỏ qua `splits/*.csv` có duy nhất cột `id` trong Dataset code đã giải nén;
+chỉ chọn CSV nguồn có header `id,text,labels`. Nếu có hai CSV nguồn cùng tên, cell vẫn dừng
+để bạn kiểm tra Dataset, không tự lấy file đầu tiên. Với notebook cũ báo trùng `train.csv`,
+chỉ thay cell nạp CSV bằng cell tương ứng trong notebook mới rồi chạy lại cell đó;
+không cần upload lại dữ liệu hay giải nén đè project đang chạy.
 
 Nếu project đã tồn tại trong cùng session, bỏ qua cell giải nén. Sau restart kernel mà filesystem còn,
 chạy lại cell nối workspace, import/setup cần thiết, CSV và helper/init. Model hoàn tất được giữ;
