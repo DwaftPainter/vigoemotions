@@ -1,0 +1,4 @@
+model,n,max_metric_error,val_ids_targets_match,baseline27_ids_targets_metrics_match,neutral_tp,neutral_fp,neutral_fn
+tfidf_lr,2066,6.245004513516506e-17,True,True,1,1,93
+gru,2066,7.632783294297951e-17,True,True,5,15,89
+phobert,2066,5.551115123125783e-17,True,True,44,62,50

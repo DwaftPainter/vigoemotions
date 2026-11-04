@@ -1,5 +1,17 @@
 # Thí nghiệm độc lập 28 nhãn — notebook 06
 
+**Cập nhật 04/11/2026 — đã có kết quả chạy thật.** Đã nhận `vigoemotions_neutral28_private_results.zip` và notebook Kaggle có output; tính lại metric từ ba NPZ khớp CSV (sai số dưới 1e-12). [Bảng nguồn và giới hạn](../reports/midterm_2026-11-04/evidence/README.md), [phân tích đưa vào báo cáo](../reports/midterm_2026-11-04/neutral28_results.md), [lời dẫn thuyết trình/Q&A](midterm_presentation_2026-11-04.md).
+
+| Mô hình | Macro-F1 28 | Macro-F1 chiếu 27 | Neutral F1 |
+| --- | --- | --- | --- |
+| TF-IDF + LR | 0,231040 | 0,238825 | 0,020833 |
+| BiGRU | 0,399227 | 0,410764 | 0,087719 |
+| PhoBERT | 0,574653 | 0,579640 | 0,440000 |
+
+Tất cả là validation (2.066 mẫu), seed 42, ngưỡng 0,5; test chưa chấm. Neutral support 94 = 75 only + 19 mixed. BiGRU chọn epoch 10/10, PhoBERT 11/12 trên Tesla T4; config thật nằm trong ZIP. Baseline gốc chỉ chạy PhoBERT 4 epoch nên chưa tách tác động Neutral khỏi epoch/runtime. ZIP chứa checkpoint/tokenizer/vocab; không cần train lại để đọc kết quả.
+
+Cell tìm ví dụ validation (cell index 24, execution_count 16) lỗi JVM đã chạy trước đó; không có `validation_prediction_cases.csv` trong ZIP. Training, metric và inference bốn câu tự viết có output; metric được kiểm chứng riêng. Notebook thực thi có output comment nguồn, giữ riêng tư. Các hướng dẫn bên dưới dùng để tái chạy, không ngụ ý toàn notebook đã chạy không lỗi.
+
 Không sửa pipeline 27 nhãn. Notebook mới gọi `scripts/neutral_28_labels.py`, dùng namespace riêng
 `reports/neutral_28_labels/` cho CSV, model, tokenizer, vocabulary, config và báo cáo Markdown.
 Checkpoint, vocabulary và kết quả riêng của study được Git ignore; chỉ code/notebook/test/tài liệu được đưa lên repo.
@@ -75,7 +87,7 @@ chạy lại cell nối workspace, import/setup cần thiết, CSV và helper/in
 model dở dang không hỗ trợ resume giữa epoch, hãy giữ bản sao và dùng study mới để chạy lại.
 Đừng dùng `--resume` của notebook 05 cho study 28 nhãn.
 
-Đã kiểm tra nhập/xuất trên filesystem tạm và cú pháp cell; chưa chạy toàn bộ GPU trên Kaggle.
+Đã có bằng chứng train GPU đủ ba model trên Kaggle ngày 04/11; cell tìm ví dụ validation vẫn lỗi JVM như ghi ở đầu tài liệu.
 Nguồn giao diện/runtime: https://www.kaggle.com/docs/notebooks.
 
 ## CLI local / cloud
@@ -128,7 +140,7 @@ reports/neutral_28_labels/
   test_lock.json                      chỉ xuất hiện khi chấm test cuối
 ```
 
-Không có số neural đầy đủ trước khi bạn chạy GPU. Tiny RoBERTa smoke test không phải kết quả pretrained PhoBERT.
+Study ngày 04/11 đã có số neural đầy đủ trong ZIP riêng tư và bản evidence tổng hợp. Khi tạo study mới, chỉ ghi kết quả sau khi chạy GPU; tiny RoBERTa smoke test không phải kết quả pretrained PhoBERT.
 Chỉ dùng `package_neutral28.py` để đóng gói code study này: nó loại trừ model/vocabulary mới.
 Script cũ `package_colab.py --include-results` thu thập toàn bộ reports nên có thể mang cả artifact private
 của study 28 nhãn; không dùng gói đó làm gói code công khai.

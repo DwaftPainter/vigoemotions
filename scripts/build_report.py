@@ -500,6 +500,24 @@ Giới hạn chính: một seed, validation đã dùng chọn cấu hình/ngư�
 
 Mã và tài liệu có hỗ trợ AI trong phiên hoàn thiện; số liệu TF-IDF/EDA lấy từ chạy thực tế. Nhóm cần tự đọc, xác nhận diễn giải và tuân thủ quy định khai báo hỗ trợ AI của học phần.
 '''
+    neutral_update = REPORTS/'midterm_2026-11-04'
+    if (neutral_update/'neutral28_results.md').exists():
+        text = text.replace('**Trạng thái:** '+status,
+            '**Trạng thái (04/11/2026):** Đã kiểm chứng ba baseline 27 nhãn và study mới 28 nhãn. '
+            'PhoBERT mới đạt Macro-F1 0,5747 trên validation 28 nhãn; test chưa chấm. '
+            'Mục 5.7 trình bày kết quả mới và giới hạn so sánh; mục 5.1–5.6 giữ nguồn baseline gốc.')
+        text = text.replace('Đầu vào là một bình luận tiếng Việt; đầu ra là tập con của 27 cảm xúc.',
+            'Đầu vào là một bình luận tiếng Việt. Baseline gốc có 27 cảm xúc; '
+            'study bổ sung ngày 04/11 có 28 đầu ra, gồm cả Neutral (mục 5.7). '
+            'Các mô tả 27 nhãn bên dưới nói về baseline gốc.')
+        text = text.replace('## 5. Kết quả thực nghiệm trên validation',
+            '## 5. Kết quả thực nghiệm trên validation\n\n'
+            'Bảng baseline và phân tích Q1–Q5 bên dưới dùng artifact gốc 14/10, '
+            'không phải lượt chạy lại 23/10 hoặc study 28 nhãn 04/11. '
+            'Không trộn số liệu giữa ba lượt; kết quả mới và nguồn đối chiếu ở mục 5.7.')
+        text = text.replace('## 6. Phân tích lỗi và trường hợp biên',
+            (neutral_update/'neutral28_results.md').read_text(encoding='utf-8')+
+            '\n\n## 6. Phân tích lỗi và trường hợp biên')
     (REPORTS/'midterm_report.md').write_text(text,encoding='utf-8')
     slides=[
         ('ViGoEmotions | Midterm', ['Nhận diện đa nhãn: một bình luận có thể mang nhiều cảm xúc.','27 cảm xúc; neutral là vector 0.', 'Bằng chứng hiện có: '+('ba mô hình trên validation.' if neural_done else 'EDA + TF-IDF trên validation; neural chờ Colab.')],None,'Mở đầu bằng bài toán, phạm vi và trạng thái thực nghiệm; không trình bày neural như đã chạy nếu chưa có số liệu.'),
@@ -534,6 +552,24 @@ Mã và tài liệu có hỗ trợ AI trong phiên hoàn thiện; số liệu TF
             'Đọc đường học, per-label/style delta và ca lỗi của sweep.',
             'Ghi quan sát thủ công; không coi xuất CSV là đã audit.'], None,
             'Insight baseline và insight tuning phải ghi đúng nguồn. Không suy ra cơ chế hoặc overfitting chỉ từ một điểm F1.')]
+    if (neutral_update/'neutral28_slides.json').exists():
+        slides[0] = ('ViGoEmotions | Midterm 04/11', [
+            'Nhận diện đa nhãn cảm xúc tiếng Việt.',
+            'Baseline 27 cảm xúc và study mới 28 nhãn có Neutral.',
+            'Đã chạy đủ ba mô hình; kết quả trên validation.',
+            'PhoBERT 28 nhãn: Macro-F1 0,5747; Neutral F1 0,4400.'], None,
+            'Tách nguồn baseline gốc 14/10, lượt chạy lại 23/10 và study 28 nhãn 04/11. Test giữ cho Final.')
+        title, bullets, figure, note = slides[7]
+        slides[7] = ('Baseline 27 nhãn | lượt gốc 14/10', bullets, figure,
+            'Các slide 8–12 dùng baseline gốc. Kết quả mới 28 nhãn ở slide 13–17. '+note)
+        slides[12:15] = json.loads((neutral_update/'neutral28_slides.json').read_text(encoding='utf-8'))
+        slides[-2] = ('Việc cần chốt trước khi nộp', [
+            'Study 28 đã có checkpoint/tokenizer/vocab trong ZIP private.',
+            'Cell tìm ví dụ validation lỗi JVM; metric đã kiểm chứng riêng.',
+            'Đọc lỗi neural; điền tên/MSSV/phân công; xác nhận split.',
+            'Sweep 05 chưa chạy; cần đối chứng 27/28 cùng điều kiện.',
+            'Giữ notebook output có comment nguồn riêng tư.'], None,
+            'Đây là giới hạn và việc còn lại, không phủ nhận kết quả đã kiểm chứng. Không cần train lại để trình bày số đo hiện có.')
     register_fonts();render_report(text);render_slides(slides)
     print('Wrote midterm_report.md/pdf, midterm_slides.md/pdf, model comparison tables')
 

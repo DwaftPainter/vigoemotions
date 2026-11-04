@@ -1,6 +1,6 @@
 # ViGoEmotions — Các công việc từ bắt đầu đến midterm
 
-Cập nhật trạng thái: **14/10/2026**. Tài liệu này tổng hợp công việc theo thứ tự thực hiện hợp lý,
+Cập nhật mới nhất: **04/11/2026**, xem mục 12 về study 28 nhãn. Mục 1–11 giữ lịch sử baseline và thiết kế sweep từ 14–23/10. Tài liệu này tổng hợp công việc theo thứ tự thực hiện hợp lý,
 dựa trên mã, notebook và kết quả đang có trong project; không phải nhật ký có thời điểm của từng thao tác.
 Mục đích là giúp thành viên mới hiểu **đã làm gì, vì sao làm, xem bằng chứng ở đâu và còn thiếu gì**.
 
@@ -204,7 +204,7 @@ Danh sách còn lại trước khi nộp:
 - [x] Đối chiếu mapping ID–nhãn với ảnh dataset card do người dùng cung cấp ngày 22/10; đủ 28 ID khớp.
 - [ ] Xác nhận việc giữ split gốc có đáp ứng yêu cầu phân tầng đa nhãn trong đề hay không.
 - [x] Chạy BiGRU/PhoBERT; nhập và kiểm chứng run metadata, probabilities.
-- [ ] Lưu riêng checkpoint/vocab từ Colab (không có trong ZIP kết quả).
+- [ ] Lưu riêng checkpoint/vocab baseline 27 từ Colab (không có trong ZIP baseline; ZIP study 28 mới đã có checkpoint/vocab).
 - [x] Cập nhật bảng đủ ba mô hình, per-label metric, số tham số và thời gian thực tế.
 - [x] Trả lời Q4 bằng chênh lệch neural trên cùng nhóm validation; chưa kiểm định ý nghĩa thống kê.
 - [ ] Đọc ca lỗi neural và cập nhật phần thảo luận/giới hạn, báo cáo và slide.
@@ -225,3 +225,14 @@ Report có mục 5.6 và slide được mở rộng thành 18 trang, trong giớ
 Phân biệt rõ fine-tune PhoBERT đã chạy với hyperparameter sweep còn chờ kết quả. Hướng dẫn chạy,
 nhập kết quả và viết insight tại [phobert_tuning.md](phobert_tuning.md). Danh sách lỗi neural tự sinh
 vẫn cần audit thủ công; chưa điền quan sát hoặc kết quả thí nghiệm chưa thực hiện.
+
+
+## 12. Cập nhật 04/11: study Neutral 28 nhãn và tài liệu midterm
+
+Đã nhận ZIP `vigoemotions_neutral28_private_results.zip` và notebook Kaggle 06 có output. Đối chiếu checksum ba CSV, ID split, targets và thứ tự nhãn; tính lại cả metric 28, phép chiếu 27 và per-class từ NPZ của ba model. Sai số metric dưới 1e-12. Baseline gốc cũng được đối chiếu ID/target/metric, không huấn luyện lại.
+
+Macro-F1 28 của TF-IDF / BiGRU / PhoBERT: **0,231040 / 0,399227 / 0,574653**; Neutral F1 **0,020833 / 0,087719 / 0,440000**. PhoBERT chọn epoch **11/12**, BiGRU **10/10**. Trên cùng 27 cảm xúc PhoBERT đạt 0,579640, nhưng baseline gốc chỉ chạy 4 epoch nên chưa cô lập tác động Neutral. Baseline 27 chạy lại dùng cho lời thoại 23/10 (0,467850) được giữ riêng, không làm đối chứng của study 06.
+
+Cell tìm ví dụ validation lỗi JVM sau huấn luyện/xuất metric; ZIP không có `validation_prediction_cases.csv`. Bảng đếm kiểu dự đoán trong evidence được tính thêm từ NPZ. `RUN_FINAL_TEST=False`, chưa chấm test. ZIP study mới đã có checkpoint, tokenizer và vocabulary; không còn là hạng mục thiếu của study 28.
+
+Đã cập nhật báo cáo mục 5.7, bộ 20 slide, [lời dẫn và Q&A](midterm_presentation_2026-11-04.md), README và hướng dẫn study 28. [Evidence riêng](../reports/midterm_2026-11-04/evidence/README.md) chỉ giữ tổng hợp và metadata, không copy output văn bản nguồn. Các bản pre-midterm theo ngày vẫn là lịch sử. Còn cần đọc lỗi neural, bổ sung thông tin nhóm, xác nhận split; sweep 05 chưa hoàn tất và chưa có thí nghiệm Final.

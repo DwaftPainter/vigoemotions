@@ -1,12 +1,13 @@
 # ViGoEmotions — Nội dung thuyết trình giữa kỳ
 
-## 1. ViGoEmotions | Midterm
+## 1. ViGoEmotions | Midterm 04/11
 
-- Nhận diện đa nhãn: một bình luận có thể mang nhiều cảm xúc.
-- 27 cảm xúc; neutral là vector 0.
-- Bằng chứng hiện có: ba mô hình trên validation.
+- Nhận diện đa nhãn cảm xúc tiếng Việt.
+- Baseline 27 cảm xúc và study mới 28 nhãn có Neutral.
+- Đã chạy đủ ba mô hình; kết quả trên validation.
+- PhoBERT 28 nhãn: Macro-F1 0,5747; Neutral F1 0,4400.
 
-Ghi chú thuyết trình: Mở đầu bằng bài toán, phạm vi và trạng thái thực nghiệm; không trình bày neural như đã chạy nếu chưa có số liệu.
+Ghi chú thuyết trình: Tách nguồn baseline gốc 14/10, lượt chạy lại 23/10 và study 28 nhãn 04/11. Test giữ cho Final.
 
 ## 2. Dữ liệu & kiểm tra chất lượng
 
@@ -64,7 +65,7 @@ Ghi chú thuyết trình: Phân biệt dữ liệu mô tả test với sử dụ
 
 Ghi chú thuyết trình: Không dùng softmax. Nêu trạng thái Colab của hai neural model.
 
-## 8. Kết quả baseline | validation
+## 8. Baseline 27 nhãn | lượt gốc 14/10
 
 - TF-IDF Macro-F1: 0.2388; Micro-F1: 0.2712.
 - Hamming Loss: 0.0606; LRAP: 0.6407.
@@ -72,7 +73,7 @@ Ghi chú thuyết trình: Không dùng softmax. Nêu trạng thái Colab của h
 - BiGRU Macro-F1: 0.4060; PhoBERT: 0.4393.
 - Subset accuracy không là metric chính.
 
-Ghi chú thuyết trình: Thời gian TF-IDF gồm vectorizer + LR, không so tốc độ tuyệt đối với GPU. LRAP trên mẫu all-zero có quy ước đặc biệt.
+Ghi chú thuyết trình: Các slide 8–12 dùng baseline gốc. Kết quả mới 28 nhãn ở slide 13–17. Thời gian TF-IDF gồm vectorizer + LR, không so tốc độ tuyệt đối với GPU. LRAP trên mẫu all-zero có quy ước đặc biệt.
 
 ## 9. Nhãn nào tốt, nhãn nào khó?
 
@@ -112,36 +113,52 @@ Ghi chú thuyết trình: Cặp được chọn từ train trước, rồi đo t
 
 Ghi chú thuyết trình: Style groups chồng lấn và có heuristic nhiễu. Sau khi chạy lại cần kiểm tra ca lỗi mới. Không chép comment thô lên slide.
 
-## 13. Fine-tune PhoBERT như thế nào?
+## 13. Thêm Neutral thành đầu ra thứ 28
 
-- Cập nhật toàn bộ pretrained backbone và head 27 logits.
-- VnCoreNLP → BPE; tối đa 256 tokens; BCE + sigmoid.
-- AdamW: lr 2e-5, batch 16, weight decay 0,01; 4 epoch.
-- Chọn checkpoint bằng validation Macro-F1 tại 0,5.
-- Fine-tuning đã chạy; tìm hyperparameter là bước bổ sung.
+- IDs 0–26: cảm xúc; ID 27: Neutral riêng.
+- Giữ annotation: [27] → Neutral; [2,27] → joy + Neutral.
+- Validation: 75 Neutral-only + 19 mixed = 94 Neutral dương.
+- Sigmoid + BCE; ngưỡng 0,5; không ép loại trừ Neutral.
 
-Ghi chú thuyết trình: Mở configs/midterm.json, train_neural.py và phobert_run.json. BiGRU huấn luyện từ đầu.
+Ghi chú thuyết trình: Baseline cũ bỏ ID 27; study mới giữ cả nhãn mixed. Đây là quyết định đo lường trước bất nhất annotation, không khẳng định đã sửa nhãn. Nguồn: annotation_counts.csv và config.json trong evidence ngày 04/11.
 
-## 14. Điều chỉnh learning rate | trạng thái
+## 14. Kết quả mới | 28 nhãn, validation
 
-- Grid: 1e-5 / 2e-5 / 3e-5; chạy lại 2e-5 làm đối chứng.
-- Giữ seed, split, batch, số epoch và threshold 0,5.
-- Code + notebook 05 đã có; sweep GPU chưa chạy.
-- Chưa chọn cấu hình hay kết luận ảnh hưởng learning rate.
+- Macro-F1: TF-IDF 0,2310; BiGRU 0,3992; PhoBERT 0,5747.
+- PhoBERT: Micro-F1 0,5777; Hamming 0,0551; LRAP 0,7122.
+- Đủ 2.066 mẫu; seed 42; test chưa chấm.
+- PhoBERT cao nhất trong study 28 nhãn này.
 
-Ghi chú thuyết trình: Notebook 05 chạy ba lượt riêng, không ghi đè baseline. Chỉ điền kết quả khi sweep đã hoàn tất.
+Ghi chú thuyết trình: Đọc bảng metric đúng tập 28 nhãn. Không lấy 0,5747 trừ trực tiếp baseline 27 nhãn để kết luận cải thiện do Neutral. Nguồn: metrics_summary.csv đã tính lại từ ba NPZ.
 
-## 15. Insight hiện có & việc cần kiểm chứng
+## 15. Neutral vẫn là nhãn khó
 
-- PhoBERT − BiGRU: +3.33 điểm Macro-F1 validation.
-- Delta lớn nhất theo style: teencode, +9.41 điểm.
-- Đây là so sánh baseline, chưa tách riêng tác động của pretraining.
-- Đọc đường học, per-label/style delta và ca lỗi của sweep.
-- Ghi quan sát thủ công; không coi xuất CSV là đã audit.
+- Neutral F1: 0,0208 / 0,0877 / 0,4400 (TF-IDF / BiGRU / PhoBERT).
+- PhoBERT: precision 0,4151; recall 0,4681; support 94.
+- Dự đoán 106 ca: 44 TP, 62 FP; còn 50 FN.
+- Tập dự đoán rỗng không tự động là Neutral.
 
-Ghi chú thuyết trình: Insight baseline và insight tuning phải ghi đúng nguồn. Không suy ra cơ chế hoặc overfitting chỉ từ một điểm F1.
+Ghi chú thuyết trình: PhoBERT tìm được gần một nửa Neutral thật nhưng precision còn thấp. Baseline 27 không có output Neutral: không tự gán Neutral F1=0. Nguồn: neutral_analysis.csv và verification.csv.
 
-## 16. RQ Final: một ngưỡng có đủ?
+## 16. So sánh công bằng trên 27 cảm xúc
+
+- Macro-F1 cũ → mới chiếu về 27: TF-IDF 0,2388 → 0,2388.
+- BiGRU: 0,4060 → 0,4108; PhoBERT: 0,4393 → 0,5796.
+- PhoBERT cũ 4 epoch; mới 12 epoch, chọn epoch 11.
+- Delta chưa tách tác động Neutral, epoch và runtime.
+
+Ghi chú thuyết trình: Đối chứng ở đây là baseline gốc 14/10 tại reports/tables, không phải lượt chạy lại 23/10 có PhoBERT 0,4679. Checkpoint cũng được chọn theo tập nhãn khác. Hamming trên phép chiếu 27 tăng 0,0533 → 0,0552 dù F1 tăng. Muốn kết luận nhân quả cần đối chứng cùng điều kiện.
+
+## 17. Đường học & trạng thái thực nghiệm
+
+- PhoBERT: 12 epoch; chọn 11; Macro-F1 28 nhãn 0,5747.
+- Epoch 12 giảm còn 0,5630; chưa kết luận overfitting.
+- BiGRU chọn 10/10; neural chạy Tesla T4.
+- lr=2e-5 là một lượt; sweep 05 vẫn chưa có kết quả.
+
+Ghi chú thuyết trình: Đường học có đủ history; train loss không thay validation loss. Cell tìm ví dụ validation lỗi JVM sau khi đã xuất metric; điểm số đã được tính lại từ NPZ. Giữ notebook output riêng tư. Nguồn: models/*/run.json và provenance.json.
+
+## 18. RQ Final: một ngưỡng có đủ?
 
 - Chọn neural backbone tốt nhất từ midterm; giữ nguyên trọng số.
 - So sánh fixed 0,5 / global tuned / per-label tuned.
@@ -150,16 +167,17 @@ Ghi chú thuyết trình: Insight baseline và insight tuning phải ghi đúng 
 
 Ghi chú thuyết trình: Bằng chứng TF-IDF tạo động lực, nhưng đề yêu cầu Final dùng neural architecture tốt nhất.
 
-## 17. Việc cần chốt trước khi nộp
+## 19. Việc cần chốt trước khi nộp
 
-- Đã kiểm chứng kết quả Colab; lưu riêng checkpoint và vocab.
-- Mapping đã khớp ảnh nguồn; làm rõ yêu cầu stratification với giảng viên.
-- Đọc error analysis neural; bổ sung tên/MSSV/phân công nhóm.
-- Gói nộp: PDF, slide, code, README, config, ID, bảng/hình, probabilities.
+- Study 28 đã có checkpoint/tokenizer/vocab trong ZIP private.
+- Cell tìm ví dụ validation lỗi JVM; metric đã kiểm chứng riêng.
+- Đọc lỗi neural; điền tên/MSSV/phân công; xác nhận split.
+- Sweep 05 chưa chạy; cần đối chứng 27/28 cùng điều kiện.
+- Giữ notebook output có comment nguồn riêng tư.
 
-Ghi chú thuyết trình: Nêu trạng thái thật và công việc cụ thể còn lại. Nếu đã chạy Colab, chuyển trọng tâm sang rà soát nội dung.
+Ghi chú thuyết trình: Đây là giới hạn và việc còn lại, không phủ nhận kết quả đã kiểm chứng. Không cần train lại để trình bày số đo hiện có.
 
-## 18. Nguồn & tái lập
+## 20. Nguồn & tái lập
 
 - Đề ViGoEmotions và student-guide: tiêu chí đánh giá.
 - Hung et al., EACL 2026: doi.org/10.18653/v1/2026.eacl-long.129.

@@ -1,0 +1,225 @@
+{
+  "model": "phobert",
+  "config": {
+    "seed": 42,
+    "label_count": 28,
+    "neutral_id": 27,
+    "threshold": 0.5,
+    "split_policy": "Preserve supplied val/test; remove normalized train overlaps; audit label prevalence",
+    "frequency_tiers": {
+      "method": "descending training frequency rank; tie by label ID",
+      "head_ranks": [
+        1,
+        9
+      ],
+      "mid_ranks": [
+        10,
+        18
+      ],
+      "tail_ranks": [
+        19,
+        27
+      ]
+    },
+    "tfidf": {
+      "max_features": 40000,
+      "ngram_range": [
+        1,
+        2
+      ],
+      "min_df": 2,
+      "sublinear_tf": true,
+      "lowercase": true,
+      "token_pattern": "(?u)\\b\\w+\\b"
+    },
+    "logistic_regression": {
+      "C": 1.0,
+      "solver": "liblinear",
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "gru": {
+      "max_vocab": 30000,
+      "embedding_dim": 128,
+      "hidden_dim": 128,
+      "dropout": 0.3,
+      "max_length": 128,
+      "epochs": 10,
+      "batch_size": 64,
+      "learning_rate": 0.001
+    },
+    "phobert": {
+      "checkpoint": "vinai/phobert-base-v2",
+      "max_length": 256,
+      "epochs": 12,
+      "batch_size": 16,
+      "learning_rate": 2e-05,
+      "weight_decay": 0.01,
+      "revision": "86cd7fd4c148980922ac11a2cf5e257f2ba639e1"
+    },
+    "checkpoint_selection": "Highest validation 28-label Macro-F1 at 0.5; ties keep earliest epoch",
+    "threshold_sweep": {
+      "start": 0.05,
+      "stop": 0.8,
+      "step": 0.05,
+      "split": "val"
+    },
+    "neutral_policy": "preserve_original_annotations"
+  },
+  "labels": [
+    "amusement",
+    "excitement",
+    "joy",
+    "love",
+    "desire",
+    "optimism",
+    "caring",
+    "pride",
+    "admiration",
+    "gratitude",
+    "relief",
+    "approval",
+    "realization",
+    "surprise",
+    "curiosity",
+    "confusion",
+    "fear",
+    "nervousness",
+    "remorse",
+    "embarrassment",
+    "disappointment",
+    "sadness",
+    "grief",
+    "disgust",
+    "anger",
+    "annoyance",
+    "disapproval",
+    "neutral"
+  ],
+  "environment": {
+    "python": "3.13.16",
+    "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+    "packages": {
+      "numpy": "2.1.3",
+      "pandas": "2.3.3",
+      "scikit-learn": "1.6.1",
+      "scipy": "1.16.3",
+      "torch": "2.11.0+cu130",
+      "transformers": "4.57.3",
+      "py-vncorenlp": "0.1.4"
+    },
+    "data_sha256": {
+      "train": "9abcb2b7d9fadd9da043a3af43e8ee569f7099d87d20daf39a69e7e1a76c5624",
+      "val": "d3a473a65bf10d3d07423306a4324e94c9979d42d58f6a05cceb4cc1cc4fcab0",
+      "test": "620814a67ad5297cdcdac6369dbb223b4e95030b7b525d4466302f0288418e33"
+    }
+  },
+  "selection_split": "val",
+  "threshold": 0.5,
+  "history": [
+    {
+      "epoch": 1,
+      "loss": 0.2601835206448491,
+      "macro_f1": 0.0,
+      "micro_f1": 0.0,
+      "hamming_loss": 0.06842068870142443,
+      "lrap": 0.42063158183141514
+    },
+    {
+      "epoch": 2,
+      "loss": 0.19266935418536285,
+      "macro_f1": 0.12754800449719042,
+      "micro_f1": 0.2892787524366472,
+      "hamming_loss": 0.06302724381136772,
+      "lrap": 0.6084291811730731
+    },
+    {
+      "epoch": 3,
+      "loss": 0.15621029596327293,
+      "macro_f1": 0.3334362867587806,
+      "micro_f1": 0.45240567670474213,
+      "hamming_loss": 0.05469506292352372,
+      "lrap": 0.6813021774750092
+    },
+    {
+      "epoch": 4,
+      "loss": 0.1310141123610414,
+      "macro_f1": 0.47530169122859084,
+      "micro_f1": 0.5302210542587726,
+      "hamming_loss": 0.052534227631033055,
+      "lrap": 0.6966280503385648
+    },
+    {
+      "epoch": 5,
+      "loss": 0.11253566292294284,
+      "macro_f1": 0.5029381704165661,
+      "micro_f1": 0.5463146650389135,
+      "hamming_loss": 0.05139330659659798,
+      "lrap": 0.7064549951212122
+    },
+    {
+      "epoch": 6,
+      "loss": 0.09879777671727569,
+      "macro_f1": 0.5247881580306243,
+      "micro_f1": 0.5587282896673536,
+      "hamming_loss": 0.05182547365509611,
+      "lrap": 0.7165496109699363
+    },
+    {
+      "epoch": 7,
+      "loss": 0.08596501028085217,
+      "macro_f1": 0.5216623806098082,
+      "micro_f1": 0.544896168470313,
+      "hamming_loss": 0.0537961554418476,
+      "lrap": 0.6981110289869566
+    },
+    {
+      "epoch": 8,
+      "loss": 0.07568888187011805,
+      "macro_f1": 0.5714037019720842,
+      "micro_f1": 0.5830417227456258,
+      "hamming_loss": 0.05355414188908865,
+      "lrap": 0.7143096493417778
+    },
+    {
+      "epoch": 9,
+      "loss": 0.06619542691692105,
+      "macro_f1": 0.5622619285834611,
+      "micro_f1": 0.5747619686200885,
+      "hamming_loss": 0.05481606969990319,
+      "lrap": 0.7079907506472819
+    },
+    {
+      "epoch": 10,
+      "loss": 0.057894079094212916,
+      "macro_f1": 0.5546757007136163,
+      "micro_f1": 0.5635784443854526,
+      "hamming_loss": 0.056838611533674456,
+      "lrap": 0.6939550987735272
+    },
+    {
+      "epoch": 11,
+      "loss": 0.050653144720822336,
+      "macro_f1": 0.5746532330885304,
+      "micro_f1": 0.5776718315454906,
+      "hamming_loss": 0.05512722998202185,
+      "lrap": 0.712200684637673
+    },
+    {
+      "epoch": 12,
+      "loss": 0.04395974186185411,
+      "macro_f1": 0.5629885944512661,
+      "micro_f1": 0.5696969696969697,
+      "hamming_loss": 0.0552309500760614,
+      "lrap": 0.7036056192724216
+    }
+  ],
+  "best_epoch": 11,
+  "train_seconds": 8930.752666324,
+  "prep_seconds": 33.33602243499996,
+  "device": "Tesla T4",
+  "parameter_count": 135019804,
+  "trainable_parameter_count": 135019804,
+  "time_definition": "Training loop + per-epoch validation/checkpoint writes; excludes preprocessing",
+  "deterministic_note": "Fixed seeds/cuDNN; exact equality across runtimes/GPUs is not guaranteed"
+}

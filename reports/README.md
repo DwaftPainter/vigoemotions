@@ -2,6 +2,8 @@
 
 Đây là nơi lưu **kết quả đo, bằng chứng thực nghiệm và bản trình bày**. Bắt đầu từ trang này thay vì mở lần lượt mọi CSV.
 
+**Midterm mới nhất — 04/11/2026:** [20 slide PDF](midterm_slides.pdf), [báo cáo cập nhật mục 5.7](midterm_report.pdf), [lời dẫn và Q&A](../docs/midterm_presentation_2026-11-04.md), [kết quả Neutral 28 nhãn](midterm_2026-11-04/neutral28_results.md) và [minh chứng riêng](midterm_2026-11-04/evidence/README.md). Macro-F1 28 nhãn TF-IDF/BiGRU/PhoBERT: **0,2310 / 0,3992 / 0,5747**; Neutral F1: **0,0208 / 0,0877 / 0,4400**. PhoBERT chạy 12 epoch, chọn 11; baseline gốc 4 epoch nên chưa cô lập tác động Neutral. Test chưa chấm. Cell ví dụ validation lỗi JVM; metric đã xác minh từ NPZ.
+
 Buổi **pre-midterm 23/10/2026**: [báo cáo tiến độ 6 trang](pre_midterm_progress_2026-10-23.pdf), [slide trình bày 12 trang](pre_midterm_slides_2026-10-23.pdf), [lời dẫn từng slide](pre_midterm_speaker_notes_2026-10-23.md) và [nguồn báo cáo sửa được](pre_midterm_progress_2026-10-23.md). Snapshot ngày 22/10 phân biệt kết quả baseline lịch sử với lượt Colab mới đang chạy; mỗi phần có đường dẫn minh chứng. Các tài liệu này không tự cập nhật sau khi có kết quả mới.
 
 **Lời thoại cập nhật ngày 23/10:** [script đọc trình bày PDF](pre_midterm_2026-10-23/presentation_script.pdf), [bản Markdown có link minh chứng](pre_midterm_2026-10-23/presentation_script.md). Script dùng lượt 04 mới đã kiểm chứng (PhoBERT Macro-F1 0,4679), kèm [bảng nguồn riêng](pre_midterm_2026-10-23/evidence/README.md), câu hỏi thường gặp và các số cần sửa khi dùng lại slide snapshot cũ ở trên. Baseline gốc vẫn được giữ nguyên; chưa có kết quả study 05 mới được kiểm chứng.
@@ -10,7 +12,7 @@ Buổi **pre-midterm 23/10/2026**: [báo cáo tiến độ 6 trang](pre_midterm_
 
 1. [Bảng so sánh ba baseline](tables/model_comparison.csv): mô hình nào tốt hơn trên validation, số tham số và thời gian.
 2. [Báo cáo PDF](midterm_report.pdf) hoặc [Markdown](midterm_report.md): phương pháp, diễn giải, giới hạn và hướng Final.
-3. [Slide PDF](midterm_slides.pdf) hoặc [nội dung/lời dẫn](midterm_slides.md): bản trình bày 18 trang, giới hạn 20 trang.
+3. [Slide PDF](midterm_slides.pdf) hoặc [nội dung/lời dẫn](midterm_slides.md): bản trình bày 20 trang, gồm study mới ở slide 13–17; [lời thoại đầy đủ](../docs/midterm_presentation_2026-11-04.md).
 4. Chọn một câu hỏi trong bảng dưới rồi mở README của nhóm file tương ứng.
 
 | Muốn biết gì? | Đọc ở đâu? |
@@ -27,6 +29,7 @@ Buổi **pre-midterm 23/10/2026**: [báo cáo tiến độ 6 trang](pre_midterm_
 
 | Nhóm | Trạng thái | Ý nghĩa |
 | --- | --- | --- |
+| Neutral 28 nhãn | Đủ ba model, kiểm chứng 04/11/2026 | [CSV/metadata riêng](midterm_2026-11-04/evidence/README.md); không ghi đè bộ baseline |
 | EDA và ba baseline | Đã có kết quả, nhập/kiểm chứng Colab ngày 14/10/2026 | Các bảng/hình/NPZ hiện hữu là kết quả thật; audit 22/10 kiểm tra lại từ xác suất |
 | Ablation mixed-neutral | `completed` trong [experiment_config.json](ablation_mixed_neutral/experiment_config.json) | Có hai điều kiện A/B, xác suất và bảng so sánh riêng |
 | Sweep learning rate | `prepared` trong [study.json](phobert_tuning/study.json) | Chỉ có thiết kế và ba cấu hình; **chưa có điểm sweep** |
@@ -34,7 +37,7 @@ Buổi **pre-midterm 23/10/2026**: [báo cáo tiến độ 6 trang](pre_midterm_
 | Audit lỗi thủ công | 10 bình luận TF-IDF của lượt baseline 14/10 đã được diễn giải | CSV 20 FN/20 FP tự sinh của neural chưa chứng minh đã được người đọc |
 | Test / thí nghiệm Final | Chưa có dự đoán hay metric test | Không gọi kết quả validation hoặc threshold sweep là kết quả Final |
 
-Các trạng thái trên là snapshot được audit ngày **22/10/2026**. Sau lượt chạy mới, xem run JSON, `study.json` và CSV thực tế; trang README không tự cập nhật trạng thái.
+Các dòng baseline, ablation và sweep giữ nguồn audit **22/10/2026**; dòng Neutral là cập nhật **04/11/2026**. Lượt chạy lại 27 nhãn dùng trong lời thoại 23/10 được lưu riêng trong evidence của ngày đó. Không trộn số liệu giữa các lượt.
 
 ## Cấu trúc thư mục và quy ước tên
 
@@ -51,6 +54,7 @@ reports/
   predictions/               xác suất validation, không có text
   ablation_mixed_neutral/     một thí nghiệm A/B đã hoàn tất
   phobert_tuning/             thiết kế sweep; kết quả chỉ có sau khi chạy
+  midterm_2026-11-04/         phần bổ sung 28 nhãn, nguồn slide, biểu đồ và evidence tổng hợp
 ```
 
 `<model>` là `tfidf_lr` (TF-IDF + OvR Logistic Regression), `gru` (BiGRU) hoặc `phobert` (PhoBERT). `_val` nghĩa là validation; `train_` chỉ thống kê quan hệ nhãn từ train. Thư mục thí nghiệm giữ riêng config/ID/xác suất để tránh trộn với baseline chính.

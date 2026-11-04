@@ -1,0 +1,16 @@
+model,category,count
+tfidf_lr,empty,1461
+tfidf_lr,neutral_only,2
+tfidf_lr,single_emotion,453
+tfidf_lr,multi_emotion,150
+tfidf_lr,mixed_neutral,0
+gru,empty,591
+gru,neutral_only,14
+gru,single_emotion,805
+gru,multi_emotion,650
+gru,mixed_neutral,6
+phobert,empty,59
+phobert,neutral_only,75
+phobert,single_emotion,720
+phobert,multi_emotion,1181
+phobert,mixed_neutral,31

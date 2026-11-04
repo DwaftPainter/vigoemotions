@@ -1,0 +1,4 @@
+model,split,label_id,label,precision,recall,f1,support,predicted_positive
+tfidf_lr,val,27,neutral,0.5,0.0106382978723404,0.0208333333333333,94,2
+gru,val,27,neutral,0.25,0.0531914893617021,0.087719298245614,94,20
+phobert,val,27,neutral,0.4150943396226415,0.4680851063829787,0.44,94,106

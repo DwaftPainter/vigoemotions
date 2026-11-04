@@ -1,0 +1,32 @@
+[
+  ["Thêm Neutral thành đầu ra thứ 28", [
+    "IDs 0–26: cảm xúc; ID 27: Neutral riêng.",
+    "Giữ annotation: [27] → Neutral; [2,27] → joy + Neutral.",
+    "Validation: 75 Neutral-only + 19 mixed = 94 Neutral dương.",
+    "Sigmoid + BCE; ngưỡng 0,5; không ép loại trừ Neutral."
+  ], null, "Baseline cũ bỏ ID 27; study mới giữ cả nhãn mixed. Đây là quyết định đo lường trước bất nhất annotation, không khẳng định đã sửa nhãn. Nguồn: annotation_counts.csv và config.json trong evidence ngày 04/11."],
+  ["Kết quả mới | 28 nhãn, validation", [
+    "Macro-F1: TF-IDF 0,2310; BiGRU 0,3992; PhoBERT 0,5747.",
+    "PhoBERT: Micro-F1 0,5777; Hamming 0,0551; LRAP 0,7122.",
+    "Đủ 2.066 mẫu; seed 42; test chưa chấm.",
+    "PhoBERT cao nhất trong study 28 nhãn này."
+  ], null, "Đọc bảng metric đúng tập 28 nhãn. Không lấy 0,5747 trừ trực tiếp baseline 27 nhãn để kết luận cải thiện do Neutral. Nguồn: metrics_summary.csv đã tính lại từ ba NPZ."],
+  ["Neutral vẫn là nhãn khó", [
+    "Neutral F1: 0,0208 / 0,0877 / 0,4400 (TF-IDF / BiGRU / PhoBERT).",
+    "PhoBERT: precision 0,4151; recall 0,4681; support 94.",
+    "Dự đoán 106 ca: 44 TP, 62 FP; còn 50 FN.",
+    "Tập dự đoán rỗng không tự động là Neutral."
+  ], null, "PhoBERT tìm được gần một nửa Neutral thật nhưng precision còn thấp. Baseline 27 không có output Neutral: không tự gán Neutral F1=0. Nguồn: neutral_analysis.csv và verification.csv."],
+  ["So sánh công bằng trên 27 cảm xúc", [
+    "Macro-F1 cũ → mới chiếu về 27: TF-IDF 0,2388 → 0,2388.",
+    "BiGRU: 0,4060 → 0,4108; PhoBERT: 0,4393 → 0,5796.",
+    "PhoBERT cũ 4 epoch; mới 12 epoch, chọn epoch 11.",
+    "Delta chưa tách tác động Neutral, epoch và runtime."
+  ], null, "Đối chứng ở đây là baseline gốc 14/10 tại reports/tables, không phải lượt chạy lại 23/10 có PhoBERT 0,4679. Checkpoint cũng được chọn theo tập nhãn khác. Hamming trên phép chiếu 27 tăng 0,0533 → 0,0552 dù F1 tăng. Muốn kết luận nhân quả cần đối chứng cùng điều kiện."],
+  ["Đường học & trạng thái thực nghiệm", [
+    "PhoBERT: 12 epoch; chọn 11; Macro-F1 28 nhãn 0,5747.",
+    "Epoch 12 giảm còn 0,5630; chưa kết luận overfitting.",
+    "BiGRU chọn 10/10; neural chạy Tesla T4.",
+    "lr=2e-5 là một lượt; sweep 05 vẫn chưa có kết quả."
+  ], "midterm_2026-11-04/neutral28_learning_curves.png", "Đường học có đủ history; train loss không thay validation loss. Cell tìm ví dụ validation lỗi JVM sau khi đã xuất metric; điểm số đã được tính lại từ NPZ. Giữ notebook output riêng tư. Nguồn: models/*/run.json và provenance.json."]
+]

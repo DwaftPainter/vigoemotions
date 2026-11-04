@@ -1,0 +1,40 @@
+{
+  "verified_date": "2026-11-04",
+  "source_zip": "vigoemotions_neutral28_private_results.zip",
+  "source_zip_sha256": "0b00002c82044ef20efb4dfc3b5cf7ac0b4cd8d6519057f9b27e3be24bc6399f",
+  "notebook": "notebooks/06_kaggle_neutral_28_labels.ipynb",
+  "notebook_sha256": "cb88ad7954621dcd5181d6f5430a7f4e0ddfe5107a168361235545c79143af9d",
+  "source_members_sha256": {
+    "annotation_counts.csv": "5cdf07ca31ead8578993d5b84bd0c3ebc52e99a2610b3b0a766367b5a9fb02c5",
+    "metrics_summary.csv": "22bbec9885bc7478353af0a2a290c6ac8970118aca6b7654147cd0060404ff32",
+    "neutral_analysis.csv": "82930ae49d8adb5d09745a768e308704c2ff99c3cdee42c5aa72e3474b7cc404",
+    "comparison_27_vs_28.csv": "f00507a5f771157c5db6d0e0e00c581c80f90fca207d91ae3881916890004835",
+    "emotion27_per_class_comparison.csv": "a229914f742928f26601bbef5beb7070c5adee26b6304d1bea298445f04c351d",
+    "per_class_metrics.csv": "a4b21cca903f9e7d146159a0860459d893620b06bd919e4f8e65996feac6017e",
+    "config.json": "0549cf270c4775283e8c9dc62e3f471216da88da7e2c9254f73400c578283caa",
+    "study.json": "3e4818e5d56df7a7034d1a39a1cee15a677e95937aca41eb467b538314497034",
+    "models/tfidf_lr/run.json": "b811ec9ccf4d6c0dec3627e760f54fc5792a14c2e826a0aa30d00cf175a7fe8f",
+    "models/gru/run.json": "6d43dfe465640de887baf922425875b3ce7f72592215d8e795b48b4bf8a79579",
+    "models/gru/history.csv": "6720064615041df7bd060b52eb97e4c13801d2cbe82681b8b37ab8f0beb12b61",
+    "models/phobert/run.json": "56f8f40ef8767dd73e490ddbfcb9c673150f2b7ae4b318fe4b116c77b9697861",
+    "models/phobert/history.csv": "3be8c6d1644d182153d2f1840df2beaddab9ec81b8276b197ca652b2ffef9229"
+  },
+  "checks": [
+    "Recomputed 28-label and emotion27 metrics from all three saved NPZs",
+    "Recomputed all 28 per-class metrics and Neutral TP/FP/FN",
+    "Verified CSV checksums, effective split IDs and validation targets against local source",
+    "Verified paired 27-label baseline IDs, targets and recorded metrics",
+    "Verified best epoch against complete run history",
+    "RUN_FINAL_TEST=False; no test predictions or test lock in ZIP"
+  ],
+  "notebook_errors": [
+    {
+      "cell_index": 24,
+      "execution_count": 16,
+      "error_type": "ValueError",
+      "context": "Optional validation examples; JVM already running"
+    }
+  ],
+  "baseline27_source": "reports/tables and reports/predictions (14/10 baseline, not 23/10 rerun)",
+  "exported_content": "Aggregate CSVs and run metadata only; no raw text, checkpoints, vocabulary or notebook outputs"
+}

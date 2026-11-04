@@ -5,6 +5,8 @@
 
 Tài liệu tiếng Việt dành cho sinh viên mới học ML/NLP.
 
+**Cập nhật midterm 04/11/2026:** Study mới đã có 28 nhãn, gồm Neutral; PhoBERT Macro-F1 28 = 0,574653, Neutral F1 = 0,4400, chọn epoch 11/12. Các chương bên dưới vẫn giảng pipeline và artifact baseline 27 nhãn gốc (PhoBERT 4 epoch, 0,439320), nên không dùng chúng như kết quả mới. Đọc thêm [kết quả 28 nhãn và giới hạn so sánh](../reports/midterm_2026-11-04/neutral28_results.md), [lời dẫn 20 slide/Q&A](midterm_presentation_2026-11-04.md). Test chưa chấm; sweep learning rate chưa hoàn tất.
+
 ```flow
 01  TF-IDF unigram/bigram → 27 Logistic Regression theo OvR
 02  Chuỗi token → embedding học từ đầu → BiGRU → 27 logits

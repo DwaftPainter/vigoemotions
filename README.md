@@ -5,17 +5,20 @@ Báo cáo/slide viết tiếng Việt; kết quả đo trên **validation**, tes
 
 ## Mở nội dung
 
+- **Midterm cập nhật 04/11:** [Lời dẫn 20 slide và Q&A](docs/midterm_presentation_2026-11-04.md), [kết quả study 28 nhãn](reports/midterm_2026-11-04/neutral28_results.md), [bảng nguồn đã kiểm chứng](reports/midterm_2026-11-04/evidence/README.md).
 - [Mục lục reports và ý nghĩa từng file](reports/README.md) — thứ tự đọc, quy ước tên, metric và trạng thái thí nghiệm.
 - [Kết quả audit toàn project](docs/project_audit.md) — đã kiểm tra gì, lỗi đã sửa và giới hạn còn lại.
 - [README cho buổi pre-midterm](README_PRE_MIDTERM.md) — kịch bản báo cáo tiến độ và đường dẫn đến từng minh chứng.
 - [Các công việc từ bắt đầu đến midterm](docs/midterm_worklog.md) — thứ tự thực hiện, lý do, bằng chứng và việc còn lại.
 - [Báo cáo PDF](reports/midterm_report.pdf) / [Markdown có thể sửa](reports/midterm_report.md).
-- [18 slide PDF (tối đa 20)](reports/midterm_slides.pdf) / [Nội dung và lời dẫn](reports/midterm_slides.md).
+- [20 slide PDF (tối đa 20)](reports/midterm_slides.pdf) / [Nội dung và lời dẫn](reports/midterm_slides.md).
 - [Notebook Colab GPU](notebooks/04_colab_neural_baselines.ipynb).
 - [Bảng ba mô hình](reports/tables/model_comparison.csv).
 - [Điều chỉnh learning rate PhoBERT](docs/phobert_tuning.md) / [Notebook Colab 05](notebooks/05_colab_phobert_tuning.ipynb) — đã chuẩn bị, chưa chạy sweep GPU.
 
-**Trạng thái (14/10/2026):** Đã nhập và kiểm chứng kết quả Colab của đủ ba mô hình.
+**Mới nhất (04/11/2026):** Đã kiểm chứng ZIP kết quả và notebook 06 Kaggle: Macro-F1 validation **28 nhãn** của TF-IDF / BiGRU / PhoBERT là **0,2310 / 0,3992 / 0,5747**; Neutral F1 **0,0208 / 0,0877 / 0,4400**. PhoBERT chạy 12 epoch, chọn 11; không quy mức tăng so với baseline 4 epoch cho riêng Neutral. Test chưa chấm. Cell tìm ví dụ validation lỗi JVM sau xuất metric; các metric đã tính lại từ NPZ. Báo cáo mục 5.7 và slide 13–17 có kết quả mới. Xem [hướng dẫn study 28 nhãn](docs/neutral_28_labels.md).
+
+**Baseline lịch sử (14/10/2026):** Đã nhập và kiểm chứng kết quả Colab của đủ ba mô hình.
 BiGRU chạy 10 epoch (37,50 giây); PhoBERT chạy 4 epoch (3.047,11 giây), trên Tesla T4.
 Macro-F1 validation tại 0,5 lần lượt là 0,2388 / 0,4060 / 0,4393 cho TF-IDF / BiGRU / PhoBERT.
 Xem [kiểm tra kết quả Colab](docs/colab_results_check.md). Còn cần xác minh mapping/split, đọc lỗi neural
@@ -24,7 +27,7 @@ và bổ sung tên, MSSV, phân công nhóm trước khi nộp.
 **Bổ sung cho pre-midterm:** đã fine-tune PhoBERT với cấu hình baseline; sweep hyperparameter là bước tiếp theo.
 Đã thêm quy trình so sánh learning rate `1e-5 / 2e-5 / 3e-5`, chạy lại `2e-5` trong cùng runtime làm đối chứng.
 Mỗi lượt lưu kết quả/checkpoint riêng; giữ bảng ba baseline ban đầu. Chọn cấu hình bằng validation tại 0,5.
-**Chưa có số liệu sweep mới**; report/slide ghi rõ trạng thái chờ GPU.
+**Chưa có số liệu sweep mới**; study 28 nhãn 04/11 là một lượt lr=2e-5, không hoàn tất sweep notebook 05.
 
 Để chạy: tạo ZIP bằng `.venv/bin/python scripts/package_colab.py --include-results`, mở notebook 05 trên Colab T4,
 upload ZIP và ba CSV riêng rồi chạy các cell. Notebook xuất ZIP kết quả và tải riêng checkpoint được chọn.
@@ -39,9 +42,9 @@ Không commit/upload CSV nguồn, comment gốc, vocabulary hoặc checkpoint c�
 `data/` đã được ignore. Báo cáo, biểu đồ, case audit chỉ chứa tổng hợp/ID và mô tả trừu tượng.
 
 Tổng 20.664 mẫu; train 16.531, val 2.066, test 2.067. Loại train ID `1698` trùng text với test
-`red000094`; train dùng thực nghiệm còn 16.530. Neutral ID 27 → không thêm output;
+`red000094`; train dùng thực nghiệm còn 16.530. Trong baseline 27 nhãn, Neutral ID 27 → không thêm output;
 mixed-neutral giữ nhãn cảm xúc; gộp ID lặp. Chi tiết: [dataset check](docs/dataset_check.md).
-Mapping nhãn kế thừa notebook gốc, cần người có quyền truy cập xác minh với metadata dataset.
+Study 28 nhãn giữ Neutral thành output riêng và giữ cả mixed-neutral. Mapping đã đối chiếu ảnh dataset card do người dùng cung cấp ngày 22/10, xem [label mapping](docs/label_mapping.md).
 
 Giữ split được cung cấp và lưu `splits/*.csv`. Chưa chứng minh thuật toán split gốc được multilabel
 stratified: audit prevalence không thay thế bằng chứng đó. Nếu giảng viên yêu cầu tự stratify, phải tạo
