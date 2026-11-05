@@ -10,7 +10,7 @@
 
 Tất cả là validation (2.066 mẫu), seed 42, ngưỡng 0,5; test chưa chấm. Neutral support 94 = 75 only + 19 mixed. BiGRU chọn epoch 10/10, PhoBERT 11/12 trên Tesla T4; config thật nằm trong ZIP. Baseline gốc chỉ chạy PhoBERT 4 epoch nên chưa tách tác động Neutral khỏi epoch/runtime. ZIP chứa checkpoint/tokenizer/vocab; không cần train lại để đọc kết quả.
 
-Cell tìm ví dụ validation (cell index 24, execution_count 16) lỗi JVM đã chạy trước đó; không có `validation_prediction_cases.csv` trong ZIP. Training, metric và inference bốn câu tự viết có output; metric được kiểm chứng riêng. Notebook thực thi có output comment nguồn, giữ riêng tư. Các hướng dẫn bên dưới dùng để tái chạy, không ngụ ý toàn notebook đã chạy không lỗi.
+Lượt thực thi nguồn có lỗi JVM tại cell tìm ví dụ validation; ZIP gốc không có `validation_prediction_cases.csv`. Ngày 05/11 đã sửa hàm dùng xác suất NPZ đã lưu, không khởi tạo lại model/JVM; kiểm chứng offline và xuất đủ bảng ID cho cả ba model. Notebook công khai đã xóa output, mặc định `DISPLAY_PRIVATE_TEXT=False`; hash bản thực thi cũ được giữ trong provenance. Không chạy lại toàn bộ training GPU.
 
 Không sửa pipeline 27 nhãn. Notebook mới gọi `scripts/neutral_28_labels.py`, dùng namespace riêng
 `reports/neutral_28_labels/` cho CSV, model, tokenizer, vocabulary, config và báo cáo Markdown.
@@ -28,7 +28,7 @@ Checkpoint, vocabulary và kết quả riêng của study được Git ignore; c
 - BiGRU dùng lại class/forward từ `train_neural.py`, thay đúng linear head sang 28; vocabulary chỉ xây từ train.
 - PhoBERT giữ checkpoint/revision, VnCoreNLP, tokenizer và fine-tune toàn bộ backbone/head. Dùng lại
   `segmented_texts`, `logits`, `predict`; BCE, AdamW và gradient clipping như baseline.
-- Config 28 được sao chép riêng từ `configs/midterm.json` đi kèm ZIP; kiểm tra epoch trong config
+- Config 28 được sao chép riêng từ `configs/neutral28_12ep_base.json` đi kèm ZIP; kiểm tra epoch trong config
   in ra sau init. Không lấy epoch từ notebook khác hay suy ra từ reports cũ. Muốn đổi phải tạo study mới
   và nêu rõ khác biệt với baseline.
 - Chọn checkpoint bằng validation Macro-F1 trên 28 nhãn tại 0.5 (khác tập nhãn chọn epoch của baseline 27).
@@ -66,7 +66,7 @@ tokenizer và model backbone/head được nạp từ checkpoint local.
 5. Chạy từ trên xuống: nạp project → nối workspace → dependency → GPU/Java → CSV → init
    → smoke tests → TF-IDF → BiGRU → PhoBERT → report/inference → ZIP. Dừng khi cell lỗi.
    Phải thấy `CUDA available: True` trước neural. Internet cần cho pip, PhoBERT và VnCoreNLP.
-6. Sau init, đọc config được in ra: epoch thực dùng lấy từ `configs/midterm.json` trong ZIP.
+6. Sau init, đọc config được in ra: epoch thực dùng lấy từ `configs/neutral28_12ep_base.json` trong ZIP.
    Muốn chỉnh hyperparameters thì chỉnh file trước init; study đã init phải dùng OUT mới.
    Giữ `RUN_FINAL_TEST = False` nếu chưa khóa các lựa chọn hoặc vẫn giữ test cho Final.
 7. Chạy cell ZIP cuối; tải **/kaggle/working/vigoemotions_neutral28_private_results.zip**

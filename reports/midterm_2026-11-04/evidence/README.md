@@ -1,6 +1,6 @@
 # Nguồn kết quả Neutral 28 nhãn — kiểm chứng 04/11/2026
 
-Trích từ `vigoemotions_neutral28_private_results.zip`, đối chiếu notebook `notebooks/06_kaggle_neutral_28_labels.ipynb`. Hash ZIP, notebook và từng file trích nguyên nằm trong [provenance.json](provenance.json). Chỉ lưu CSV tổng hợp và metadata; checkpoint, vocabulary, probabilities và output comment nguồn vẫn ở nguồn riêng tư.
+Trích từ `vigoemotions_neutral28_private_results.zip`, đối chiếu notebook `notebooks/06_kaggle_neutral_28_labels.ipynb`. Hash ZIP, notebook và từng file trích nguyên nằm trong [provenance.json](provenance.json). Lưu CSV tổng hợp, NPZ ID/nhãn/xác suất và metadata; checkpoint, vocabulary và output comment nguồn giữ riêng tư. Ngày 05/11 bản notebook chia sẻ đã xóa outputs; provenance giữ hash của cả bản thực thi nguồn và bản đã sanitize.
 
 | Muốn kiểm tra | File |
 | --- | --- |
@@ -13,6 +13,9 @@ Trích từ `vigoemotions_neutral28_private_results.zip`, đối chiếu noteboo
 | Config và môi trường của study | [config.json](config.json), [study.json](study.json) |
 | Cấu hình thật, best epoch, thời gian và tham số | [TF-IDF run](models/tfidf_lr/run.json), [BiGRU run](models/gru/run.json), [PhoBERT run](models/phobert/run.json) |
 | Đường học theo epoch | [BiGRU history](models/gru/history.csv), [PhoBERT history](models/phobert/history.csv) |
+| Xác suất validation 28 không chứa text | `models/{tfidf_lr,gru,phobert}/val_predictions.npz` |
+| Đọc lỗi PhoBERT hỗ trợ AI, chờ nhóm xác nhận | [phobert28_error_review.csv](phobert28_error_review.csv) |
+| F1 đầy đủ từng nhãn | [baseline27](baseline27_per_label_f1.csv), [neutral28](neutral28_per_label_f1.csv) |
 | Kiểm chứng lại metric và Neutral TP/FP/FN | [verification.csv](verification.csv) |
 | Số mẫu cho năm kiểu dự đoán, tính trực tiếp từ NPZ | [prediction_category_counts.csv](prediction_category_counts.csv) |
 
@@ -23,5 +26,7 @@ Hai bảng `verification.csv` và `prediction_category_counts.csv` được tín
 **Không trộn baseline:** nguồn đối chiếu trong ZIP là bộ gốc (PhoBERT 0,439320, 4 epoch), không phải [lượt chạy lại 23/10](../../pre_midterm_2026-10-23/evidence/model_comparison.csv) (0,467850). `study.json.baseline_config` là config tại init có 12 epoch; đối chiếu thời lượng baseline thật bằng [reports/phobert_run.json](../../phobert_run.json). File comparison giữ nguyên đường dẫn runtime `/kaggle/working/...` để bảo toàn nguồn; bảng trong thư mục này là bản sao local.
 
 **Giới hạn thực thi:** code cell 24 (execution_count 16) tìm ví dụ validation lỗi JVM/VnCoreNLP. ZIP không có `validation_prediction_cases.csv`; bảng đếm bổ sung ở đây không khẳng định cell đó chạy thành công. Inference bốn câu tự viết và huấn luyện/xuất metric đã có output. Test không được chấm. Notebook nguồn có output văn bản dataset, cần giữ private; thư mục evidence không sao chép các output đó.
+
+**Cập nhật 05/11:** Mã tìm ca validation dùng NPZ, không nạp lại JVM, đã xuất [validation_prediction_cases.csv](validation_prediction_cases.csv) cho cả ba model. File này và các bảng review/per-label bổ sung là kết quả hoàn thiện, không có trong ZIP nguồn. Notebook công khai hiện không có output văn bản; lịch sử Git cũ chưa được rewrite.
 
 [Phần diễn giải đưa vào báo cáo](../neutral28_results.md) • [Lời dẫn và Q&A](../../../docs/midterm_presentation_2026-11-04.md).

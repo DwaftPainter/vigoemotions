@@ -13,6 +13,8 @@ Tài liệu tiếng Việt dành cho sinh viên mới học ML/NLP.
 03  Tách từ → PhoBERT-base-v2 pretrained → full fine-tuning
 ```
 
+**Hoàn thiện 05/11:** Notebook 07 đã có audit split; report có phụ lục F1 mọi nhãn và chín ca PhoBERT đọc định tính hỗ trợ AI. Profile 27/4 epoch và Neutral 12 epoch được tách riêng; xem [lệnh tái lập](reproducibility_profiles.md) và [trạng thái trước nộp](midterm_readiness_2026-11-05.md).
+
 ### Bạn cần trả lời được điều gì?
 
 Một bình luận được biến thành số như thế nào? Mô hình học điều gì từ nhãn? Trọng số thay đổi ở dòng mã nào? Điểm validation nói được và chưa nói được điều gì?
@@ -134,7 +136,7 @@ Máy tính cần số để nhân ma trận và tối ưu hàm mất mát. TF-ID
 
 **Unigram** là một token. **Bigram** là hai token đứng cạnh nhau. [MINH HỌA] “không vui” tạo unigram `không`, `vui` và bigram `không vui`. Bigram giúp phân biệt một số cụm phủ định, nhưng không xử lý được mọi quan hệ ngữ nghĩa dài.
 
-[MÃ] `configs/midterm.json:22–31` dùng `lowercase=true`, `token_pattern=(?u)\b\w+\b`, `ngram_range=[1,2]`. Tokenizer regex nhận chuỗi ký tự từ Unicode, kể cả token một ký tự. Đây không phải tách từ VnCoreNLP; nhiều từ tiếng Việt gồm nhiều tiếng vẫn bị tách theo ranh giới regex. Emoji và dấu câu không thuộc `\w` nên không thành đặc trưng riêng ở cấu hình này. Không có bước loại stopword được cấu hình.
+[MÃ] `configs/baseline27_4ep.json:22–31` dùng `lowercase=true`, `token_pattern=(?u)\b\w+\b`, `ngram_range=[1,2]`. Tokenizer regex nhận chuỗi ký tự từ Unicode, kể cả token một ký tự. Đây không phải tách từ VnCoreNLP; nhiều từ tiếng Việt gồm nhiều tiếng vẫn bị tách theo ranh giới regex. Emoji và dấu câu không thuộc `\w` nên không thành đặc trưng riêng ở cấu hình này. Không có bước loại stopword được cấu hình.
 
 ### 2.2. TF, IDF và ví dụ tính tay
 
@@ -163,7 +165,7 @@ Nguồn [MÃ]: `scripts/train_tfidf.py:17–24`.
 
 <!-- source:scripts/train_tfidf.py:17:24 -->
 ```python
-    config = json.loads((ROOT/'configs/midterm.json').read_text())
+    config = json.loads((ROOT/'configs/baseline27_4ep.json').read_text())
     frames, _ = load_data()
     params = config['tfidf'].copy()
     params['ngram_range'] = tuple(params['ngram_range'])
@@ -187,7 +189,7 @@ Nguồn [MÃ]: `scripts/train_tfidf.py:17–24`.
 | `solver`, `max_iter` | `liblinear`, 1.000: thuật toán tối ưu và giới hạn số vòng lặp solver. |
 | `random_state` | 42, trùng seed cấu hình chung. |
 
-Nguồn tham số: `configs/midterm.json:22–38`. Regularization L2 và `class_weight=None` là mặc định của Logistic Regression phiên bản 1.6.1 ghi trong run; JSON không bật cân bằng lớp tự động.
+Nguồn tham số: `configs/baseline27_4ep.json:22–38`. Regularization L2 và `class_weight=None` là mặc định của Logistic Regression phiên bản 1.6.1 ghi trong run; JSON không bật cân bằng lớp tự động.
 
 ### 2.4. Logistic Regression và OvR là gì?
 
@@ -335,7 +337,7 @@ Nguồn [MÃ]: `scripts/train_neural.py:54–59`.
 | Loss / optimizer | `BCEWithLogitsLoss` / AdamW. |
 | Weight decay / gradient clipping | 0,0 do fallback của code / norm tối đa 1,0. |
 
-Nguồn: `configs/midterm.json:39–48`; optimizer/loss/clipping ở `scripts/train_neural.py:135–150`. Đừng nhầm dropout ở đây với dropout bên trong nhiều tầng GRU: mã chỉ tạo `nn.Dropout` bên ngoài, không truyền tham số `dropout` vào `nn.GRU`.
+Nguồn: `configs/baseline27_4ep.json:39–48`; optimizer/loss/clipping ở `scripts/train_neural.py:135–150`. Đừng nhầm dropout ở đây với dropout bên trong nhiều tầng GRU: mã chỉ tạo `nn.Dropout` bên ngoài, không truyền tham số `dropout` vào `nn.GRU`.
 
 [MÃ] `prepare` tạo `TensorDataset(ids,mask,target_float32)` rồi `DataLoader`, train có shuffle và val không shuffle (`scripts/train_neural.py:81–85`). Vòng lặp neural được dùng chung cho BiGRU và PhoBERT; Chương 4–5 trích đầy đủ đoạn cập nhật trọng số. Với BiGRU, `logits` gọi `model(ids,mask)` tại `scripts/train_neural.py:89–92`.
 
@@ -463,7 +465,7 @@ Nguồn [MÃ]: `scripts/train_neural.py:81–85`.
 | AdamW learning rate / weight decay | 0,00002 = 2e-5 / 0,01. |
 | Loss / gradient clipping | BCEWithLogitsLoss / max norm 1,0. |
 
-Nguồn: `configs/midterm.json:49–57`, `scripts/train_neural.py:135–150`. Mã không tự đặt scheduler, warmup, gradient accumulation hoặc mixed precision; không thêm chúng vào phần mô tả thí nghiệm.
+Nguồn: `configs/baseline27_4ep.json:49–57`, `scripts/train_neural.py:135–150`. Mã không tự đặt scheduler, warmup, gradient accumulation hoặc mixed precision; không thêm chúng vào phần mô tả thí nghiệm.
 
 <!-- page -->
 ### 4.5. Fine-tuning thực sự xảy ra ở đâu?
@@ -753,7 +755,7 @@ Có thể nói hai lượt này cải thiện nhiều so với epoch đầu. Kh�
 | Regularization | L2; C=1. | Dropout 0,3; decay=0,0. | Decay=0,01; dropout bên trong model thư viện. |
 | Quyết định nhãn | Xác suất ≥0,5. | Sigmoid(logits) ≥0,5. | Sigmoid(logits) ≥0,5. |
 
-Nguồn thực thi: `scripts/train_tfidf.py:17–32`, `scripts/train_neural.py:19–85`, `scripts/train_neural.py:89–163`; cấu hình: `configs/midterm.json:22–58`. Các mặc định thư viện như L2 được phân biệt với tham số viết tường minh trong config. Không tự gán dropout=0,3 của BiGRU cho PhoBERT.
+Nguồn thực thi: `scripts/train_tfidf.py:17–32`, `scripts/train_neural.py:19–85`, `scripts/train_neural.py:89–163`; cấu hình: `configs/baseline27_4ep.json:22–58`. Các mặc định thư viện như L2 được phân biệt với tham số viết tường minh trong config. Không tự gán dropout=0,3 của BiGRU cho PhoBERT.
 
 ### 8.2. Độ phức tạp và chi phí nên hiểu thế nào?
 
@@ -837,7 +839,7 @@ PhoBERT có nhiều tầng dễ nhầm: pretrained khác fine-tuning, segmentati
 
 **5. Tại sao cần OvR?** Mỗi cột cảm xúc là một bài toán có/không; OvR huấn luyện một Logistic Regression cho mỗi cột (`scripts/train_tfidf.py:24–27`).
 
-**6. TF-IDF có dùng tách từ VnCoreNLP không?** Không. Vectorizer dùng regex từ config; nhánh VnCoreNLP chỉ phục vụ PhoBERT (`configs/midterm.json:22–31`, `scripts/train_neural.py:63–67`).
+**6. TF-IDF có dùng tách từ VnCoreNLP không?** Không. Vectorizer dùng regex từ config; nhánh VnCoreNLP chỉ phục vụ PhoBERT (`configs/baseline27_4ep.json:22–31`, `scripts/train_neural.py:63–67`).
 
 **7. Vì sao chỉ fit vocabulary trên train?** Để vocabulary/IDF không học thông tin phân bố từ val/test. Validation chỉ transform; BiGRU xây Counter trên train (`scripts/train_tfidf.py:23–29`, `scripts/train_neural.py:48–49`).
 
@@ -920,4 +922,4 @@ PhoBERT có nhiều tầng dễ nhầm: pretrained khác fine-tuning, segmentati
 
 **[3]** scikit-learn: [TF-IDF](https://scikit-learn.org/stable/modules/feature_extraction.html), [OvR 1.6.1](https://scikit-learn.org/1.6/modules/generated/sklearn.multiclass.OneVsRestClassifier.html), [Logistic Regression 1.6.1](https://scikit-learn.org/1.6/modules/generated/sklearn.linear_model.LogisticRegression.html), [LRAP](https://scikit-learn.org/1.6/modules/generated/sklearn.metrics.label_ranking_average_precision_score.html). **[4]** PyTorch: [BCEWithLogitsLoss](https://docs.pytorch.org/docs/stable/generated/torch.nn.BCEWithLogitsLoss.html), [AdamW](https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html), [GRU](https://docs.pytorch.org/docs/stable/generated/torch.nn.GRU.html).
 
-**[5]** Nguồn nội bộ: `configs/midterm.json`, ba run JSON, ba NPZ validation, các bảng metric/per-label trong `reports/tables/`, `reports/phobert_tuning/study.json`, `docs/label_mapping.md`, đề bài `docs/02-vigoemotions-vietnamese-emotion.pdf`. Tài liệu thư viện được tra qua Context7 và nguồn chính thức; hành vi triển khai và số đo lấy từ repository, không thay bằng ví dụ trên mạng.
+**[5]** Nguồn nội bộ: `configs/baseline27_4ep.json`, ba run JSON, ba NPZ validation, các bảng metric/per-label trong `reports/tables/`, `reports/phobert_tuning/study.json`, `docs/label_mapping.md`, đề bài `docs/02-vigoemotions-vietnamese-emotion.pdf`. Tài liệu thư viện được tra qua Context7 và nguồn chính thức; hành vi triển khai và số đo lấy từ repository, không thay bằng ví dụ trên mạng.

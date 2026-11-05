@@ -1,5 +1,7 @@
 # Chạy ViGoEmotions trên Kaggle
 
+Các lượt chạy dùng [profile cấu hình tách riêng](reproducibility_profiles.md). Notebook 04 mặc định baseline 10/4; profile Kaggle 25/20 giữ riêng, không sửa đè `midterm.json`. Notebook/gói chia sẻ đã xóa output.
+
 ## 1. File đã chuẩn bị
 
 - `notebooks/04_kaggle_neural_baselines.ipynb`: chạy EDA, TF-IDF, BiGRU, PhoBERT và tạo báo cáo.

@@ -8,6 +8,8 @@ Buổi **pre-midterm 23/10/2026**: [báo cáo tiến độ 6 trang](pre_midterm_
 
 **Lời thoại cập nhật ngày 23/10:** [script đọc trình bày PDF](pre_midterm_2026-10-23/presentation_script.pdf), [bản Markdown có link minh chứng](pre_midterm_2026-10-23/presentation_script.md). Script dùng lượt 04 mới đã kiểm chứng (PhoBERT Macro-F1 0,4679), kèm [bảng nguồn riêng](pre_midterm_2026-10-23/evidence/README.md), câu hỏi thường gặp và các số cần sửa khi dùng lại slide snapshot cũ ở trên. Baseline gốc vẫn được giữ nguyên; chưa có kết quả study 05 mới được kiểm chứng.
 
+**Hoàn thiện 05/11:** [audit split](split_audit/README.md), [checklist trước nộp](../docs/midterm_readiness_2026-11-05.md), [profile tái lập](../docs/reproducibility_profiles.md). Report mục 6.1 có chín ca đọc lỗi PhoBERT hỗ trợ AI; phụ lục A có F1 đủ nhãn; evidence/models có NPZ 28 nhãn không chứa text.
+
 ## Nên đọc theo thứ tự nào?
 
 1. [Bảng so sánh ba baseline](tables/model_comparison.csv): mô hình nào tốt hơn trên validation, số tham số và thời gian.
@@ -34,7 +36,7 @@ Buổi **pre-midterm 23/10/2026**: [báo cáo tiến độ 6 trang](pre_midterm_
 | Ablation mixed-neutral | `completed` trong [experiment_config.json](ablation_mixed_neutral/experiment_config.json) | Có hai điều kiện A/B, xác suất và bảng so sánh riêng |
 | Sweep learning rate | `prepared` trong [study.json](phobert_tuning/study.json) | Chỉ có thiết kế và ba cấu hình; **chưa có điểm sweep** |
 | Logs/history/learning curves bổ sung từ notebook 04 | Code đã có, chưa sinh ở snapshot này | Chỉ xuất hiện sau khi chạy lại notebook 04 mới |
-| Audit lỗi thủ công | 10 bình luận TF-IDF của lượt baseline 14/10 đã được diễn giải | CSV 20 FN/20 FP tự sinh của neural chưa chứng minh đã được người đọc |
+| Đọc lỗi định tính | 10 bình luận TF-IDF gốc và 9 ca PhoBERT 28 hỗ trợ AI | Nhóm cần xác nhận phần đọc PhoBERT; không coi xuất CSV là audit của nhóm |
 | Test / thí nghiệm Final | Chưa có dự đoán hay metric test | Không gọi kết quả validation hoặc threshold sweep là kết quả Final |
 
 Các dòng baseline, ablation và sweep giữ nguồn audit **22/10/2026**; dòng Neutral là cập nhật **04/11/2026**. Lượt chạy lại 27 nhãn dùng trong lời thoại 23/10 được lưu riêng trong evidence của ngày đó. Không trộn số liệu giữa các lượt.

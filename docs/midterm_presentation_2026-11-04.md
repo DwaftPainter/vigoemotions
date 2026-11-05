@@ -1,4 +1,4 @@
-# Lời dẫn midterm — cập nhật kết quả Neutral ngày 04/11/2026
+# Lời dẫn midterm — hoàn thiện ngày 05/11/2026, giữ kết quả Neutral 04/11
 
 Dùng cùng [20 slide PDF](../reports/midterm_slides.pdf) và [báo cáo PDF](../reports/midterm_report.pdf). Dự kiến 12–15 phút, điều chỉnh theo thời lượng giảng viên cấp; dành khoảng 4–5 phút cho slide 13–17 về kết quả mới. [Bảng nguồn và kiểm chứng](../reports/midterm_2026-11-04/evidence/README.md) giúp trả lời khi được hỏi số liệu lấy từ đâu. Điền tên, MSSV và phân công nhóm trước khi nộp.
 
@@ -26,7 +26,7 @@ Dùng cùng [20 slide PDF](../reports/midterm_slides.pdf) và [báo cáo PDF](..
 
 ### 6. Chia tập và preprocessing
 
-“Nhóm giữ split được cấp, fit từ vựng và IDF chỉ trên train. Chuẩn hóa Unicode và khoảng trắng nhưng giữ dấu, phủ định và emoji ở bước chung. PhoBERT có tách từ VnCoreNLP trước BPE. Chưa có mã tạo split gốc nên chưa chứng minh được stratification; nhóm đã kiểm tra phân bố. Test chưa được dùng để chọn mô hình hay ngưỡng.”
+“Nhóm giữ split được cấp, fit từ vựng và IDF chỉ trên train. Chuẩn hóa Unicode và khoảng trắng nhưng giữ dấu, phủ định và emoji ở bước chung. PhoBERT có tách từ VnCoreNLP trước BPE. Notebook 07 xác nhận fixed IDs khớp và không overlap sau xử lý; lệch prevalence lớn nhất là 1,6324 điểm phần trăm ở validation, 0,9387 ở test. Đây là audit chất lượng phân bố, chưa xác nhận thuật toán chia gốc. Test chưa được dùng để chọn mô hình hay ngưỡng.”
 
 ### 7. Ba baseline gốc
 
@@ -70,7 +70,7 @@ Dùng cùng [20 slide PDF](../reports/midterm_slides.pdf) và [báo cáo PDF](..
 
 ### 17. Đường học và thực nghiệm đã hoàn tất đến đâu
 
-“PhoBERT chọn epoch 11 với Macro-F1 28 nhãn 0,5747; epoch 12 giảm còn 0,5630 dù train loss tiếp tục giảm. Chúng ta chưa có validation loss nên không kết luận overfitting chỉ từ đây. Study này chạy một learning rate 2e-5, chưa phải sweep notebook 05. Cell tìm ví dụ validation lỗi JVM sau khi xuất metric; kết quả định lượng đã được kiểm chứng riêng từ NPZ.”
+“PhoBERT chọn epoch 11 với Macro-F1 28 nhãn 0,5747; epoch 12 giảm còn 0,5630 dù train loss tiếp tục giảm. Chúng ta chưa có validation loss nên không kết luận overfitting chỉ từ đây. Study này chạy một learning rate 2e-5, chưa phải sweep notebook 05. Lượt nguồn từng lỗi JVM ở cell tìm ví dụ; bản mã ngày 05/11 đã dùng xác suất lưu sẵn để tránh nạp lại JVM. Không chạy lại training GPU; metric giữ nguyên.”
 
 ### 18. Câu hỏi Final
 
@@ -78,7 +78,7 @@ Dùng cùng [20 slide PDF](../reports/midterm_slides.pdf) và [báo cáo PDF](..
 
 ### 19. Việc còn lại
 
-“Nhóm đã có checkpoint, tokenizer và vocabulary của study 28 trong ZIP riêng tư. Cần đọc lỗi neural, điền thông tin nhóm và xác nhận yêu cầu split. Nếu muốn kết luận tác động riêng của Neutral thì cần đối chứng 27/28 cùng điều kiện; sweep learning rate vẫn chưa có kết quả. Khi chia sẻ notebook phải bỏ output chứa comment nguồn. Các giới hạn này được ghi trong báo cáo thay vì trình bày như đã hoàn tất.”
+“Nhóm đã có checkpoint, tokenizer và vocabulary của study 28 trong ZIP riêng tư. Đã bổ sung chín ca đọc lỗi PhoBERT hỗ trợ AI và phụ lục per-label, nhóm cần xác nhận. Còn thiếu thông tin nhóm và xác nhận yêu cầu official split. Nếu muốn kết luận tác động riêng của Neutral thì cần đối chứng 27/28 cùng điều kiện; sweep learning rate vẫn chưa có kết quả. Notebook/gói ZIP chia sẻ đã xóa output, không kèm lịch sử Git cũ có dữ liệu nguồn. Các giới hạn này được ghi trong báo cáo thay vì trình bày như đã hoàn tất.”
 
 ### 20. Nguồn và tái lập
 
@@ -94,7 +94,7 @@ Dùng cùng [20 slide PDF](../reports/midterm_slides.pdf) và [báo cáo PDF](..
 | Sao có Neutral đi cùng cảm xúc? | Annotation có mixed. Study giữ nguyên để đo, công bố bất nhất và chưa đặt luật sửa nhãn/decoder loại trừ. |
 | Baseline là 0,4393 hay 0,4679? | Hai lượt khác nhau: artifact gốc 14/10 là 0,4393, lượt chạy lại dùng ngày 23/10 là 0,4679. Study 06 đối chiếu bộ gốc 0,4393. |
 | Đã tune learning rate chưa? | Study 06 dùng lr=2e-5; chạy 12 epoch không hoàn tất grid learning rate của notebook 05. |
-| Lỗi notebook có làm metric sai không? | Cell tìm ví dụ validation lỗi JVM; ba NPZ và CSV đã xuất trước đó. Tính lại đủ metric và từng nhãn khớp, sai số tối đa dưới 1e-12. Không tuyên bố toàn notebook chạy không lỗi. |
+| Lỗi notebook có làm metric sai không? | Lượt nguồn từng lỗi JVM sau khi xuất metric; đã sửa riêng cell đọc ca bằng NPZ và kiểm chứng offline. Không gọi đó là chạy lại training GPU; metric giữ nguyên. |
 | Kết quả đã qua test chưa? | Chưa. Test chỉ tham gia audit dữ liệu/trùng lặp; `RUN_FINAL_TEST=False`, chưa có metric test mô hình trong ZIP. |
 | Có bảo đảm kết quả lặp lại y hệt không? | Có seed/config/revision và artifact để kiểm chứng; không bảo đảm bitwise giữa GPU/package khác nhau. Một seed chưa đo được độ biến thiên. |
 

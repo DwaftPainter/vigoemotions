@@ -1,6 +1,6 @@
 # ViGoEmotions — Các công việc từ bắt đầu đến midterm
 
-Cập nhật mới nhất: **04/11/2026**, xem mục 12 về study 28 nhãn. Mục 1–11 giữ lịch sử baseline và thiết kế sweep từ 14–23/10. Tài liệu này tổng hợp công việc theo thứ tự thực hiện hợp lý,
+Cập nhật mới nhất: **05/11/2026**, xem mục 12 về study 28 nhãn. Mục 1–11 giữ lịch sử baseline và thiết kế sweep từ 14–23/10. Tài liệu này tổng hợp công việc theo thứ tự thực hiện hợp lý,
 dựa trên mã, notebook và kết quả đang có trong project; không phải nhật ký có thời điểm của từng thao tác.
 Mục đích là giúp thành viên mới hiểu **đã làm gì, vì sao làm, xem bằng chứng ở đâu và còn thiếu gì**.
 
@@ -236,3 +236,10 @@ Macro-F1 28 của TF-IDF / BiGRU / PhoBERT: **0,231040 / 0,399227 / 0,574653**; 
 Cell tìm ví dụ validation lỗi JVM sau huấn luyện/xuất metric; ZIP không có `validation_prediction_cases.csv`. Bảng đếm kiểu dự đoán trong evidence được tính thêm từ NPZ. `RUN_FINAL_TEST=False`, chưa chấm test. ZIP study mới đã có checkpoint, tokenizer và vocabulary; không còn là hạng mục thiếu của study 28.
 
 Đã cập nhật báo cáo mục 5.7, bộ 20 slide, [lời dẫn và Q&A](midterm_presentation_2026-11-04.md), README và hướng dẫn study 28. [Evidence riêng](../reports/midterm_2026-11-04/evidence/README.md) chỉ giữ tổng hợp và metadata, không copy output văn bản nguồn. Các bản pre-midterm theo ngày vẫn là lịch sử. Còn cần đọc lỗi neural, bổ sung thông tin nhóm, xác nhận split; sweep 05 chưa hoàn tất và chưa có thí nghiệm Final.
+
+
+## 13. Hoàn thiện trước khi chốt — 05/11
+
+Đã commit notebook 07 và bằng chứng audit split; xác nhận fixed IDs/data giữ nguyên. Tách ba profile baseline 4 epoch, Neutral 12 epoch và Kaggle 25/20; các notebook/CLI dùng profile tường minh. Đã xóa output/execution metadata trên notebook chia sẻ; packager lọc private artifact và kèm fixed IDs. Sửa cell tìm ca validation dùng xác suất lưu sẵn để tránh nạp lại JVM; kiểm chứng offline, không chạy lại GPU.
+
+Đưa ba NPZ validation 28 nhãn không có text vào evidence; thêm bảng per-label đủ các model và đọc định tính chín ca PhoBERT hỗ trợ AI. Report/slide/cẩm nang cập nhật cùng nguồn. Còn cần cung cấp thông tin nhóm và nhóm xác nhận phần đọc lỗi, làm rõ việc chấp nhận official split với giảng viên. Sweep/test không phải điều kiện phải làm thêm cho midterm. Xem [readiness](midterm_readiness_2026-11-05.md).

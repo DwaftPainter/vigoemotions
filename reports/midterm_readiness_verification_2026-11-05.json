@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-05",
+  "test_cases_total": 61,
+  "primary_suite": {
+    "python": "3.14",
+    "passed": 59,
+    "errors_due_to_missing_torch": 2,
+    "failures": 0,
+    "skipped": 0
+  },
+  "supplemental_neural_smoke": {
+    "python": "3.12",
+    "environment": "Existing ATI tutorial virtualenv with Torch/Transformers; offline CPU fixture tests",
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0
+  },
+  "all_test_cases_covered": true,
+  "single_environment_full_suite": false,
+  "data_audit": "PASS: EDA/split hashes, 3 baseline probability/evaluation tables, ablation and style comparisons",
+  "archives_checked": [
+    "vigoemotions_colab.zip",
+    "vigoemotions_neutral28_colab.zip"
+  ],
+  "notebook_outputs_removed": true,
+  "raw_text_csvs_excluded": true,
+  "private_model_artifacts_excluded": true,
+  "original_models_retrained": false,
+  "test_set_scored": false,
+  "pdfs": {
+    "report_pages": 19,
+    "slides_pages": 20,
+    "study_guide_pages": 25,
+    "study_guide_code_quotes_verified": 18
+  },
+  "pending_external": [
+    "Team identity/roles not supplied",
+    "Group confirmation of AI-assisted qualitative review",
+    "Instructor acceptance of supplied split versus original-algorithm proof"
+  ],
+  "history": "Current notebooks/archives sanitized; old Git history not rewritten; share archive without .git"
+}

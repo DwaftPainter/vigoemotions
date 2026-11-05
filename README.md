@@ -5,6 +5,8 @@ Báo cáo/slide viết tiếng Việt; kết quả đo trên **validation**, tes
 
 ## Mở nội dung
 
+- **Chốt nội dung 05/11:** [trạng thái các mục trước nộp](docs/midterm_readiness_2026-11-05.md), [profile và lệnh tái lập](docs/reproducibility_profiles.md), [audit split](notebooks/07_split_distribution_audit.ipynb), [thông tin nhóm chờ cung cấp](docs/team_information.md). Report đã thêm phụ lục per-label và chín ca đọc lỗi PhoBERT có hỗ trợ AI; nhóm cần xác nhận khi bảo vệ.
+
 - **Midterm cập nhật 04/11:** [Lời dẫn 20 slide và Q&A](docs/midterm_presentation_2026-11-04.md), [kết quả study 28 nhãn](reports/midterm_2026-11-04/neutral28_results.md), [bảng nguồn đã kiểm chứng](reports/midterm_2026-11-04/evidence/README.md).
 - [Mục lục reports và ý nghĩa từng file](reports/README.md) — thứ tự đọc, quy ước tên, metric và trạng thái thí nghiệm.
 - [Kết quả audit toàn project](docs/project_audit.md) — đã kiểm tra gì, lỗi đã sửa và giới hạn còn lại.
@@ -21,8 +23,7 @@ Báo cáo/slide viết tiếng Việt; kết quả đo trên **validation**, tes
 **Baseline lịch sử (14/10/2026):** Đã nhập và kiểm chứng kết quả Colab của đủ ba mô hình.
 BiGRU chạy 10 epoch (37,50 giây); PhoBERT chạy 4 epoch (3.047,11 giây), trên Tesla T4.
 Macro-F1 validation tại 0,5 lần lượt là 0,2388 / 0,4060 / 0,4393 cho TF-IDF / BiGRU / PhoBERT.
-Xem [kiểm tra kết quả Colab](docs/colab_results_check.md). Còn cần xác minh mapping/split, đọc lỗi neural
-và bổ sung tên, MSSV, phân công nhóm trước khi nộp.
+Xem [kiểm tra kết quả Colab](docs/colab_results_check.md). Mapping đã đối chiếu; audit split có ở notebook 07. Còn xác nhận yêu cầu official split, thông tin nhóm và nhận xét đọc lỗi có hỗ trợ AI trước khi nộp.
 
 **Bổ sung cho pre-midterm:** đã fine-tune PhoBERT với cấu hình baseline; sweep hyperparameter là bước tiếp theo.
 Đã thêm quy trình so sánh learning rate `1e-5 / 2e-5 / 3e-5`, chạy lại `2e-5` trong cùng runtime làm đối chứng.
@@ -74,6 +75,7 @@ Không chọn nhầm `ATI/.venv/bin/python`: môi trường đó đã ghi nhận
 Cell đầu kiểm tra import của môi trường đang chạy và in interpreter/versions để phát hiện vấn đề sớm.
 Không cần thêm alias `np.long` vào code; phải dùng bộ dependency tương thích.
 Notebook 01 kiểm tra schema; 02 tái tạo EDA; 03 chạy baseline và xem bảng/error analysis.
+Bộ test đầy đủ còn có hai smoke test cần Torch/Transformers; `requirements.txt` local chỉ đủ EDA/report. Dùng môi trường neural theo `requirements-colab.txt` cho các smoke test này. Bản hoàn thiện 05/11 đã kiểm chứng 59 test local và hai smoke test neural bổ sung trong môi trường có sẵn, xem checklist readiness.
 Chạy lại baseline ghi đè artifact của lần trước. Thời gian train có thể thay đổi; giữ `*_run.json` cùng kết quả.
 
 TF-IDF hiện tại: Macro-F1 0,2388; Micro-F1 0,2712; Hamming Loss 0,0606; LRAP 0,6407 trên validation tại 0,5.
@@ -89,7 +91,7 @@ Không diễn giải điểm đã tune này là điểm test hoặc kết quả 
 5. Chạy lần lượt EDA, TF-IDF, BiGRU và PhoBERT. PhoBERT tải checkpoint công khai và VnCoreNLP từ mạng.
 6. Chạy cell tạo báo cáo, tải `vigoemotions_results.zip`; giải nén kết quả vào project để cập nhật `reports/`, `splits/`.
 7. Đọc lại phần Q4, error analysis và giới hạn trước khi nộp. Kết quả error analysis thủ công hiện có chỉ dành cho TF-IDF;
-   các file neural error cases là danh sách ứng viên audit, không phải bằng chứng đã đọc thủ công.
+   các file neural error cases là danh sách ứng viên. Đã bổ sung chín ca PhoBERT 28 có đọc định tính hỗ trợ AI; cần nhóm xác nhận, xem báo cáo mục 6.1.
 
 Không dùng `test.csv` để chọn epoch, hyperparameter hay threshold. Mã chỉ suy luận validation trong midterm.
 Colab cần kết nối mạng khi cài dependencies/tải pretrained resources; các bước chạy script kiểm tra exit code để dừng khi lỗi.
@@ -108,7 +110,7 @@ nếu cần tái dùng backbone cho Final. ZIP kết quả không mang checkpoin
 
 ## Thiết kế thí nghiệm
 
-- Seed 42; config chung ở `configs/midterm.json`.
+- Seed 42; dùng profile tách riêng ở [hướng dẫn tái lập](docs/reproducibility_profiles.md): baseline 27 nhãn 4 epoch; Neutral 12 epoch; Kaggle 25/20. `configs/midterm.json` là file legacy, không dùng để chuyển profile.
 - TF-IDF: unigram/bigram, min_df 2, max_features 40.000, sublinear TF; LR C=1, liblinear, max_iter 1000.
 - GRU: embedding 128, hidden 128/hướng, dropout 0,3, max_length 128, batch 64, 10 epoch, AdamW lr=0,001.
 - PhoBERT: `vinai/phobert-base-v2`, revision `86cd7fd4c148980922ac11a2cf5e257f2ba639e1`,

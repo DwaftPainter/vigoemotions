@@ -1,0 +1,13 @@
+model,category,available_count,sample_id
+tfidf_lr,neutral_only,2,you001201
+tfidf_lr,single_emotion,453,13119
+tfidf_lr,multi_emotion,150,5192
+tfidf_lr,neutral_and_emotion,0,
+gru,neutral_only,14,21419
+gru,single_emotion,805,17079
+gru,multi_emotion,650,13119
+gru,neutral_and_emotion,6,tik002443
+phobert,neutral_only,75,29320
+phobert,single_emotion,720,2525
+phobert,multi_emotion,1181,13119
+phobert,neutral_and_emotion,31,17290

@@ -1,6 +1,6 @@
 # ViGoEmotions — Nội dung thuyết trình giữa kỳ
 
-## 1. ViGoEmotions | Midterm 04/11
+## 1. ViGoEmotions | Midterm 05/11
 
 - Nhận diện đa nhãn cảm xúc tiếng Việt.
 - Baseline 27 cảm xúc và study mới 28 nhãn có Neutral.
@@ -47,13 +47,13 @@ Ghi chú thuyết trình: Đếm đồng xuất hiện và tương quan trả l�
 
 ## 6. Split & preprocessing
 
-- Giữ split đã cấp; fit vocab/IDF trên train.
-- NFC + gom khoảng trắng; giữ dấu và phủ định.
-- GRU: whitespace; PhoBERT: VnCoreNLP + BPE.
-- Có audit prevalence; chưa chứng minh split gốc được stratified.
-- Test giữ cho Final; midterm phân tích validation.
+- Giữ split được cấp; fit vocab/IDF trên train.
+- Audit 07: fixed IDs khớp; sau xử lý không còn overlap.
+- Lệch prevalence tối đa: val 1,6324 pp; test 0,9387 pp.
+- Có bằng chứng phân bố; thuật toán chia gốc chưa xác minh.
+- Test giữ cho Final; không tạo ma trận nhãn test.
 
-Ghi chú thuyết trình: Phân biệt dữ liệu mô tả test với sử dụng test chọn mô hình. Nêu giới hạn nguồn thuật toán split một cách rõ ràng.
+Ghi chú thuyết trình: Audit là mô tả chất lượng phân bố, không chứng nhận đã dùng iterative stratification. Xem reports/split_audit; cần xác nhận yêu cầu official split với giảng viên.
 
 ## 7. Ba baseline theo đề
 
@@ -167,15 +167,15 @@ Ghi chú thuyết trình: Đường học có đủ history; train loss không t
 
 Ghi chú thuyết trình: Bằng chứng TF-IDF tạo động lực, nhưng đề yêu cầu Final dùng neural architecture tốt nhất.
 
-## 19. Việc cần chốt trước khi nộp
+## 19. Chốt bộ midterm | trạng thái
 
-- Study 28 đã có checkpoint/tokenizer/vocab trong ZIP private.
-- Cell tìm ví dụ validation lỗi JVM; metric đã kiểm chứng riêng.
-- Đọc lỗi neural; điền tên/MSSV/phân công; xác nhận split.
-- Sweep 05 chưa chạy; cần đối chứng 27/28 cùng điều kiện.
-- Giữ notebook output có comment nguồn riêng tư.
+- Đã có audit split và phụ lục F1 đủ mọi nhãn của ba model.
+- Đã đọc 9 ca lỗi PhoBERT với hỗ trợ AI; nhóm cần xác nhận.
+- Đã tách profile 27/4 epoch, 28/12 epoch và Kaggle 25/20.
+- Notebook/gói code đã làm sạch output dữ liệu nguồn.
+- Còn thiếu thông tin nhóm; chờ xác nhận yêu cầu split.
 
-Ghi chú thuyết trình: Đây là giới hạn và việc còn lại, không phủ nhận kết quả đã kiểm chứng. Không cần train lại để trình bày số đo hiện có.
+Ghi chú thuyết trình: Lỗi JVM ở cell tìm ca validation đã sửa bằng xác suất lưu; không khẳng định đã chạy lại toàn bộ training GPU. Sweep 05 chưa chạy và không bắt buộc hoàn tất cho midterm.
 
 ## 20. Nguồn & tái lập
 

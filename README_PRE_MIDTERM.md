@@ -1,6 +1,8 @@
-# Chuẩn bị thuyết trình midterm — 04/11/2026
+# Chuẩn bị thuyết trình midterm — chốt nội dung 05/11/2026
 
 Bộ hiện tại đã cập nhật kết quả dự đoán thêm Neutral từ notebook 06 và ZIP riêng tư. Dùng tài liệu sau cho buổi midterm; các bộ có ngày 23/10 trong `reports/` là snapshot lịch sử.
+
+Đã hoàn tất audit split, tách config/lệnh tái lập, làm sạch notebook/gói chia sẻ, phụ lục per-label và đọc định tính chín ca PhoBERT. Xem [readiness](docs/midterm_readiness_2026-11-05.md). Còn thiếu thông tin nhóm; cần xác nhận yêu cầu official split và các nhận xét hỗ trợ AI.
 
 ## Mở sẵn
 
@@ -38,15 +40,15 @@ Neutral support = **94**: 75 Neutral-only + 19 mixed. PhoBERT có **44 TP / 62 F
 
 - PhoBERT mới chạy 12 epoch, baseline gốc 4; quy tắc chọn checkpoint và runtime cũng khác. Chưa thể nói thêm Neutral gây mức tăng +14,0321 điểm phần trăm trên phép chiếu 27.
 - Một seed/split, validation đã dùng chọn checkpoint; chưa có kết quả test hay kiểm định ý nghĩa thống kê.
-- Cell tìm ví dụ validation lỗi JVM/VnCoreNLP sau khi xuất metric. Metric tính lại từ NPZ khớp; không tuyên bố toàn notebook không lỗi.
+- Lượt nguồn từng lỗi JVM ở cell tìm ví dụ; mã hiện tại đã sửa để đọc NPZ, đã kiểm chứng offline. Không tuyên bố chạy lại toàn bộ training GPU.
 - Study 06 là một lượt lr=2e-5; sweep learning rate notebook 05 chưa có kết quả.
 - Các phân tích Q1–Q5/style ở slide 8–12 thuộc baseline gốc, chưa phải phân tích style cho study mới.
 
 ## Trước khi nộp
 
 - Điền tên, MSSV, phân công nhóm; luyện thời lượng với bộ 20 slide.
-- Đọc ca lỗi neural; làm rõ yêu cầu stratification với giảng viên. Mapping đã đối chiếu ảnh nguồn ngày 22/10.
-- ZIP study 28 đã có checkpoint/tokenizer/vocab; lưu riêng tư. Notebook thực thi có output comment nguồn, cần xóa output trước khi chia sẻ công khai.
+- Xác nhận chín ca đọc định tính PhoBERT hỗ trợ AI và việc chấp nhận official split. Notebook 07 đã có bằng chứng phân bố, không chứng nhận thuật toán chia gốc.
+- ZIP checkpoint giữ riêng tư. Notebook bản chia sẻ đã xóa output; packager cũng làm sạch tự động. Không kèm lịch sử `.git/` cũ hoặc backup private; xem hướng dẫn tái lập.
 - Final: khóa checkpoint và lựa chọn decoder, tune ngưỡng trên validation, chỉ chấm test sau khi chốt. Nếu cần kết luận tác động Neutral, chạy đối chứng 27/28 cùng điều kiện.
 
 Sau khi sửa nguồn nội dung, dựng lại báo cáo/slide bằng `.venv/bin/python scripts/build_report.py`. Phần bổ sung có nguồn Markdown/JSON ở `reports/midterm_2026-11-04/`; script không cần tải checkpoint hoặc train lại. [README chính](README.md) hướng dẫn chạy project.

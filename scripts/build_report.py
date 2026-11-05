@@ -233,6 +233,51 @@ def neural_result_summary(comparison, gr, ph):
         "ZIP kết quả không chứa checkpoint/vocab nên cần lưu riêng chúng.")
 
 
+def finalization_sections():
+    evidence = REPORTS/'midterm_2026-11-04/evidence'
+    audit = json.loads((REPORTS/'split_audit/summary.json').read_text())
+    drift = audit['per_label_drift']
+    split = f'''### 3.1. Bằng chứng audit split bổ sung ngày 05/11
+
+Notebook 07 kiểm tra lại ba CSV và fixed IDs, không sửa split hoặc train mô hình. Trạng thái toàn vẹn: {audit['integrity_status']}; train/validation/test là 16.530/2.066/2.067, loại một overlap train–test. Sau xử lý không giao ID hoặc văn bản NFC/gom khoảng trắng; cả 28 nhãn đều được đại diện ở từng split.
+
+Độ lệch prevalence lớn nhất trên 27 cảm xúc so với train: validation {drift['emotion27_val_max_abs_drift_pp']:.4f} điểm phần trăm ({drift['emotion27_val_max_drift_label']}), test {drift['emotion27_test_max_abs_drift_pp']:.4f} ({drift['emotion27_test_max_drift_label']}). Khoảng cách total variation cardinality 27 lần lượt 0,01588 và 0,01172. Các chẩn đoán này hỗ trợ việc giữ split được cấp; không chứng nhận thuật toán tạo split gốc hoặc tự xác nhận yêu cầu stratification của giảng viên. Không có cơ sở chỉ từ audit này để yêu cầu chia lại. Cặp nhãn chọn từ train chỉ đối chiếu validation, không tạo ma trận nhãn test.
+
+Nguồn: notebooks/07_split_distribution_audit.ipynb, reports/split_audit/README.md, các CSV và provenance.json cùng thư mục. Kết luận mô tả không dùng ngưỡng chấp nhận đặt sau khi xem dữ liệu. Việc chấp nhận official split theo đề còn cần xác nhận bên giảng viên.
+
+'''
+    review = pd.read_csv(evidence/'phobert28_error_review.csv')
+    display_review = review[['sample_id', 'case_type', 'observation', 'hypothesis']].copy()
+    display_review.columns = ['ID validation', 'Loại ca', 'Quan sát định tính', 'Diễn giải cần kiểm chứng']
+    errors = '''### 6.1. Đọc định tính chín ca PhoBERT 28 nhãn
+
+Đã đọc nội dung riêng tư của chín mẫu: ba Neutral FP tự tin nhất, ba Neutral FN có xác suất Neutral thấp nhất và ba mẫu có cardinality cảm xúc lớn nhất, hòa theo thứ tự validation. Lựa chọn dựa trên xác suất đã lưu, không đổi ngưỡng 0,5 và không suy luận lại. Bảng chỉ giữ ID và diễn giải trừu tượng. Đây là đọc định tính có hỗ trợ AI; nhóm cần xác nhận khi bảo vệ, không được trình bày như chín mẫu đã do thành viên nhóm kiểm duyệt. Các mẫu được chọn có chủ đích, không đại diện ngẫu nhiên cho tỷ lệ lỗi.
+
+''' + table(display_review) + '''
+
+Ground truth/predicted labels và xác suất Neutral của từng ID có trong reports/midterm_2026-11-04/evidence/phobert28_error_review.csv, không chứa văn bản gốc. Quan sát gợi ý khó khăn với cảm xúc hàm ý, khẩu ngữ/từ tục và nhãn tích cực gần nhau; đây là giả thuyết từ đọc ca lỗi, chưa phải kết luận nhân quả. Không tự sửa annotation mixed hoặc Neutral. Phần này không thay thế yêu cầu audit ít nhất 20 FN/20 FP của Final.
+
+'''
+    baseline = pd.read_csv(evidence/'baseline27_per_label_f1.csv')
+    neutral = pd.read_csv(evidence/'neutral28_per_label_f1.csv')
+    appendix = '''## Phụ lục A. F1 đủ từng nhãn của cả ba mô hình
+
+Tất cả dùng validation tại ngưỡng 0,5. Hai bảng giữ riêng tập nhãn và lượt chạy; Neutral của baseline 27 không được gán bằng 0.
+
+### A.1. Baseline gốc 27 cảm xúc, PhoBERT 4 epoch
+
+''' + table(baseline) + '''
+
+### A.2. Study 28 nhãn, PhoBERT 12 epoch chọn 11
+
+''' + table(neutral) + '''
+
+Các bảng lấy từ CSV per-label đã kiểm chứng, không train lại. Saved validation NPZ 28 nhãn được đưa vào evidence/models/<model>/val_predictions.npz, chỉ có ID, nhãn và xác suất. Cấu hình từng lượt và lệnh tái lập tại docs/reproducibility_profiles.md.
+
+'''
+    return split, errors, appendix
+
+
 def main():
     summary=pd.read_csv(TABLES/'dataset_summary.csv')
     freq=pd.read_csv(TABLES/'label_frequency.csv')
@@ -518,6 +563,20 @@ Mã và tài liệu có hỗ trợ AI trong phiên hoàn thiện; số liệu TF
         text = text.replace('## 6. Phân tích lỗi và trường hợp biên',
             (neutral_update/'neutral28_results.md').read_text(encoding='utf-8')+
             '\n\n## 6. Phân tích lỗi và trường hợp biên')
+    if (REPORTS/'split_audit/summary.json').exists() and (neutral_update/'evidence/phobert28_error_review.csv').exists():
+        split_section, error_section, appendix = finalization_sections()
+        text = text.replace('## 4. Mô hình và giao thức thực nghiệm', split_section+'## 4. Mô hình và giao thức thực nghiệm')
+        text = text.replace('## 7. Câu hỏi nghiên cứu cho Final và thiết kế kiểm chứng', error_section+'## 7. Câu hỏi nghiên cứu cho Final và thiết kế kiểm chứng')
+        text = text.replace('## Tài liệu tham khảo', appendix+'## Tài liệu tham khảo')
+        text = text.replace('**Trạng thái (04/11/2026):**', '**Trạng thái (05/11/2026):**')
+        text = text.replace('## 1. Mục tiêu và phạm vi',
+            '**Thông tin nhóm:** Chưa được cung cấp. Bổ sung tên/MSSV/phân công tại docs/team_information.md trước khi nộp. '
+            'Đã bổ sung audit split, phụ lục F1 từng nhãn và chín ca đọc lỗi PhoBERT; xem docs/midterm_readiness_2026-11-05.md.\n\n## 1. Mục tiêu và phạm vi')
+        text = text.replace('revision khóa trong configs/midterm.json', 'revision khóa trong configs/baseline27_4ep.json')
+        text = text.replace('C: đủ metric, per-label, tham số, thời gian | Có cho mô hình đã chạy; tự sinh từ evaluator chung khi neural hoàn tất',
+            'C: đủ metric, per-label, tham số, thời gian | Đủ cả ba mô hình; phụ lục A có F1 của mọi nhãn cho baseline 27 và study 28')
+        text = text.replace('E: slide, code, EDA, error analysis, RQ, README | Đã tạo; cần rà soát ca lỗi neural và điền thông tin nhóm khi nộp',
+            'E: slide, code, EDA, error analysis, RQ, README | Đã có; đọc lỗi PhoBERT có hỗ trợ AI, nhóm cần xác nhận; chưa cung cấp thông tin nhóm')
     (REPORTS/'midterm_report.md').write_text(text,encoding='utf-8')
     slides=[
         ('ViGoEmotions | Midterm', ['Nhận diện đa nhãn: một bình luận có thể mang nhiều cảm xúc.','27 cảm xúc; neutral là vector 0.', 'Bằng chứng hiện có: '+('ba mô hình trên validation.' if neural_done else 'EDA + TF-IDF trên validation; neural chờ Colab.')],None,'Mở đầu bằng bài toán, phạm vi và trạng thái thực nghiệm; không trình bày neural như đã chạy nếu chưa có số liệu.'),
@@ -570,6 +629,22 @@ Mã và tài liệu có hỗ trợ AI trong phiên hoàn thiện; số liệu TF
             'Sweep 05 chưa chạy; cần đối chứng 27/28 cùng điều kiện.',
             'Giữ notebook output có comment nguồn riêng tư.'], None,
             'Đây là giới hạn và việc còn lại, không phủ nhận kết quả đã kiểm chứng. Không cần train lại để trình bày số đo hiện có.')
+    if (REPORTS/'split_audit/summary.json').exists() and (neutral_update/'evidence/phobert28_error_review.csv').exists():
+        slides[0] = ('ViGoEmotions | Midterm 05/11', slides[0][1], slides[0][2], slides[0][3])
+        slides[5] = ('Split & preprocessing', [
+            'Giữ split được cấp; fit vocab/IDF trên train.',
+            'Audit 07: fixed IDs khớp; sau xử lý không còn overlap.',
+            'Lệch prevalence tối đa: val 1,6324 pp; test 0,9387 pp.',
+            'Có bằng chứng phân bố; thuật toán chia gốc chưa xác minh.',
+            'Test giữ cho Final; không tạo ma trận nhãn test.'], None,
+            'Audit là mô tả chất lượng phân bố, không chứng nhận đã dùng iterative stratification. Xem reports/split_audit; cần xác nhận yêu cầu official split với giảng viên.')
+        slides[-2] = ('Chốt bộ midterm | trạng thái', [
+            'Đã có audit split và phụ lục F1 đủ mọi nhãn của ba model.',
+            'Đã đọc 9 ca lỗi PhoBERT với hỗ trợ AI; nhóm cần xác nhận.',
+            'Đã tách profile 27/4 epoch, 28/12 epoch và Kaggle 25/20.',
+            'Notebook/gói code đã làm sạch output dữ liệu nguồn.',
+            'Còn thiếu thông tin nhóm; chờ xác nhận yêu cầu split.'], None,
+            'Lỗi JVM ở cell tìm ca validation đã sửa bằng xác suất lưu; không khẳng định đã chạy lại toàn bộ training GPU. Sweep 05 chưa chạy và không bắt buộc hoàn tất cho midterm.')
     register_fonts();render_report(text);render_slides(slides)
     print('Wrote midterm_report.md/pdf, midterm_slides.md/pdf, model comparison tables')
 

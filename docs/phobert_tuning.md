@@ -12,7 +12,7 @@ Fine-tuning cập nhật trọng số pretrained trên dữ liệu của nhóm. 
 | --- | --- |
 | Learning rate thử nghiệm | `1e-5`, `2e-5`, `3e-5` |
 | Đối chứng | Chạy lại `2e-5` trong cùng runtime; giữ baseline đã có riêng |
-| Mô hình | `vinai/phobert-base-v2`, revision trong `configs/midterm.json`; cập nhật toàn bộ backbone và head |
+| Mô hình | `vinai/phobert-base-v2`, revision trong `configs/baseline27_4ep.json`; cập nhật toàn bộ backbone và head |
 | Dữ liệu | Cùng train sau loại trùng và cùng validation; preprocessing giữ nguyên |
 | Huấn luyện | Seed 42, batch 16, 4 epoch, max length 256 BPE, AdamW weight decay 0,01, BCEWithLogitsLoss |
 | Chọn epoch trong mỗi lượt | Macro-F1 validation cao nhất tại threshold 0,5; hòa chọn epoch sớm |
