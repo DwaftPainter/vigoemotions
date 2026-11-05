@@ -1,6 +1,6 @@
 # Kiểm tra kết quả Colab — 14/10/2026
 
-> **Phạm vi lịch sử:** Các run/điểm trước lượt Kaggle 20 epoch không còn là kết quả chính. Dùng [README hiện tại](../README.md) và report/slide equal20.
+> **Phạm vi lịch sử:** Các run/điểm trước lượt Kaggle 20 epoch không còn là kết quả chính. Dùng [README hiện tại](../../README.md) và report/slide equal20.
 
 Đây là kiểm chứng **baseline 27 nhãn gốc**. Kết quả mới 28 nhãn ngày 04/11 được lưu riêng tại [evidence Neutral](../reports/midterm_2026-11-04/evidence/README.md); không thay số trong bản lịch sử này.
 
@@ -40,7 +40,7 @@ Python Unicode regex đếm 307 nhưng backend mặc định của pandas local 
 ## Việc còn lại
 
 - Đọc và diễn giải ca lỗi neural; danh sách 20 FN/20 FP tự sinh không thay thế việc audit thủ công.
-- Mapping khớp ảnh dataset card đã đối chiếu ngày 22/10; xem [nguồn](label_mapping.md). Paper nêu 8:1:1 nhưng không mô tả thuật toán; cần làm rõ yêu cầu stratification với giảng viên.
+- Mapping khớp ảnh dataset card đã đối chiếu ngày 22/10; xem [nguồn](../../docs/label_mapping.md). Paper nêu 8:1:1 nhưng không mô tả thuật toán; cần làm rõ yêu cầu stratification với giảng viên.
 - Lưu riêng checkpoint và vocabulary từ Colab: ZIP này không chứa chúng, nên chưa kiểm tra được
   trọng số checkpoint hoặc suy luận lại từ trọng số.
 - Bổ sung thông tin nhóm, rà soát báo cáo/slide; chưa đánh giá test hoặc thực hiện RQ Final.

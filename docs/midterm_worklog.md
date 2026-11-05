@@ -8,7 +8,7 @@ Mục đích là giúp thành viên mới hiểu **đã làm gì, vì sao làm, 
 
 Đã chạy đủ TF-IDF, BiGRU và PhoBERT; kết quả Colab đã được nhập và kiểm chứng ngày 14/10/2026.
 BiGRU: 10 epoch, 37,50 giây; PhoBERT: 4 epoch, khoảng 50 phút 47 giây trên Tesla T4.
-Xem [kiểm tra kết quả Colab](colab_results_check.md). Mapping đã đối chiếu ảnh nguồn ngày 22/10; còn làm rõ stratification và audit lỗi neural trước khi nộp.
+Xem [kiểm tra kết quả Colab](../archive/docs/colab_results_check.md). Mapping đã đối chiếu ảnh nguồn ngày 22/10; còn làm rõ stratification và audit lỗi neural trước khi nộp.
 
 ## 1. Đọc đề và xác định sản phẩm phải nộp
 
@@ -225,7 +225,7 @@ Macro-F1 tại threshold 0,5; baseline gốc được giữ riêng. Chưa chạy
 
 Report có mục 5.6 và slide được mở rộng thành 18 trang, trong giới hạn 20 theo hướng dẫn bổ sung.
 Phân biệt rõ fine-tune PhoBERT đã chạy với hyperparameter sweep còn chờ kết quả. Hướng dẫn chạy,
-nhập kết quả và viết insight tại [phobert_tuning.md](phobert_tuning.md). Danh sách lỗi neural tự sinh
+nhập kết quả và viết insight tại [phobert_tuning.md](../archive/docs/phobert_tuning.md). Danh sách lỗi neural tự sinh
 vẫn cần audit thủ công; chưa điền quan sát hoặc kết quả thí nghiệm chưa thực hiện.
 
 
@@ -237,7 +237,7 @@ Macro-F1 28 của TF-IDF / BiGRU / PhoBERT: **0,231040 / 0,399227 / 0,574653**; 
 
 Cell tìm ví dụ validation lỗi JVM sau huấn luyện/xuất metric; ZIP không có `validation_prediction_cases.csv`. Bảng đếm kiểu dự đoán trong evidence được tính thêm từ NPZ. `RUN_FINAL_TEST=False`, chưa chấm test. ZIP study mới đã có checkpoint, tokenizer và vocabulary; không còn là hạng mục thiếu của study 28.
 
-Đã cập nhật báo cáo mục 5.7, bộ 20 slide, [lời dẫn và Q&A](midterm_presentation_2026-11-04.md), README và hướng dẫn study 28. [Evidence riêng](../reports/midterm_2026-11-04/evidence/README.md) chỉ giữ tổng hợp và metadata, không copy output văn bản nguồn. Các bản pre-midterm theo ngày vẫn là lịch sử. Còn cần đọc lỗi neural, bổ sung thông tin nhóm, xác nhận split; sweep 05 chưa hoàn tất và chưa có thí nghiệm Final.
+Đã cập nhật báo cáo mục 5.7, bộ 20 slide, [lời dẫn và Q&A](midterm_presentation_en.md), README và hướng dẫn study 28. [Evidence riêng](../archive/reports/midterm_2026-11-04/evidence/README.md) chỉ giữ tổng hợp và metadata, không copy output văn bản nguồn. Các bản pre-midterm theo ngày vẫn là lịch sử. Còn cần đọc lỗi neural, bổ sung thông tin nhóm, xác nhận split; sweep 05 chưa hoàn tất và chưa có thí nghiệm Final.
 
 
 ## 13. Hoàn thiện trước khi chốt — 05/11

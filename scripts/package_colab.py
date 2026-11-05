@@ -15,7 +15,7 @@ for folder in ('scripts', 'configs', 'tests', 'docs', 'notebooks', 'splits') + (
     files.extend(p for p in (ROOT/folder).rglob('*') if p.is_file()
                  and '__pycache__' not in p.parts and '.ipynb_checkpoints' not in p.parts
                  and (folder not in ('reports', 'splits') or is_public_report(p, ROOT)))
-files.extend(ROOT/name for name in ('README.md','README_PRE_MIDTERM.md',
+files.extend(ROOT/name for name in ('README.md',
                                     'requirements-colab.txt','requirements.txt'))
 with ZipFile(ROOT/'vigoemotions_colab.zip','w',ZIP_DEFLATED) as archive:
     for path in sorted(files):

@@ -1,4 +1,4 @@
-> **Lịch sử 04/11:** Không dùng bảng dưới đây cho midterm hiện tại. Kết quả chính là [Kaggle 20 epoch](../kaggle_equal20_2026-11-05/README.md).
+> **Lịch sử 04/11:** Không dùng bảng dưới đây cho midterm hiện tại. Kết quả chính là [Kaggle 20 epoch](../../../reports/kaggle_equal20_2026-11-05/README.md).
 
 ### 5.7. Cập nhật 04/11/2026 — dự đoán thêm Neutral, đủ 28 nhãn
 
@@ -16,7 +16,7 @@
 
 PhoBERT cao nhất trong study này theo Macro-F1, Micro-F1 và LRAP, đồng thời có Hamming Loss thấp nhất. Đây là xếp hạng trong cùng thiết lập 28 nhãn; chưa có kiểm định ý nghĩa thống kê hoặc kết quả test. BiGRU có F1 cao hơn TF-IDF nhưng LRAP thấp hơn một chút; không khẳng định mọi metric đều tăng.
 
-![Macro-F1 đủ 28 nhãn và F1 Neutral, validation tại 0,5; không đặt metric baseline 27 nhãn vào cùng phép so sánh.](midterm_2026-11-04/neutral28_metrics.png)
+![Macro-F1 đủ 28 nhãn và F1 Neutral, validation tại 0,5; không đặt metric baseline 27 nhãn vào cùng phép so sánh.](neutral28_metrics.png)
 
 **Neutral có được học thực sự không?** Support là 94 cho cả ba mô hình và bao gồm mixed-neutral.
 
@@ -52,7 +52,7 @@ Trên cùng 27 cảm xúc, Hamming Loss PhoBERT tăng từ 0,053261 lên 0,05516
 
 Thời gian TF-IDF gồm fit vectorizer + LR, còn neural gồm vòng train, validation từng epoch và ghi checkpoint, không gồm preprocessing. Không dùng bảng này để so tốc độ tuyệt đối giữa CPU và GPU. ZIP riêng tư có checkpoint, tokenizer và vocabulary cho study 28, khác ZIP baseline gốc chỉ có kết quả.
 
-![Train loss và validation Macro-F1 28 nhãn theo epoch; PhoBERT chọn epoch 11, không chọn epoch cuối.](midterm_2026-11-04/neutral28_learning_curves.png)
+![Train loss và validation Macro-F1 28 nhãn theo epoch; PhoBERT chọn epoch 11, không chọn epoch cuối.](neutral28_learning_curves.png)
 
 PhoBERT tăng Macro-F1 từ 0,4753 ở epoch 4 lên 0,5747 ở epoch 11 rồi giảm còn 0,5630 ở epoch 12; train loss vẫn giảm. Chỉ nêu biến động quan sát được: không có validation loss, chưa đủ cơ sở kết luận hội tụ hay overfitting. Đây là một lượt lr=2e-5, không hoàn tất sweep learning rate notebook 05.
 

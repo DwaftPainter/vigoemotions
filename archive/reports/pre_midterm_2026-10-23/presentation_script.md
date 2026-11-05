@@ -38,7 +38,7 @@ Mapping ID đã được đối chiếu với bảng nhãn trên Hugging Face: I
 
 Nhóm giữ split được cấp. Paper mục 5.1 chỉ công bố tỷ lệ 8:1:1, không mô tả thuật toán chia tập; vì vậy nhóm chưa khẳng định split đã được stratified.”
 
-**Thao tác:** Mở [bảng mapping và đối chiếu paper](../../docs/label_mapping.md), chỉ mục nguồn và phần split; sau đó chỉ số mẫu trong [dataset summary](evidence/dataset_summary.csv). Paper ở trang PDF 6, trang in 2810.
+**Thao tác:** Mở [bảng mapping và đối chiếu paper](../../../docs/label_mapping.md), chỉ mục nguồn và phần split; sau đó chỉ số mẫu trong [dataset summary](evidence/dataset_summary.csv). Paper ở trang PDF 6, trang in 2810.
 
 ## Slide 4 — EDA cho thấy điều gì? · 40 giây
 
@@ -48,7 +48,7 @@ Nhóm giữ split được cấp. Paper mục 5.1 chỉ công bố tỷ lệ 8:1
 
 Tần suất các cảm xúc không đều. Vì vậy nhóm theo dõi Macro-F1 và F1 từng nhãn, thay vì chỉ nhìn một chỉ số tổng thể. Nhóm cũng khảo sát độ dài và chia các nhóm văn phong như bình luận ngắn, nhiều emoji và teencode để xem mô hình gặp khó ở đâu.”
 
-**Thao tác:** Mở [hình tần suất nhãn](../figures/label_frequency.png) và chỉ các nhóm head/mid/tail. Các nhóm style là heuristic, chưa phải nhãn được con người xác minh riêng.
+**Thao tác:** Mở [hình tần suất nhãn](../../../reports/figures/label_frequency.png) và chỉ các nhóm head/mid/tail. Các nhóm style là heuristic, chưa phải nhãn được con người xác minh riêng.
 
 ## Slide 5 — Quan hệ giữa các nhãn · 35 giây
 
@@ -70,7 +70,7 @@ BiGRU được đặt ngân sách 10 epoch; PhoBERT là 4 epoch. Đây là cấu
 
 Trong lượt mới, checkpoint tốt nhất của BiGRU là epoch 10, PhoBERT là epoch 4. Việc cả hai nằm ở epoch cuối chưa chứng minh mô hình đã hội tụ; nhóm cần đọc đường học trước khi quyết định tăng epoch.”
 
-**Thao tác:** Mở [config](../../configs/midterm.json), rồi [PhoBERT run JSON](evidence/phobert_run.json), chỉ `config`, `history` và `best_epoch`. Không đọc hết các tham số trên màn hình.
+**Thao tác:** Mở [config](../../../configs/midterm.json), rồi [PhoBERT run JSON](evidence/phobert_run.json), chỉ `config`, `history` và `best_epoch`. Không đọc hết các tham số trên màn hình.
 
 ## Slide 7 — Kết quả validation mới · 55 giây
 
@@ -124,7 +124,7 @@ Notebook 04 mới đã hoàn tất; nhóm đã tải ZIP kết quả và ZIP che
 
 Sau đó, nhóm sẽ đọc lỗi BiGRU và PhoBERT, cập nhật insight, đồng thời làm rõ với thầy/cô việc sử dụng split được cấp có đáp ứng yêu cầu stratification trong đề hay cần protocol bổ sung.”
 
-**Thao tác:** Mở [notebook 05](../../notebooks/05_colab_phobert_tuning.ipynb) hoặc [thiết kế tuning](../../docs/phobert_tuning.md). Không dùng kết quả study cũ cho lượt mới.
+**Thao tác:** Mở [notebook 05](../../../notebooks/05_colab_phobert_tuning.ipynb) hoặc [thiết kế tuning](../../docs/phobert_tuning.md). Không dùng kết quả study cũ cho lượt mới.
 
 ## Slide 12 — Hướng Final và kết thúc · 35 giây
 

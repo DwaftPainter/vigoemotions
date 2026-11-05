@@ -23,10 +23,10 @@ Trích từ `vigoemotions_neutral28_private_results.zip`, đối chiếu noteboo
 
 Hai bảng `verification.csv` và `prediction_category_counts.csv` được tính thêm trong lần cập nhật docs, không có sẵn trong ZIP. Với bảng category, năm nhóm loại trừ nhau: empty; Neutral-only; một cảm xúc không Neutral; nhiều cảm xúc không Neutral; Neutral + ít nhất một cảm xúc. Mỗi mô hình có tổng 2.066 mẫu. Có 31 ca PhoBERT dự đoán mixed; đó là đầu ra mô hình, không phải 31 ca annotation mixed (validation chỉ có 19 annotation mixed).
 
-**Không trộn baseline:** nguồn đối chiếu trong ZIP là bộ gốc (PhoBERT 0,439320, 4 epoch), không phải [lượt chạy lại 23/10](../../pre_midterm_2026-10-23/evidence/model_comparison.csv) (0,467850). `study.json.baseline_config` là config tại init có 12 epoch; đối chiếu thời lượng baseline thật bằng [reports/phobert_run.json](../../phobert_run.json). File comparison giữ nguyên đường dẫn runtime `/kaggle/working/...` để bảo toàn nguồn; bảng trong thư mục này là bản sao local.
+**Không trộn baseline:** nguồn đối chiếu trong ZIP là bộ gốc (PhoBERT 0,439320, 4 epoch), không phải [lượt chạy lại 23/10](../../pre_midterm_2026-10-23/evidence/model_comparison.csv) (0,467850). `study.json.baseline_config` là config tại init có 12 epoch; đối chiếu thời lượng baseline thật bằng [reports/phobert_run.json](../../../../reports/phobert_run.json). File comparison giữ nguyên đường dẫn runtime `/kaggle/working/...` để bảo toàn nguồn; bảng trong thư mục này là bản sao local.
 
 **Giới hạn thực thi:** code cell 24 (execution_count 16) tìm ví dụ validation lỗi JVM/VnCoreNLP. ZIP không có `validation_prediction_cases.csv`; bảng đếm bổ sung ở đây không khẳng định cell đó chạy thành công. Inference bốn câu tự viết và huấn luyện/xuất metric đã có output. Test không được chấm. Notebook nguồn có output văn bản dataset, cần giữ private; thư mục evidence không sao chép các output đó.
 
 **Cập nhật 05/11:** Mã tìm ca validation dùng NPZ, không nạp lại JVM, đã xuất [validation_prediction_cases.csv](validation_prediction_cases.csv) cho cả ba model. File này và các bảng review/per-label bổ sung là kết quả hoàn thiện, không có trong ZIP nguồn. Notebook công khai hiện không có output văn bản; lịch sử Git cũ chưa được rewrite.
 
-[Phần diễn giải đưa vào báo cáo](../neutral28_results.md) • [Lời dẫn và Q&A](../../../docs/midterm_presentation_2026-11-04.md).
+[Phần diễn giải đưa vào báo cáo](../neutral28_results.md) • [Lời dẫn và Q&A](../../../../docs/midterm_presentation_en.md).

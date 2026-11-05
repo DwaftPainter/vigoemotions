@@ -235,7 +235,7 @@ def neural_result_summary(comparison, gr, ph):
 
 
 def finalization_sections():
-    evidence = REPORTS/'midterm_2026-11-04/evidence'
+    evidence = ROOT/'archive/reports/midterm_2026-11-04/evidence'
     audit = json.loads((REPORTS/'split_audit/summary.json').read_text())
     drift = audit['per_label_drift']
     split = f'''### 3.1. Bằng chứng audit split bổ sung ngày 05/11
@@ -546,7 +546,7 @@ Giới hạn chính: một seed, validation đã dùng chọn cấu hình/ngư�
 
 Mã và tài liệu có hỗ trợ AI trong phiên hoàn thiện; số liệu TF-IDF/EDA lấy từ chạy thực tế. Nhóm cần tự đọc, xác nhận diễn giải và tuân thủ quy định khai báo hỗ trợ AI của học phần.
 '''
-    neutral_update = REPORTS/'midterm_2026-11-04'
+    neutral_update = ROOT/'archive/reports/midterm_2026-11-04'
     if (neutral_update/'neutral28_results.md').exists():
         text = text.replace('**Trạng thái:** '+status,
             '**Trạng thái (04/11/2026):** Đã kiểm chứng ba baseline 27 nhãn và study mới 28 nhãn. '

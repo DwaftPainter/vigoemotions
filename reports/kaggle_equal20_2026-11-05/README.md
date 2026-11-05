@@ -7,6 +7,6 @@
 - `analysis/27_emotion27/` và `analysis/28_emotion27/`: evaluator chung trên 27 cột, đúng nguồn NPZ từng study; không ghi đè bảng lịch sử.
 - `phobert28_error_review.csv`: sáu ca mới, AI hỗ trợ đọc; nhóm cần xác nhận.
 - `evidence/`, `provenance.json`: dữ liệu dự đoán ID-only và kiểm chứng nguồn.
-- `results.md`, `figures/`, `slides.json`: nội dung báo cáo và hình từ các lượt 20 epoch.
+- Báo cáo chính ở `../midterm_report.md`; `figures/`, `slides.json` giữ hình và dữ liệu slide, không tạo thêm bản báo cáo trùng.
 
 Build: `python scripts/import_equal20_results.py`, sau đó `python scripts/build_report.py`. Không train, không chấm test và không dùng metric các lượt ít epoch. Hai ZIP riêng tư gốc không được commit.

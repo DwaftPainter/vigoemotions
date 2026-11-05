@@ -1,6 +1,6 @@
 # Audit project ViGoEmotions — 22/10/2026
 
-> **Phạm vi lịch sử:** Các run/điểm trước lượt Kaggle 20 epoch không còn là kết quả chính. Dùng [README hiện tại](../README.md) và report/slide equal20.
+> **Phạm vi lịch sử:** Các run/điểm trước lượt Kaggle 20 epoch không còn là kết quả chính. Dùng [README hiện tại](../../README.md) và report/slide equal20.
 
 Phạm vi: toàn bộ script, năm notebook, hợp đồng dữ liệu/split, các artifact đang có trong `reports/`, quy trình xuất Colab và tài liệu. Không chạy lại huấn luyện neural hoặc inference từ checkpoint trong lượt audit này.
 
@@ -35,7 +35,7 @@ Không thay điểm số thủ công hoặc dựng kết quả tuning. Thay đ�
 
 ## Tổ chức reports sau audit
 
-[reports/README.md](../reports/README.md) là điểm vào chính. Có hướng dẫn riêng cho [tables](../reports/tables/README.md), [figures](../reports/figures/README.md), [predictions](../reports/predictions/README.md), [ablation](../reports/ablation_mixed_neutral/README.md) và [tuning](../reports/phobert_tuning/README.md).
+[reports/README.md](../../reports/README.md) là điểm vào chính. Có hướng dẫn riêng cho [tables](../../reports/tables/README.md), [figures](../../reports/figures/README.md), [predictions](../../reports/predictions/README.md), [ablation](../../reports/ablation_mixed_neutral/README.md) và [tuning](../../reports/phobert_tuning/README.md).
 
 Giữ các đường dẫn artifact hiện tại vì scripts, notebook và report generator đang dùng chúng. Phân nhóm bằng mục lục và bảng tra cứu đủ để đọc thuận tiện, tránh phải sửa đồng loạt đường dẫn hoặc tạo hai bản kết quả trùng nhau. Tất cả 67 artifact có trước khi thêm README đều có liên kết trực tiếp từ bộ hướng dẫn.
 
@@ -68,4 +68,4 @@ Từ project root, dùng môi trường local đã cài dependency và dữ li�
 
 ## Bổ sung nguồn ngày 22/10 sau audit
 
-Mapping ID–nhãn đã khớp ảnh dataset card người dùng cung cấp; hạng mục mapping ở snapshot audit phía trên được giải quyết trong phạm vi nguồn này. Paper mục 5.1, trang PDF 6 (2810), xác nhận 8:1:1 nhưng không mô tả thuật toán chia tập. Chưa có bằng chứng stratification. Xem [bảng mapping và đối chiếu paper](label_mapping.md). Không thay config, split, mô hình hay kết quả đo.
+Mapping ID–nhãn đã khớp ảnh dataset card người dùng cung cấp; hạng mục mapping ở snapshot audit phía trên được giải quyết trong phạm vi nguồn này. Paper mục 5.1, trang PDF 6 (2810), xác nhận 8:1:1 nhưng không mô tả thuật toán chia tập. Chưa có bằng chứng stratification. Xem [bảng mapping và đối chiếu paper](../../docs/label_mapping.md). Không thay config, split, mô hình hay kết quả đo.

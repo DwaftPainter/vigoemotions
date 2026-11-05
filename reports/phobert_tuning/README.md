@@ -1,6 +1,6 @@
 # PhoBERT learning-rate sweep — trạng thái prepared
 
-[← Mục lục reports](../README.md) · [Hướng dẫn chạy Colab](../../docs/phobert_tuning.md)
+[← Mục lục reports](../README.md) · [Hướng dẫn chạy Colab](../../archive/docs/phobert_tuning.md)
 
 **Snapshot 22/10/2026: chưa chạy sweep GPU.** File cấu hình không phải bằng chứng đã có kết quả. Trạng thái thực tế được ghi trong [study.json](study.json).
 

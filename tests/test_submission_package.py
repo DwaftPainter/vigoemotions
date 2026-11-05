@@ -57,6 +57,6 @@ class SubmissionPackageTests(unittest.TestCase):
         baseline = json.loads((ROOT/'configs/baseline27_4ep.json').read_text())
         neutral = json.loads((ROOT/'configs/neutral28_12ep_base.json').read_text())
         self.assertEqual(baseline, json.loads((ROOT/'reports/phobert_run.json').read_text())['config'])
-        self.assertEqual(neutral, json.loads((ROOT/'reports/midterm_2026-11-04/evidence/study.json').read_text())['baseline_config'])
+        self.assertEqual(neutral, json.loads((ROOT/'archive/reports/midterm_2026-11-04/evidence/study.json').read_text())['baseline_config'])
         self.assertEqual((baseline['gru']['epochs'], baseline['phobert']['epochs']), (10, 4))
         self.assertEqual((neutral['gru']['epochs'], neutral['phobert']['epochs']), (10, 12))

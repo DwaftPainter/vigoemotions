@@ -54,4 +54,4 @@ Import cần hai ZIP, notebook executed và CSV nguồn. Evidence/tổng hợp m
 
 Điền tên/MSSV/phân công; xác nhận sáu ca đọc lỗi có hỗ trợ AI; làm rõ việc chấp nhận official split. Chưa có metric test hoặc sweep learning rate. Final giữ backbone neural cố định, so sánh fixed/global/per-label thresholds, chọn trên validation rồi khóa trước khi chấm test. Một seed và style heuristic còn hạn chế.
 
-Các notebook 01–07, reports/tables, run JSON ở reports root và các báo cáo theo ngày trước đây được giữ làm lịch sử; không dùng số model trong chúng làm kết quả chính hiện tại. [Mục lục reports](reports/README.md).
+Notebook 01/02/07 phục vụ kiểm tra dữ liệu, EDA và audit split; notebook 03–06 giữ cho workflow lịch sử. Các snapshot và tài liệu trình bày cũ đã gom vào [archive/](archive/README.md). Config/run JSON và bảng model cũ còn được script/test tham chiếu nên giữ nguyên vị trí; kết quả chính chỉ lấy từ thư mục Kaggle 20 epoch. [Mục lục reports](reports/README.md).

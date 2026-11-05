@@ -11,6 +11,6 @@
 
 Các bảng EDA trong `tables/label_frequency.csv`, `dataset_summary.csv`, `text_lengths.csv`, train co-occurrence/correlation và hình EDA vẫn hợp lệ cho cùng dữ liệu. `split_audit/` là bằng chứng phân bố/toàn vẹn, không chứng nhận thuật toán stratification gốc.
 
-Các bảng **model** trong `tables/`, `*_run.json` tại reports root, `midterm_2026-11-04/`, `pre_midterm*`, `local_notebook_run_2026-11-05/` và các bản theo ngày là **lịch sử**. Không lấy số, đường học, ca lỗi hoặc style delta từ các lượt đó để điền vào report hiện tại. Thư mục mới có toàn bộ phân tích tính lại từ NPZ 20 epoch.
+Snapshot `midterm_2026-11-04/`, `pre_midterm*`, lượt local và các tài liệu theo ngày trước đây đã chuyển vào [archive/reports/](../archive/README.md). Các bảng **model** trong tables/ và run JSON ở reports root vẫn phục vụ script/test lịch sử. Không dùng điểm trong các nguồn đó cho báo cáo hiện tại. EDA dùng chung vẫn giữ nguyên; toàn bộ phân tích model hiện tại ở kaggle_equal20_2026-11-05/.
 
 Lệnh build chính: `python scripts/import_equal20_results.py`, sau đó `python scripts/build_report.py`. Không train lại, không chấm test và không ghi đè artifact lịch sử.
