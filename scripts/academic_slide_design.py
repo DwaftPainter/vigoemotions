@@ -48,19 +48,27 @@ SPEECH = ['Good morning. Our project recognizes emotions in Vietnamese social-me
  'epochs fourteen and fifteen. Selection is based on validation, not simply the final epoch. '
  'Training loss continued to decrease, but validation loss was not recorded, so we do not claim '
  'confirmed overfitting.',
- 'For individual emotions, PhoBERT performs best on gratitude and worst on disapproval. The '
- 'correlation between training frequency and per-label F1 is approximately 0.018, with a p-value '
- 'of 0.928. These descriptive results do not support a simple rule that more frequent labels are '
- 'always easier. The report includes every label for all three models.',
- 'Our most frequent training pair is disappointment and sadness. PhoBERT predicts both correctly '
- 'in 63 of 122 validation cases containing both labels. For text styles, its largest advantage '
- 'over BiGRU is in teencode, at about 22.1 percentage points of Macro-F1. Teencode means informal '
- 'online spellings and abbreviations. Our style groups use heuristics and can overlap, so this '
- 'finding needs cautious interpretation.',
- 'We also vary the threshold while keeping the checkpoint fixed. For PhoBERT, the best validation '
- 'grid point is 0.35, with Macro-F1 0.5978, compared with 0.5974 at zero point five. The gain is '
- 'tiny and Hamming Loss worsens. This is exploratory analysis, not a test improvement; the main '
- 'comparison stays at zero point five.',
+ 'Gratitude is the easiest label for all three models. The weakest label is realization for TF-IDF '
+ 'and BiGRU, but disapproval for PhoBERT. The bars show selected PhoBERT labels; the table '
+ 'compares each model’s extremes. Overall F1 hides these differences.',
+ 'For Q2, each dot represents one emotion under PhoBERT. Its frequency–F1 correlation is only '
+ '0.018. The table also shows TF-IDF and BiGRU. These descriptive correlations do not establish '
+ 'causation; frequency alone cannot explain which labels are difficult.',
+ 'For Q3, we choose disappointment and sadness because they co-occur most often in training. '
+ 'Validation contains 122 comments annotated with both. TF-IDF recovers both in two cases, BiGRU '
+ 'in thirty-seven, and PhoBERT in sixty-three. Joint recall is therefore 1.64, 30.33 and 51.64 '
+ 'percent. Other predicted labels are allowed, so this does not measure pair precision.',
+ 'Q4 compares every available text-style group using the same twenty-seven labels. PhoBERT leads '
+ 'in all four rows. Its largest advantage over BiGRU is teencode: 22.13 percentage points on 307 '
+ 'examples. These groups use heuristic rules and overlap. Their sample counts differ, so this is '
+ 'descriptive rather than a controlled style effect.',
+ 'Q5 keeps each checkpoint fixed and varies only the threshold. The three curves respond '
+ 'differently. TF-IDF gains about 24.55 percentage points of validation Macro-F1; BiGRU gains '
+ '1.86; PhoBERT gains only 0.043. Circles mark the best grid points, not test improvements.',
+ 'The table compares the default and exploratory best thresholds for every model. Lower thresholds '
+ 'improve Macro-F1 but increase Hamming Loss in all three cases. Choosing on validation can '
+ 'overestimate generalization. We keep the main comparison at 0.5 and will lock decoding choices '
+ 'before evaluating test.',
  'Two examples illustrate the six-case preliminary, AI-assisted review. On the left, a comment '
  'annotated as relief is predicted as Neutral. On the right, a Neutral comment is assigned anger '
  'and annoyance. Implied affect and profanity are possible explanations, not proven causes. We '
@@ -101,7 +109,8 @@ def slide_definitions():
     paired=pd.read_csv(OUT/'paired_emotion27_delta.csv')
     label=pd.read_csv(OUT/'analysis/27_emotion27/phobert/tables/phobert_per_label.csv')
     annotation=pd.read_csv(OUT/'evidence/28/annotation_counts.csv').set_index('split')
-    style=pd.read_csv(OUT/'neural_style_comparison.csv').set_index('style')
+    style_tables={model:pd.read_csv(OUT/f'analysis/27_emotion27/{model}/tables/{model}_styles.csv').set_index('style')
+                  for model in NAMES}
     freq=pd.read_csv(OUT/'frequency_f1.csv').set_index('model')
     pairs=pd.read_csv(OUT/'pair_preservation.csv').set_index('model')
     extremes=pd.read_csv(OUT/'label_extremes.csv').set_index('model')
@@ -225,50 +234,109 @@ def slide_definitions():
         charts=charts,caption='Train BCE continued to decrease; validation loss was not recorded. These curves alone do not confirm overfitting.')
 
     ordered=label.sort_values('f1',ascending=False);subset=pd.concat([ordered.head(3),ordered.tail(3)])
-    add('analysis','08 / Q1–Q2','Performance varies by label, beyond raw frequency',
-        'PhoBERT, 27 outputs • per-label validation F1 at threshold 0.5',
-        'Gratitude is strongest; disapproval is weakest. Frequency shows little monotonic association in this run.',
-        'Sources: per_label_metrics.csv; frequency_f1.csv; current PhoBERT-27 per-label table. Descriptive, single-seed analysis.',
-        bars=dict(labels=subset.label.tolist(),values=subset.f1.astype(float).tolist(),x=64,top=479,width=566,height=269,
-                  maximum=1,value_format='f1',label_width=157,
-                  colors_by_row=[TEAL]*3+[BLUE]*3),
-        scatter=dict(series=[dict(name='27 emotion labels',x=label.train_count.astype(int).tolist(),y=label.f1.astype(float).tolist(),color=TEAL)],
-                     x=690,y=214,width=526,height=280,xlim=[0,3200],ylim=[0,1],xticks=[0,1000,2000,3000],yticks=[0,.25,.5,.75,1],
-                     xlabel='Positive training instances',ylabel='Validation per-label F1',scatter=True,show_legend=False),
-        association=f'Spearman ρ = {freq.loc["PhoBERT","spearman_rho"]:.3f}; p = {freq.loc["PhoBERT","p_value"]:.3f}',
-        caption='Selected top three and bottom three labels; full 27-label results remain in the report.')
+    add('table_chart','08 / Q1','Q1 · Which emotions are easiest and hardest?',
+        '27-output study • per-label validation F1 at threshold 0.5 • bars show selected PhoBERT labels',
+        'Gratitude ranks highest for every model; the weakest label depends on the model.',
+        'Sources: label_extremes.csv; current analysis/27_emotion27/*/tables/*_per_label.csv. Full label tables in report.',
+        rq='Q1',
+        bars=dict(labels=subset.label.tolist(),values=subset.f1.astype(float).tolist(),x=64,top=479,width=560,height=269,
+                  maximum=1,value_format='f1',label_width=157,colors_by_row=[TEAL]*3+[BLUE]*3),
+        table=dict(headers=['Model','Highest label / F1','Lowest label / F1'],
+                   rows=[[name,f'{a.highest}\n{a.highest_f1:.4f}',f'{a.lowest}\n{a.lowest_f1:.4f}']
+                         for name,a in extremes.iterrows()],x=656,top=520,widths=[150,200,210],row_height=76,
+                   highlights=[(2,1),(2,2)],alignments=[0,0,0]),
+        annotations=[dict(value='PhoBERT: top three and bottom three labels',x=64,top=520,width=560,size=14,color=MUTED,height=35),
+                     dict(value='Per-label F1 reveals weaknesses hidden by the overall average. These are single-run validation results.',
+                          x=656,top=219,width=560,size=17,color=MUTED,height=65)])
 
-    st=style.loc['teencode'];th=threshold.loc['PhoBERT'];ex=extremes.loc['PhoBERT']
-    add('full_table','09 / Q1–Q5','Research questions: a compact evidence checklist',
-        'Current 27-output study • frozen checkpoints • validation-only diagnostics',
-        'The findings depend on the label, text style, metric and decision threshold.',
-        'Sources: label_extremes, frequency_f1, pair_preservation, neural_style_comparison, threshold_sensitivity.csv.',
-        table=table(['RQ','What was measured?','Selected result','Interpretation / boundary'],[
-            ['Q1','Highest / lowest label F1',f'Gratitude {ex.highest_f1:.4f}; disapproval {ex.lowest_f1:.4f}','PhoBERT-27; full label table in report'],
-            ['Q2','Training frequency vs F1',f'Spearman ρ {freq.loc["PhoBERT","spearman_rho"]:.3f}; p {freq.loc["PhoBERT","p_value"]:.3f}','Descriptive association, not causation'],
-            ['Q3','Disappointment + sadness',f'PhoBERT: {int(pairs.loc["PhoBERT","joint_TP"])}/122 jointly correct ({pairs.loc["PhoBERT","joint_recall"]*100:.2f}%)','Pair chosen from train: 904 occurrences'],
-            ['Q4','PhoBERT advantage by style',f'Teencode: {st.phobert:.4f} vs GRU {st.gru:.4f}; +{st.delta_pp:.2f} pp','Largest gap among heuristic groups; n = 307'],
-            ['Q5','Fixed vs explored threshold',f'τ 0.50 → 0.35: Macro-F1 {th.default_macro:.4f} → {th.exploratory_macro:.4f}','Tiny F1 gain; Hamming Loss worsens']
-        ],[70,300,435,347],row_height=66,font_size=16,alignments=[0,0,0,0]))
+    add('table_chart','09 / Q2','Q2 · Does label frequency predict F1?',
+        '27-output study • training counts versus validation per-label F1 • one point per emotion',
+        'PhoBERT shows almost no monotonic frequency–F1 association in this run.',
+        'Sources: frequency_f1.csv; current PhoBERT-27 per-label table. Descriptive correlation across 27 labels per model.',
+        rq='Q2',
+        scatter=dict(series=[dict(name='27 emotion labels',x=label.train_count.astype(int).tolist(),y=label.f1.astype(float).tolist(),color=TEAL)],
+                     x=64,y=185,width=710,height=340,xlim=[0,3200],ylim=[0,1],xticks=[0,1000,2000,3000],yticks=[0,.25,.5,.75,1],
+                     xlabel='Positive training instances',ylabel='PhoBERT validation per-label F1',scatter=True,show_legend=False),
+        table=dict(headers=['Model','Spearman ρ','p-value'],
+                   rows=[[name,f'{a.spearman_rho:.3f}',f'{a.p_value:.3f}'] for name,a in freq.iterrows()],
+                   x=815,top=520,widths=[150,120,131],row_height=66,alignments=[0,2,2],highlights=[(2,1)]),
+        annotations=[dict(value='Frequency alone does not explain label difficulty. Association is not causation; one seed was evaluated.',
+                          x=815,top=245,width=401,size=17,color=MUTED,height=100)])
+
+    pair_detail=pd.read_csv(OUT/'analysis/27_emotion27/phobert/tables/phobert_pair_preservation_val.csv').sort_values('train_count',ascending=False).iloc[0]
+    pair_name=f'{pair_detail.label_a} + {pair_detail.label_b}'
+    add('table_chart','10 / Q3','Q3 · How often are both emotions recovered?',
+        f'27-output study • threshold 0.5 • {pair_name} (top training pair: {int(pair_detail.train_count):,})',
+        f'PhoBERT recovers both emotions in {int(pairs.loc["PhoBERT","joint_TP"])}/{int(pairs.loc["PhoBERT","val_true"])} positive-pair cases; about half are still missed.',
+        'Sources: pair_preservation.csv; current 27-output pair tables. Extra predicted labels allowed; this is joint recall, not precision.',
+        rq='Q3',
+        table=table(['Model','Joint TP','Val. support','Joint recall'],
+                    [[name,str(int(a.joint_TP)),str(int(a.val_true)),f'{100*a.joint_recall:.2f}%'] for name,a in pairs.iterrows()],
+                    [240,130,165,170],row_height=70,alignments=[0,2,2,2],highlights=[(2,1),(2,3)]),
+        bars=dict(labels=['TF-IDF + LR','BiGRU','PhoBERT'],values=pairs.joint_recall.astype(float).tolist(),
+                  x=807,top=460,width=409,height=195,label_width=143,maximum=1,value_format='percent'),
+        annotations=[dict(value='JOINT RECALL · 0–100% scale',x=807,top=520,width=409,size=14,color=TEAL,bold=True,height=30),
+                     dict(value='Joint recall = cases with both labels predicted ÷ cases annotated with both labels.',
+                          x=64,top=225,width=1152,size=19,color=NAVY,bold=True,height=55),
+                     dict(value='The pair was selected by training co-occurrence, then measured on validation; extra labels do not invalidate a hit.',
+                          x=64,top=183,width=1152,size=15,color=MUTED,height=40)])
+
+    style_names={'all':'All comments','emoji_heavy_ge_2':'Emoji-heavy (≥ 2)','short_le_5':'Short (≤ 5 tokens)','teencode':'Teencode'}
+    style_rows=[]
+    for key,name in style_names.items():
+        runs=[style_tables[m].loc[key] for m in NAMES]
+        if len({int(a.n) for a in runs})!=1 or any(a.split!='val' for a in runs):
+            raise ValueError('Text-style comparisons must share validation groups')
+        style_rows.append([name,f'{int(runs[0].n):,}']+[f'{a.macro_f1:.4f}' for a in runs]
+                          +[f'{100*(runs[2].macro_f1-runs[1].macro_f1):+.2f}'])
+    add('full_table','11 / Q4','Q4 · How does performance vary by text style?',
+        '27-output study • validation Macro-F1 over all 27 emotions • threshold 0.5',
+        'PhoBERT leads in every style group; its largest gap over BiGRU is teencode (+22.13 pp).',
+        'Sources: current analysis/27_emotion27/*/tables/*_styles.csv; neural_style_comparison.csv. Δ = PhoBERT − BiGRU.',
+        rq='Q4',
+        table=table(['Text-style group','n','TF-IDF + LR','BiGRU','PhoBERT','Δ Pho−GRU (pp)'],style_rows,
+                    [240,100,190,180,200,242],row_height=64,alignments=[0,2,2,2,2,2],
+                    highlights=[(i,4) for i in range(4)]+[(3,5)]),
+        caption='Groups overlap and are heuristic subsets, not a partition. Short = ≤ 5 whitespace tokens; emoji-heavy = ≥ 2 emoji matches; teencode = lexicon match. Group sizes differ; no significance claim.')
 
     series=[]
     for model,color in [('tfidf_lr',BLUE),('gru',TEAL),('phobert',NAVY)]:
         sweep=pd.read_csv(OUT/f'analysis/27_emotion27/{model}/tables/{model}_thresholds_val.csv')
         series.append(dict(name=NAMES[model],x=sweep.threshold.astype(float).tolist(),y=sweep.macro_f1.astype(float).tolist(),color=color))
-    add('threshold','10 / DECODING','PhoBERT gains little from this global threshold grid',
-        '27 outputs • same checkpoint • thresholds explored on validation only',
-        'Keep the main comparison at 0.5; test generalization remains unknown.',
+    gains=[100*(threshold.loc[name].exploratory_macro-threshold.loc[name].default_macro) for name in NAMES.values()]
+    add('threshold','12 / Q5','Q5 · Lower thresholds affect models differently',
+        '27-output study • fixed checkpoint per model • validation grid: 0.05–0.80, step 0.05',
+        'TF-IDF benefits most in exploratory F1; PhoBERT is almost unchanged. Keep the main comparison at 0.5.',
         'Source: current analysis/27_emotion27/*/tables/*_thresholds_val.csv. Grid 0.05–0.80, step 0.05.',
+        rq='Q5',
         chart=dict(series=series,x=64,y=213,width=766,height=314,xlim=[.05,.8],ylim=[0,.7],
-                   xticks=[.05,.2,.35,.5,.65,.8],yticks=[0,.2,.4,.6],xlabel='Decision threshold',ylabel='Validation Macro-F1'),
-        stats=[dict(x=908,top=491,width=308,number=f'{th.default_macro:.4f}',label='Macro-F1 at τ = 0.50',color=NAVY),
-               dict(x=908,top=371,width=308,number=f'{th.exploratory_macro:.4f}',label='Macro-F1 at τ = 0.35'),
-               dict(x=908,top=251,width=308,number=f'+{100*(th.exploratory_macro-th.default_macro):.3f} pp',label='exploratory F1 difference')],
-        caption=f'Hamming Loss rises from {p27.hamming_loss:.4f} to {th.exploratory_hamming:.4f}; LRAP is independent of the cutoff.')
+                   xticks=[.05,.2,.35,.5,.65,.8],yticks=[0,.2,.4,.6],xlabel='Decision threshold',ylabel='Validation Macro-F1',
+                   markers=[dict(x=float(threshold.loc[name].best_exploratory_threshold),y=float(threshold.loc[name].exploratory_macro),color=color)
+                            for name,color in zip(NAMES.values(),[BLUE,TEAL,NAVY])]),
+        stats=[dict(x=908,top=491-i*120,width=308,number=f'+{gain:.3f} pp',
+                    label=f'{name} · τ 0.50 → {threshold.loc[name].best_exploratory_threshold:.2f}',color=color)
+               for i,(name,gain,color) in enumerate(zip(NAMES.values(),gains,[BLUE,TEAL,NAVY]))],
+        caption='Callouts show the F1 change from 0.5 to the best grid point. Circles mark grid maxima; these are not test improvements.')
+
+    threshold_rows=[]
+    for model,name in NAMES.items():
+        th=threshold.loc[name];base=r.loc[(27,model)]
+        threshold_rows.extend([[name,'Default','0.50',f'{base.macro_f1:.4f}',f'{base.hamming_loss:.4f}','—'],
+                               [name,'Exploratory best',f'{th.best_exploratory_threshold:.2f}',f'{th.exploratory_macro:.4f}',
+                                f'{th.exploratory_hamming:.4f}',f'{100*(th.exploratory_macro-base.macro_f1):+.3f}']])
+    add('full_table','12 / Q5','Q5 · F1 gains come with more label errors',
+        '27-output study • same validation examples and checkpoint within each model • Macro-F1-selected grid points',
+        'Every best-F1 grid point has higher Hamming Loss; tuning F1 does not optimize every metric.',
+        'Sources: model_comparison.csv (27 outputs); threshold_sensitivity.csv. Δ F1 versus each model’s default, in percentage points.',
+        rq='Q5',
+        table=table(['Model','Threshold setting','τ','Macro-F1 ↑','Hamming ↓','Δ F1 (pp)'],threshold_rows,
+                    [220,245,95,200,200,192],row_height=43,group_starts=[2,4],alignments=[0,0,2,2,2,2],
+                    highlights=[(i,j) for i in (1,3,5) for j in (2,3,5)]),
+        caption='Best = highest Macro-F1 on the explored validation grid, not an independently validated optimum. Main results remain at 0.5. LRAP is cutoff-independent; test generalization is unknown.')
 
     cases=pd.read_csv(OUT/'phobert28_error_review.csv',dtype={'sample_id':str}).set_index('sample_id')
     fp,fn=cases.loc['30099'],cases.loc['6238']
-    add('two_column','11 / ERROR ANALYSIS','Neutral errors: implied affect versus surface cues',
+    add('two_column','13 / ERROR ANALYSIS','Neutral errors: implied affect versus surface cues',
         'Two illustrative cases from the six-case preliminary, AI-assisted review; no raw comments reproduced.',
         'Interpretations are hypotheses from selected cases, not established error causes.',
         'Source: phobert28_error_review.csv; current PhoBERT-28 validation predictions. Team confirmation remains pending.',
@@ -280,7 +348,7 @@ def slide_definitions():
                      hypothesis='Hypothesis: profanity may resemble negative affect.')],
         caption='Review scope: three confident Neutral false positives and three low-probability Neutral misses, selected deliberately.')
 
-    add('final_plan','12 / FINAL EXPERIMENT','Is one threshold suitable for every emotion?',
+    add('final_plan','14 / FINAL EXPERIMENT','Is one threshold suitable for every emotion?',
         'Planned controlled decoding comparison • no new test results claimed',
         'Hold model weights fixed; change the decoder, then evaluate held-out test once.',
         'Source: course Final RQ1 and current midterm protocol. Thresholds selected strictly on validation predictions.',
@@ -288,7 +356,7 @@ def slide_definitions():
         strategies=[['Fixed threshold','Use τ = 0.5 for every emotion.'],['Global tuned','Select one shared threshold on validation.'],['Per-label tuned','Select a separate threshold for each emotion.']],
         nodes=[['1. Tune on validation','Compare decoders; review FP / FN'],['2. Lock all choices','Checkpoint + thresholds + protocol'],['3. Evaluate test once','Report scores and limitations']])
 
-    add('conclusions','13 / CONCLUSIONS','What the current study supports',
+    add('conclusions','15 / CONCLUSIONS','What the current study supports',
         'Three evidence-backed observations; a focused next experiment',
         'PhoBERT is the strongest model in each setting; Neutral and decoder design remain open questions.',
         'Sources: current Kaggle 08–09 artifacts; ViGoEmotions (EACL 2026, doi:10.18653/v1/2026.eacl-long.129); PhoBERT (2020).',
@@ -296,6 +364,8 @@ def slide_definitions():
                   ['Neutral is not a shared-emotion F1 gain here','The 28-output projection is 1.38 pp lower than PhoBERT-27.'],
                   ['Evaluate decoding with a frozen backbone','Explore fixed, global and per-label thresholds without retraining.']],
         limits=['One seed; validation-based selection.','No model test scores or significance claims.','Original stratification algorithm unverified.','Heuristic styles; error review needs confirmation.'])
+    if len(slides)!=len(SPEECH):
+        raise ValueError('Every slide must have matching speaker notes')
     for slide,speech in zip(slides,SPEECH):
         slide['notes']=speech
     return slides

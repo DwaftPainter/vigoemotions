@@ -149,7 +149,9 @@ class SlideCanvas:
             self.rect(bar_x, y-31, bar_w, 22, PALE)
             self.rect(bar_x, y-31, max(.3,bar_w*value/maxval), 22,
                       colors_by_row[i] if colors_by_row else TEAL)
-            self.text(f'{value:.4f}' if value_format == 'f1' else f'{value:,.0f}', bar_x+bar_w+9, y-7, 62, 14, INK, True,
+            formatted = (f'{value:.4f}' if value_format == 'f1' else
+                         f'{value:.2%}' if value_format == 'percent' else f'{value:,.0f}')
+            self.text(formatted, bar_x+bar_w+9, y-7, 62, 14, INK, True,
                       height=25, align=2)
 
     def plot(self, series, x, y, width, height, xlim, ylim, xticks, yticks,
@@ -209,6 +211,7 @@ def render_table(p,s):
 def render_table_chart(p,s):
     p.table(**s['table'])
     if 'bars' in s:p.bar_chart(**s['bars'])
+    if 'scatter' in s:p.plot(**s['scatter'])
     for stat in s.get('stats',[]):p.stat(**stat)
     for item in s.get('annotations',[]):p.text(**item)
 
@@ -267,15 +270,6 @@ def render_curves(p,s):
     p.text(s['caption'],64,179,1152,15,MUTED,height=35)
 
 
-def render_analysis(p,s):
-    p.label('Q1 / Highest and lowest per-label F1',64,520,600)
-    p.bar_chart(**s['bars'])
-    p.label('Q2 / Training frequency vs per-label F1',690,520,526)
-    p.plot(**s['scatter'])
-    p.text(s['association'],726,179,490,17,TEAL,True,height=35)
-    p.text(s['caption'],64,179,580,14,MUTED,height=38)
-
-
 def render_threshold(p,s):
     p.plot(**s['chart'])
     for stat in s['stats']:p.stat(**stat)
@@ -316,7 +310,7 @@ def render_conclusion(p,s):
 
 LAYOUTS={'title':render_title,'full_table':render_table,'table_chart':render_table_chart,
          'encoding':render_encoding,'pipeline':render_pipeline,'paired':render_paired,
-         'neutral':render_neutral,'curves':render_curves,'analysis':render_analysis,
+         'neutral':render_neutral,'curves':render_curves,
          'threshold':render_threshold,'two_column':render_comparison,
          'final_plan':render_final_plan,'conclusions':render_conclusion}
 

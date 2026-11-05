@@ -39,10 +39,10 @@ def script_markdown(slides):
         f'{len(slides)} slides; {words:,} spoken words. Target: about 8–9 minutes, including short pauses and handovers. Finish before the 10-minute limit; leave any remaining time for questions.', '',
         'Use this script with reports/midterm_slides.pdf. The numerical results come from the verified Kaggle 20-epoch studies. The Vietnamese report and study guide remain available for preparation.', '',
         '## Suggested timing', '',
-        '- Slides 1–5: introduction, data and model setup, about 2–2.5 minutes.',
-        '- Slides 6–9: results, Neutral comparison and learning curves, about 2.5–3 minutes.',
-        '- Slides 10–13: midterm questions and errors, about 2–2.5 minutes.',
-        '- Slides 14–15: final research question and conclusion, about 1 minute.', '',
+        '- Slides 1–5: introduction, data and model setup, about 2 minutes.',
+        '- Slides 6–9: results, Neutral comparison and learning curves, about 2 minutes.',
+        '- Slides 10–15: dedicated Q1–Q5 analyses, about 3–3.5 minutes.',
+        '- Slides 16–18: error analysis, final research question and conclusion, about 1.5 minutes.', '',
         '## Before presenting', '',
         '- Add your real group details to the submitted materials; do not read these preparation instructions aloud.',
         '- Confirm the six AI-assisted error-review observations before presenting them as your team’s analysis.',
@@ -105,7 +105,7 @@ def render_script(markdown):
 
 def slide_markdown(slides):
     lines=['# ViGoEmotions — Midterm research presentation', '',
-           '15 slides • English • validation results from the verified Kaggle 20-epoch studies.', '',
+           f'{len(slides)} slides • English • validation results from the verified Kaggle 20-epoch studies.', '',
            'Experiment inputs are read-only. Slide definitions: reports/midterm_slide_design.json.', '']
     for i,s in enumerate(slides,1):
         lines += [f"## {i}. {s['title']}", '', f"**Layout:** {s['layout']} · **Section:** {s['section']}", '',
@@ -117,21 +117,23 @@ def slide_markdown(slides):
                 lines += [f'**{number}:** {label}', '']
         if s.get('table'):
             t=s['table'];lines += ['| '+' | '.join(t['headers'])+' |','| '+' | '.join('---' for _ in t['headers'])+' |']
-            lines += ['| '+' | '.join(str(v) for v in row)+' |' for row in t['rows']];lines += ['']
+            lines += ['| '+' | '.join(str(v).replace('\n','<br>') for v in row)+' |' for row in t['rows']];lines += ['']
         if s.get('routes'):
             for route in s['routes']:lines += [f"**{route['name']}:** "+' → '.join(n[0]+' ('+n[1]+')' for n in route['nodes'])]
             lines += ['']
         if s.get('bars'):
             bars=s['bars'];lines += ['**Chart — selected labels:**', '']
             for name,value in zip(bars['labels'],bars['values']):
-                number=f'{value:.4f}' if bars.get('value_format')=='f1' else f'{value:,.0f}'
+                number=(f'{value:.4f}' if bars.get('value_format')=='f1' else
+                        f'{value:.2%}' if bars.get('value_format')=='percent' else f'{value:,.0f}')
                 lines += [f'- {name}: {number}']
             lines += ['']
         if s.get('charts'):
             for chart in s['charts']:lines += [f"**Chart:** {chart['title']} — "+'; '.join(a['name'] for a in chart['series'])+'.']
             lines += ['']
         if s.get('chart'):lines += ['**Chart:** validation Macro-F1 versus decision threshold for TF-IDF, BiGRU and PhoBERT.','']
-        if s.get('scatter'):lines += ['**Chart:** training frequency versus validation F1 across all 27 emotion labels.',s['association'],'']
+        if s.get('scatter'):lines += ['**Chart:** training frequency versus validation F1 across all 27 emotion labels.','']
+        for item in s.get('annotations',[]):lines += [item['value'],'']
         if s.get('panels'):
             for panel in s['panels']:lines += [f"**{panel['heading']} — {panel['id']}:** {panel['truth']}; {panel['prediction']}; {panel['probability']}. {panel['hypothesis']}"]
             lines += ['']
@@ -149,8 +151,8 @@ def slide_markdown(slides):
 def build_presentation():
     from academic_slides import render_deck
     slides=presentation_content()
-    if len(slides)!=15:
-        raise ValueError('The presentation must contain exactly 15 slides')
+    if len(slides)!=18:
+        raise ValueError('The presentation must contain exactly 18 slides')
     markdown,words=script_markdown(slides)
     if words>950:
         raise ValueError('Shorten the spoken script to fit the presentation time limit')
@@ -158,7 +160,8 @@ def build_presentation():
     boxes=render_deck(slides,ROOT/'reports/midterm_slides.pdf')
     (ROOT/'reports/midterm_slides.md').write_text(slide_markdown(slides))
     SCRIPT.write_text(markdown);render_script(markdown)
-    print(f'Built {len(slides)} academic slides, seven tables and a matching script ({words} spoken words).')
+    tables=sum('table' in slide for slide in slides)
+    print(f'Built {len(slides)} academic slides, {tables} tables and a matching script ({words} spoken words).')
     return slides,boxes
 
 
