@@ -20,4 +20,4 @@ Trước buổi trình bày: điền thông tin nhóm; nhóm xác nhận phần 
 
 ## Kiểm tra bộ tài liệu hiện tại
 
-21 kiểm thử liên quan đều qua (14 workflow, 5 import/provenance, 2 report). Report PDF 10 trang, slide 20 trang, cẩm nang 22 trang và 16 đoạn trích mã đã được kiểm tra. Hai notebook executed giữ nguyên SHA-256 và output; các thành viên evidence trích từ ZIP giữ nguyên byte. Đã kiểm tra link và xem các trang PDF đại diện. Chi tiết tại [verification.json](../reports/kaggle_equal20_2026-11-05/verification.json).
+21 kiểm thử liên quan đều qua (14 workflow, 5 import/provenance, 2 report). Report PDF 10 trang, slide 15 trang, cẩm nang 22 trang và 16 đoạn trích mã đã được kiểm tra. Hai notebook executed giữ nguyên SHA-256 và output; các thành viên evidence trích từ ZIP giữ nguyên byte. Đã kiểm tra link và xem các trang PDF đại diện. Chi tiết tại [verification.json](../reports/kaggle_equal20_2026-11-05/verification.json).

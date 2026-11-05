@@ -17,23 +17,23 @@
   "pdfs": {
     "reports/midterm_report.pdf": {
       "pages": 10,
-      "sha256": "caaf63abe7a452814d5038b3b4c1467210b095980035a2f4cf29e710730eacac",
+      "sha256": "910f2fe2bdab51da23654c1319ff8b1bdaabf02dbe7bb9ee791a46e1becf21bd",
       "extractable_characters": 16337
     },
     "reports/midterm_slides.pdf": {
-      "pages": 20,
-      "sha256": "774d53189eb5c171a909491d2bbc5cea6b36b0e3e9f950eb4b4445711911b612",
-      "extractable_characters": 6364
+      "pages": 15,
+      "sha256": "e452e382484e4d3822bd30a48894911d066d9c13e391cd6bec5d0578deaa9fd6",
+      "extractable_characters": 4905
     },
     "docs/VIGOEMOTIONS_3_MODELS_STUDY_GUIDE_VI.pdf": {
       "pages": 22,
-      "sha256": "41e565d6aa3a397c236ea8ad27323106d91467ba7c8dfed54a2c9b8824d8bbb3",
-      "extractable_characters": 57386
+      "sha256": "664c005272cd00997296076d230b569357fd40ee534791fef9dc159b1f4e45fb",
+      "extractable_characters": 57459
     },
     "docs/midterm_presentation_en.pdf": {
-      "pages": 6,
-      "sha256": "f27624311bda9c8050cd4b7895b3bda0b8d5d9d584937ca1b7d8804814d2dcef",
-      "extractable_characters": 15243
+      "pages": 5,
+      "sha256": "a39473302ad62d5bab2c1cfa5052618b96134cb74e414db48797d8610c7c28d3",
+      "extractable_characters": 10894
     }
   },
   "code_quotes_verified": 16,
@@ -45,14 +45,15 @@
   "test_model_scoring": false,
   "historical_model_metrics_in_primary_report": false,
   "english_presentation": {
-    "slides": 20,
-    "matching_script_sections": 20,
-    "spoken_words": 1438,
-    "target_minutes": "12–15, including short pauses and handovers; Q&A additional",
+    "slides": 15,
+    "matching_script_sections": 15,
+    "spoken_words": 803,
+    "target_minutes": "8–9, including short pauses and handovers; finish before 10 minutes",
     "qa_answers": 12,
     "related_tests_rerun": 7,
     "all_key_metrics_checked": true,
     "representative_slide_and_script_pages_visually_inspected": true,
-    "source_notebooks_unchanged": true
+    "source_notebooks_unchanged": true,
+    "opening_slides_compacted": "Previous slides 1–9 merged into 4; results start at slide 5"
   }
 }

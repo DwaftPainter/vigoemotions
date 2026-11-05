@@ -788,7 +788,7 @@ Dùng các bảng mới trong reports/kaggle_equal20_2026-11-05/: label_extremes
 
 Sáu ca PhoBERT 28 mới: ba Neutral FP tự tin nhất, ba Neutral FN xác suất thấp nhất. Giữ ID/nhãn/xác suất và mô tả trừu tượng; không copy raw text. Nhận xét về ngữ cảnh, HTML, câu ngắn và từ tục là giả thuyết có hỗ trợ AI, cần nhóm xác nhận. 20 FN/20 FP tự sinh mỗi model là ứng viên để đọc, không phải audit hoàn tất.
 
-Giới hạn chung: một seed, validation dùng chọn checkpoint/khảo sát ngưỡng, style rules có nhiễu, test chưa chấm. Bài nói theo [lời dẫn20 slide](midterm_presentation_2026-11-05.md). Bổ sung tên/MSSV/phân công trước buổi bảo vệ.
+Giới hạn chung: một seed, validation dùng chọn checkpoint/khảo sát ngưỡng, style rules có nhiễu, test chưa chấm. Bài thuyết trình chính dùng [script tiếng Anh ngắn, 15 slide](midterm_presentation_en.md); [lời dẫn tiếng Việt mở rộng](midterm_presentation_2026-11-05.md) giữ để ôn tập. Bổ sung tên/MSSV/phân công trước buổi bảo vệ.
 
 <!-- page -->
 

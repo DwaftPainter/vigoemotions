@@ -3,7 +3,7 @@
 **Nguồn chính hiện tại là Kaggle 20 epoch, notebook 08/09 executed.**
 
 1. [Báo cáo](midterm_report.pdf) / [Markdown](midterm_report.md).
-2. [20 slide tiếng Anh](midterm_slides.pdf) / [speaker notes](midterm_slides.md).
+2. [15 slide tiếng Anh](midterm_slides.pdf) / [speaker notes](midterm_slides.md).
 3. [Kết quả, Q1–Q5 và evidence mới](kaggle_equal20_2026-11-05/README.md).
 4. [Script tiếng Anh + Q&A](../docs/midterm_presentation_en.md) / [PDF](../docs/midterm_presentation_en.pdf).
 

@@ -166,7 +166,7 @@ def main():
 
 Nhận diện cảm xúc đa nhãn trên bình luận tiếng Việt. Một mẫu có thể có nhiều cảm xúc, nên mỗi nhãn là một quyết định nhị phân độc lập. Nhóm đánh giá ba mô hình trên hai cách mã hóa: 27 cảm xúc và 28 nhãn gồm Neutral. Mọi điểm mô hình trong báo cáo là validation, ngưỡng 0,5, seed 42; test được giữ cho Final.
 
-Nguồn yêu cầu: student-guide.pdf, mục Midterm; 02-vigoemotions-vietnamese-emotion.pdf, mục Midterm A–E. Cần EDA, split/preprocessing hợp lệ, ba mô hình, Macro/Micro-F1, per-label F1, Hamming Loss, LRAP, tham số/thời gian, phân tích lỗi và RQ Final. Bộ slide có 20 trang; code và README tái lập đi cùng kết quả.
+Nguồn yêu cầu: student-guide.pdf, mục Midterm; 02-vigoemotions-vietnamese-emotion.pdf, mục Midterm A–E. Cần EDA, split/preprocessing hợp lệ, ba mô hình, Macro/Micro-F1, per-label F1, Hamming Loss, LRAP, tham số/thời gian, phân tích lỗi và RQ Final. Bộ slide có 15 trang; code và README tái lập đi cùng kết quả.
 
 ## 2. Dữ liệu và EDA
 
@@ -331,7 +331,7 @@ Mọi model được chấm lại trên validation. Tham số/thời gian lấy 
 
 Build: `python scripts/import_equal20_results.py`, sau đó `python scripts/build_report.py`. Không train, không chấm test và không dùng metric các lượt ít epoch. Hai ZIP riêng tư gốc không được commit.
 ''')
-    print('Built current equal20 midterm report and 20 slides; no historical model scores used.')
+    print('Built current equal20 midterm report and 15 English slides; no historical model scores used.')
 
 
 if __name__ == '__main__':
