@@ -1,0 +1,267 @@
+{
+  "config": {
+    "seed": 42,
+    "label_count": 27,
+    "neutral_id": 27,
+    "threshold": 0.5,
+    "split_policy": "Preserve supplied val/test; remove normalized train overlaps; audit label prevalence",
+    "frequency_tiers": {
+      "method": "descending training frequency rank; tie by label ID",
+      "head_ranks": [
+        1,
+        9
+      ],
+      "mid_ranks": [
+        10,
+        18
+      ],
+      "tail_ranks": [
+        19,
+        27
+      ]
+    },
+    "tfidf": {
+      "max_features": 40000,
+      "ngram_range": [
+        1,
+        2
+      ],
+      "min_df": 2,
+      "sublinear_tf": true,
+      "lowercase": true,
+      "token_pattern": "(?u)\\b\\w+\\b"
+    },
+    "logistic_regression": {
+      "C": 1.0,
+      "solver": "liblinear",
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "gru": {
+      "max_vocab": 30000,
+      "embedding_dim": 128,
+      "hidden_dim": 128,
+      "dropout": 0.3,
+      "max_length": 128,
+      "epochs": 20,
+      "batch_size": 64,
+      "learning_rate": 0.001
+    },
+    "phobert": {
+      "checkpoint": "vinai/phobert-base-v2",
+      "max_length": 256,
+      "epochs": 20,
+      "batch_size": 16,
+      "learning_rate": 2e-05,
+      "weight_decay": 0.01,
+      "revision": "86cd7fd4c148980922ac11a2cf5e257f2ba639e1"
+    },
+    "checkpoint_selection": "Highest validation emotion27 Macro-F1 at 0.5; ties keep earliest epoch",
+    "threshold_sweep": {
+      "start": 0.05,
+      "stop": 0.8,
+      "step": 0.05,
+      "split": "val"
+    },
+    "checkpoint_selection_metric": "emotion27_macro_f1"
+  },
+  "environment": {
+    "python": "3.13.16",
+    "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+    "processor": "x86_64",
+    "packages": {
+      "numpy": "2.1.3",
+      "pandas": "2.3.3",
+      "scikit-learn": "1.6.1",
+      "scipy": "1.16.3",
+      "matplotlib": "3.10.0",
+      "torch": "2.11.0+cu130",
+      "transformers": "4.57.3",
+      "py-vncorenlp": "0.1.4"
+    },
+    "data_sha256": {
+      "train": "9abcb2b7d9fadd9da043a3af43e8ee569f7099d87d20daf39a69e7e1a76c5624",
+      "val": "d3a473a65bf10d3d07423306a4324e94c9979d42d58f6a05cceb4cc1cc4fcab0",
+      "test": "620814a67ad5297cdcdac6369dbb223b4e95030b7b525d4466302f0288418e33"
+    }
+  },
+  "device": "Tesla T4",
+  "best_epoch": 14,
+  "history": [
+    {
+      "epoch": 1,
+      "loss": 0.26424857017421316,
+      "macro_f1": 0.0,
+      "micro_f1": 0.0,
+      "hamming_loss": 0.06926965687856297,
+      "lrap": 0.3993900523623596
+    },
+    {
+      "epoch": 2,
+      "loss": 0.21100333204286717,
+      "macro_f1": 0.08002160250662896,
+      "micro_f1": 0.24405377456049637,
+      "hamming_loss": 0.06552292854325768,
+      "lrap": 0.581104339589491
+    },
+    {
+      "epoch": 3,
+      "loss": 0.17012267322231622,
+      "macro_f1": 0.3342832260499033,
+      "micro_f1": 0.4584129189095329,
+      "hamming_loss": 0.055914094152235486,
+      "lrap": 0.6895703094473797
+    },
+    {
+      "epoch": 4,
+      "loss": 0.1401954749507826,
+      "macro_f1": 0.43393415943737984,
+      "micro_f1": 0.5190039318479686,
+      "hamming_loss": 0.052633465992614106,
+      "lrap": 0.7224248596627307
+    },
+    {
+      "epoch": 5,
+      "loss": 0.11843094184895536,
+      "macro_f1": 0.5412303068090067,
+      "micro_f1": 0.5725547445255474,
+      "hamming_loss": 0.05249005055394213,
+      "lrap": 0.7350779806999399
+    },
+    {
+      "epoch": 6,
+      "loss": 0.10195906524919987,
+      "macro_f1": 0.5620310510964979,
+      "micro_f1": 0.5823188405797102,
+      "hamming_loss": 0.05166541178157829,
+      "lrap": 0.7421162302773365
+    },
+    {
+      "epoch": 7,
+      "loss": 0.08810517517292024,
+      "macro_f1": 0.5653143752248143,
+      "micro_f1": 0.5873833727893051,
+      "hamming_loss": 0.05311749309813201,
+      "lrap": 0.7394789568991502
+    },
+    {
+      "epoch": 8,
+      "loss": 0.07672019170825942,
+      "macro_f1": 0.5780104071636172,
+      "micro_f1": 0.5937799698588848,
+      "hamming_loss": 0.05315334695780001,
+      "lrap": 0.7425832005784979
+    },
+    {
+      "epoch": 9,
+      "loss": 0.06666811355724886,
+      "macro_f1": 0.5827691480971153,
+      "micro_f1": 0.5957446808510638,
+      "hamming_loss": 0.053476031694811944,
+      "lrap": 0.7440368848212616
+    },
+    {
+      "epoch": 10,
+      "loss": 0.05772696620972317,
+      "macro_f1": 0.5833932168173548,
+      "micro_f1": 0.5900655021834061,
+      "hamming_loss": 0.05385249722132587,
+      "lrap": 0.7435611218849969
+    },
+    {
+      "epoch": 11,
+      "loss": 0.0499647084364405,
+      "macro_f1": 0.5889012584005349,
+      "micro_f1": 0.5958677685950413,
+      "hamming_loss": 0.052597612132946114,
+      "lrap": 0.7468732305741509
+    },
+    {
+      "epoch": 12,
+      "loss": 0.04307287338641075,
+      "macro_f1": 0.5829808262649725,
+      "micro_f1": 0.5902814657461498,
+      "hamming_loss": 0.0553225054677136,
+      "lrap": 0.7411063147870491
+    },
+    {
+      "epoch": 13,
+      "loss": 0.037436469068724824,
+      "macro_f1": 0.5946654857016659,
+      "micro_f1": 0.596439566323116,
+      "hamming_loss": 0.054049693449499836,
+      "lrap": 0.7433867184968334
+    },
+    {
+      "epoch": 14,
+      "loss": 0.032434728888696744,
+      "macro_f1": 0.597409592448629,
+      "micro_f1": 0.599582354476638,
+      "hamming_loss": 0.05499982073070166,
+      "lrap": 0.7419452844727383
+    },
+    {
+      "epoch": 15,
+      "loss": 0.028099137558660954,
+      "macro_f1": 0.5928700965123411,
+      "micro_f1": 0.5990688049663735,
+      "hamming_loss": 0.055573482485389555,
+      "lrap": 0.736715529142519
+    },
+    {
+      "epoch": 16,
+      "loss": 0.024636614034194624,
+      "macro_f1": 0.5907194436077988,
+      "micro_f1": 0.5982095839915745,
+      "hamming_loss": 0.054712989853357714,
+      "lrap": 0.7378604972870842
+    },
+    {
+      "epoch": 17,
+      "loss": 0.021482002936727303,
+      "macro_f1": 0.5880531587942454,
+      "micro_f1": 0.5928489042675894,
+      "hamming_loss": 0.05695385608260729,
+      "lrap": 0.7267539016211216
+    },
+    {
+      "epoch": 18,
+      "loss": 0.01943038448091896,
+      "macro_f1": 0.5875948392384869,
+      "micro_f1": 0.5938306835167821,
+      "hamming_loss": 0.05358359327381593,
+      "lrap": 0.7387927825435392
+    },
+    {
+      "epoch": 19,
+      "loss": 0.01712337046905595,
+      "macro_f1": 0.5911192601256222,
+      "micro_f1": 0.5967256057629339,
+      "hamming_loss": 0.055197016958875626,
+      "lrap": 0.738686748160957
+    },
+    {
+      "epoch": 20,
+      "loss": 0.015438368358732135,
+      "macro_f1": 0.5911182805050077,
+      "micro_f1": 0.5925925925925926,
+      "hamming_loss": 0.055412140116883585,
+      "lrap": 0.7313871987908463
+    }
+  ],
+  "preprocessing": {
+    "checkpoint": "vinai/phobert-base-v2",
+    "revision": "86cd7fd4c148980922ac11a2cf5e257f2ba639e1",
+    "tokenization": "VnCoreNLP RDRSegmenter + PhoBERT BPE",
+    "truncation_rate": {
+      "train": 0.0,
+      "val": 0.0
+    }
+  },
+  "prep_seconds": 57.56376733299999,
+  "time_definition": "Training loop including per-epoch validation and checkpoint writes; excludes preprocessing/download",
+  "checkpoint_path": "/kaggle/working/ViGoEmotions27Equal20/reports/neutral_28_labels/kaggle_equal_20ep/labels27_study/labels27/phobert/best.pt",
+  "deterministic_note": "Fixed seeds and deterministic cuDNN; exact equality across GPU types not guaranteed",
+  "parameter_count": 135019035,
+  "train_seconds": 14589.618176638
+}

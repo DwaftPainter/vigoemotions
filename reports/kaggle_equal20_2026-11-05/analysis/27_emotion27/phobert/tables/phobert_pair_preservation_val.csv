@@ -1,0 +1,11 @@
+label_a,label_b,train_count,val_true_count,val_pred_count,joint_true_positive,joint_recall
+disappointment,sadness,904,122,124,63,0.5163934426229508
+anger,annoyance,699,77,85,22,0.2857142857142857
+sadness,grief,620,81,90,54,0.6666666666666666
+amusement,joy,568,48,69,23,0.4791666666666667
+annoyance,disapproval,469,67,82,21,0.31343283582089554
+joy,love,395,50,47,23,0.46
+disgust,anger,379,49,39,16,0.32653061224489793
+embarrassment,sadness,366,48,54,32,0.6666666666666666
+excitement,joy,359,34,35,11,0.3235294117647059
+disappointment,annoyance,336,41,50,9,0.21951219512195122

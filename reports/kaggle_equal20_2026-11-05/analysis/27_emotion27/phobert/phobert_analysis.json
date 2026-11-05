@@ -1,0 +1,7 @@
+{
+  "best_global_threshold_val": 0.35,
+  "best_global_macro_f1_val": 0.5978433128696495,
+  "frequency_f1_spearman": 0.018315018315018316,
+  "spearman_pvalue": 0.9277533978634779,
+  "note": "Exploratory validation analysis; test not evaluated by default."
+}

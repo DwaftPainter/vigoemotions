@@ -1,0 +1,310 @@
+{
+  "model": "gru",
+  "config": {
+    "seed": 42,
+    "label_count": 28,
+    "neutral_id": 27,
+    "threshold": 0.5,
+    "split_policy": "Preserve supplied val/test; remove normalized train overlaps; audit label prevalence",
+    "frequency_tiers": {
+      "method": "descending training frequency rank; tie by label ID",
+      "head_ranks": [
+        1,
+        9
+      ],
+      "mid_ranks": [
+        10,
+        18
+      ],
+      "tail_ranks": [
+        19,
+        27
+      ]
+    },
+    "tfidf": {
+      "max_features": 40000,
+      "ngram_range": [
+        1,
+        2
+      ],
+      "min_df": 2,
+      "sublinear_tf": true,
+      "lowercase": true,
+      "token_pattern": "(?u)\\b\\w+\\b"
+    },
+    "logistic_regression": {
+      "C": 1.0,
+      "solver": "liblinear",
+      "max_iter": 1000,
+      "random_state": 42
+    },
+    "gru": {
+      "max_vocab": 30000,
+      "embedding_dim": 128,
+      "hidden_dim": 128,
+      "dropout": 0.3,
+      "max_length": 128,
+      "epochs": 20,
+      "batch_size": 64,
+      "learning_rate": 0.001
+    },
+    "phobert": {
+      "checkpoint": "vinai/phobert-base-v2",
+      "max_length": 256,
+      "epochs": 20,
+      "batch_size": 16,
+      "learning_rate": 2e-05,
+      "weight_decay": 0.01,
+      "revision": "86cd7fd4c148980922ac11a2cf5e257f2ba639e1"
+    },
+    "checkpoint_selection": "Highest validation emotion27 Macro-F1 at 0.5; ties keep earliest epoch",
+    "threshold_sweep": {
+      "start": 0.05,
+      "stop": 0.8,
+      "step": 0.05,
+      "split": "val"
+    },
+    "checkpoint_selection_metric": "emotion27_macro_f1",
+    "neutral_policy": "preserve_original_annotations"
+  },
+  "labels": [
+    "amusement",
+    "excitement",
+    "joy",
+    "love",
+    "desire",
+    "optimism",
+    "caring",
+    "pride",
+    "admiration",
+    "gratitude",
+    "relief",
+    "approval",
+    "realization",
+    "surprise",
+    "curiosity",
+    "confusion",
+    "fear",
+    "nervousness",
+    "remorse",
+    "embarrassment",
+    "disappointment",
+    "sadness",
+    "grief",
+    "disgust",
+    "anger",
+    "annoyance",
+    "disapproval",
+    "neutral"
+  ],
+  "environment": {
+    "python": "3.13.16",
+    "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+    "packages": {
+      "numpy": "2.1.3",
+      "pandas": "2.3.3",
+      "scikit-learn": "1.6.1",
+      "scipy": "1.16.3",
+      "torch": "2.11.0+cu130",
+      "transformers": "4.57.3",
+      "py-vncorenlp": "0.1.4"
+    },
+    "data_sha256": {
+      "train": "d8c5302bfbfd42c83fc873aff104918fae62da0bad69768c0b46a23a680a218f",
+      "val": "7a2da63676e4ba2ca4a8c97d61f5d731181083c236591e74a345f124e6d65ff3",
+      "test": "a82cda5da58b6e2043e3f05ae3971f7078630924c691c71ef4ad6eeecfa30a7f"
+    }
+  },
+  "selection_split": "val",
+  "threshold": 0.5,
+  "history": [
+    {
+      "epoch": 1,
+      "loss": 0.2732851952512698,
+      "macro_f1": 0.0382755184813978,
+      "micro_f1": 0.05335291238374939,
+      "hamming_loss": 0.06686488729083115,
+      "lrap": 0.3903060923999531,
+      "selection_macro_f1": 0.03969313027700512
+    },
+    {
+      "epoch": 2,
+      "loss": 0.20947331375630063,
+      "macro_f1": 0.15872030212859203,
+      "micro_f1": 0.2158428663932657,
+      "hamming_loss": 0.0628025169409487,
+      "lrap": 0.5197423671218947,
+      "selection_macro_f1": 0.1645988318370584
+    },
+    {
+      "epoch": 3,
+      "loss": 0.18192998786911557,
+      "macro_f1": 0.23982726973301174,
+      "micro_f1": 0.30960497292961703,
+      "hamming_loss": 0.05951804729636288,
+      "lrap": 0.5638493447760521,
+      "selection_macro_f1": 0.24870976120460478
+    },
+    {
+      "epoch": 4,
+      "loss": 0.16423347230507113,
+      "macro_f1": 0.305051997070036,
+      "micro_f1": 0.38220757825370677,
+      "hamming_loss": 0.05834255289724796,
+      "lrap": 0.5835855784739764,
+      "selection_macro_f1": 0.316350219183741
+    },
+    {
+      "epoch": 5,
+      "loss": 0.14977289121474055,
+      "macro_f1": 0.3305964950455797,
+      "micro_f1": 0.4068941009239517,
+      "hamming_loss": 0.057702945650670724,
+      "lrap": 0.5925882784192728,
+      "selection_macro_f1": 0.3428408096768975
+    },
+    {
+      "epoch": 6,
+      "loss": 0.13769750711201034,
+      "macro_f1": 0.3551516046397784,
+      "micro_f1": 0.42778730703259005,
+      "hamming_loss": 0.05766837228599087,
+      "lrap": 0.600710326650773,
+      "selection_macro_f1": 0.36682388629310353
+    },
+    {
+      "epoch": 7,
+      "loss": 0.12604949861782938,
+      "macro_f1": 0.3664290952446002,
+      "micro_f1": 0.42990654205607476,
+      "hamming_loss": 0.05694233162771401,
+      "lrap": 0.6031201111257256,
+      "selection_macro_f1": 0.3785622116812035
+    },
+    {
+      "epoch": 8,
+      "loss": 0.11492162797300295,
+      "macro_f1": 0.37939840368714767,
+      "micro_f1": 0.43961431606471646,
+      "hamming_loss": 0.05927603374360393,
+      "lrap": 0.600543702609507,
+      "selection_macro_f1": 0.39207845430381844
+    },
+    {
+      "epoch": 9,
+      "loss": 0.10484110511257946,
+      "macro_f1": 0.3935331512675669,
+      "micro_f1": 0.4539282250242483,
+      "hamming_loss": 0.05839441294426773,
+      "lrap": 0.6088786695495318,
+      "selection_macro_f1": 0.40543911716369635
+    },
+    {
+      "epoch": 10,
+      "loss": 0.09515813520044106,
+      "macro_f1": 0.3992265474699422,
+      "micro_f1": 0.45909451945988883,
+      "hamming_loss": 0.05886115336744572,
+      "lrap": 0.605070900117131,
+      "selection_macro_f1": 0.4107638529967691
+    },
+    {
+      "epoch": 11,
+      "loss": 0.08630115531173102,
+      "macro_f1": 0.39514197528931155,
+      "micro_f1": 0.4423476731169039,
+      "hamming_loss": 0.060278661319319596,
+      "lrap": 0.6007509852374361,
+      "selection_macro_f1": 0.4053937819568315
+    },
+    {
+      "epoch": 12,
+      "loss": 0.07843453822735218,
+      "macro_f1": 0.39874995016731046,
+      "micro_f1": 0.4452195972728714,
+      "hamming_loss": 0.0604861015073987,
+      "lrap": 0.60030459792773,
+      "selection_macro_f1": 0.4100996634213704
+    },
+    {
+      "epoch": 13,
+      "loss": 0.07130839776177876,
+      "macro_f1": 0.403704683519054,
+      "micro_f1": 0.4529182879377432,
+      "hamming_loss": 0.06076268842483751,
+      "lrap": 0.5999225826123749,
+      "selection_macro_f1": 0.4133657035435692
+    },
+    {
+      "epoch": 14,
+      "loss": 0.06472949004054286,
+      "macro_f1": 0.4026245007249516,
+      "micro_f1": 0.4473358116480793,
+      "hamming_loss": 0.06167888258885355,
+      "lrap": 0.5947829872490982,
+      "selection_macro_f1": 0.4109729937194529
+    },
+    {
+      "epoch": 15,
+      "loss": 0.06116716939701287,
+      "macro_f1": 0.4086670552913679,
+      "micro_f1": 0.4519913553565915,
+      "hamming_loss": 0.061367722306734894,
+      "lrap": 0.5912778105212643,
+      "selection_macro_f1": 0.41892957780703255
+    },
+    {
+      "epoch": 16,
+      "loss": 0.05399108639790373,
+      "macro_f1": 0.404840173215414,
+      "micro_f1": 0.44543773119605423,
+      "hamming_loss": 0.06219748305905131,
+      "lrap": 0.5888073161213285,
+      "selection_macro_f1": 0.41492868588539866
+    },
+    {
+      "epoch": 17,
+      "loss": 0.04844283562173861,
+      "macro_f1": 0.40001547131058734,
+      "micro_f1": 0.4442384924312635,
+      "hamming_loss": 0.06219748305905131,
+      "lrap": 0.5877334684579838,
+      "selection_macro_f1": 0.4102012295072758
+    },
+    {
+      "epoch": 18,
+      "loss": 0.044428113407606946,
+      "macro_f1": 0.40617149267145586,
+      "micro_f1": 0.4478425435276306,
+      "hamming_loss": 0.06304453049370765,
+      "lrap": 0.5889675762223846,
+      "selection_macro_f1": 0.41679254850837544
+    },
+    {
+      "epoch": 19,
+      "loss": 0.04061886986195861,
+      "macro_f1": 0.3963405598635548,
+      "micro_f1": 0.4383985159993817,
+      "hamming_loss": 0.0628025169409487,
+      "lrap": 0.5851722530275028,
+      "selection_macro_f1": 0.405400427342537
+    },
+    {
+      "epoch": 20,
+      "loss": 0.037325952132669135,
+      "macro_f1": 0.4086149318973425,
+      "micro_f1": 0.44832826747720367,
+      "hamming_loss": 0.06275065689392892,
+      "lrap": 0.5850696736951913,
+      "selection_macro_f1": 0.41948556220209354
+    }
+  ],
+  "best_epoch": 20,
+  "train_seconds": 83.6053028130001,
+  "prep_seconds": 0.8088797840000552,
+  "device": "Tesla T4",
+  "parameter_count": 2128540,
+  "trainable_parameter_count": 2128540,
+  "time_definition": "Training loop + per-epoch validation/checkpoint writes; excludes preprocessing",
+  "deterministic_note": "Fixed seeds/cuDNN; exact equality across runtimes/GPUs is not guaranteed"
+}

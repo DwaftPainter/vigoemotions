@@ -1,0 +1,42 @@
+{
+  "test_suites": {
+    "import": {
+      "tests": 5,
+      "status": "PASS"
+    },
+    "workflow": {
+      "tests": 14,
+      "status": "PASS"
+    },
+    "report": {
+      "tests": 2,
+      "status": "PASS"
+    }
+  },
+  "total_tests": 21,
+  "pdfs": {
+    "reports/midterm_report.pdf": {
+      "pages": 10,
+      "sha256": "caaf63abe7a452814d5038b3b4c1467210b095980035a2f4cf29e710730eacac",
+      "extractable_characters": 16337
+    },
+    "reports/midterm_slides.pdf": {
+      "pages": 20,
+      "sha256": "1dc3153f234c9aeacd304b253b4f782765acc9e984d9c511e98bf79999a3e9a1",
+      "extractable_characters": 5490
+    },
+    "docs/VIGOEMOTIONS_3_MODELS_STUDY_GUIDE_VI.pdf": {
+      "pages": 22,
+      "sha256": "41e565d6aa3a397c236ea8ad27323106d91467ba7c8dfed54a2c9b8824d8bbb3",
+      "extractable_characters": 57386
+    }
+  },
+  "code_quotes_verified": 16,
+  "executed_notebooks_unchanged": true,
+  "original_evidence_members_unchanged": true,
+  "all_six_npz_identity_and_schema_checked": true,
+  "markdown_targets_exist": true,
+  "representative_pdf_pages_visually_inspected": true,
+  "test_model_scoring": false,
+  "historical_model_metrics_in_primary_report": false
+}

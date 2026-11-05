@@ -1,0 +1,148 @@
+{
+  "studies": {
+    "27": {
+      "zip": "vigoemotions_kaggle_equal20_27labels_private_results.zip",
+      "zip_sha256": "24013c9c8194f6ee54dfe645ec1bdb8d8d4b77a141a3b2b853c9991efb2771d3",
+      "notebook": {
+        "path": "notebooks/08_kaggle_equal_20ep_27_labels_executed.ipynb",
+        "sha256": "360aa267fd94fe8b97043b559df8c301a46f06373719a91535441a5a1e2f06d3",
+        "code_cells": 12,
+        "output_blocks": 20
+      },
+      "verified_file_variants": {
+        "profile": "exact",
+        "scripts/kaggle_equal_epochs.py": "exact",
+        "scripts/common.py": "exact",
+        "scripts/train_tfidf.py": "exact",
+        "scripts/train_neural.py": "exact",
+        "scripts/neutral_28_labels.py": "exact",
+        "scripts/evaluate.py": "exact",
+        "data/train.csv": "exact",
+        "data/val.csv": "exact",
+        "data/test.csv": "exact"
+      },
+      "exported_members": [
+        {
+          "member": "labels27/tfidf_lr/tfidf_lr_run.json",
+          "sha256": "deec0af55b0eb446050fbb609442293d4309aee83d9e8d1fd743a29660ef79c5"
+        },
+        {
+          "member": "labels27/tfidf_lr/predictions/tfidf_lr_val.npz",
+          "sha256": "8d41400893da9b66b861a9df8f9548f5f892458b790cbee4d34442bf62fec728"
+        },
+        {
+          "member": "labels27/gru/gru_run.json",
+          "sha256": "f0fc74c79dd600e0015b6edab3ef7fae0457bca1b3aebc64a221b13f436c41af"
+        },
+        {
+          "member": "labels27/gru/predictions/gru_val.npz",
+          "sha256": "a2dea968d391174f33e20eb8b0ea2ef3048f52bda5a3b485ef35a59ca4585721"
+        },
+        {
+          "member": "labels27/phobert/phobert_run.json",
+          "sha256": "519d9d7efc3ccd1b961826c949e9ae36bb74d72261843980d4e18b81ab2db39b"
+        },
+        {
+          "member": "labels27/phobert/predictions/phobert_val.npz",
+          "sha256": "c9c4cff2ff6839ff5140f3f48246b5316ee897fa810d0154955b947b996154aa"
+        }
+      ],
+      "checkpoint_members_verified": true,
+      "raw_text_exported": false,
+      "test_model_scoring": false,
+      "environment": {
+        "python": "3.13.16",
+        "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+        "packages": {
+          "numpy": "2.1.3",
+          "pandas": "2.3.3",
+          "scikit-learn": "1.6.1",
+          "scipy": "1.16.3",
+          "torch": "2.11.0+cu130",
+          "transformers": "4.57.3",
+          "py-vncorenlp": "0.1.4"
+        },
+        "data_sha256": {
+          "train": "9abcb2b7d9fadd9da043a3af43e8ee569f7099d87d20daf39a69e7e1a76c5624",
+          "val": "d3a473a65bf10d3d07423306a4324e94c9979d42d58f6a05cceb4cc1cc4fcab0",
+          "test": "620814a67ad5297cdcdac6369dbb223b4e95030b7b525d4466302f0288418e33"
+        },
+        "gpu": "Tesla T4"
+      }
+    },
+    "28": {
+      "zip": "vigoemotions_kaggle_equal20_28labels_private_results.zip",
+      "zip_sha256": "b753e1a764d87562334e46bbd8f91bbd8e4b5c8b176c5739d8239364ac724dd6",
+      "notebook": {
+        "path": "notebooks/09_kaggle_equal_20ep_28_labels_executed.ipynb",
+        "sha256": "41d4df8db2ac1ac4a22e171ff216c028da3c3a7480d8d58674a0e1d04c28960d",
+        "code_cells": 12,
+        "output_blocks": 20
+      },
+      "verified_file_variants": {
+        "profile": "CRLF",
+        "scripts/kaggle_equal_epochs.py": "CRLF",
+        "scripts/common.py": "exact",
+        "scripts/train_tfidf.py": "CRLF",
+        "scripts/train_neural.py": "CRLF",
+        "scripts/neutral_28_labels.py": "CRLF",
+        "scripts/evaluate.py": "exact",
+        "data/train.csv": "CRLF",
+        "data/val.csv": "CRLF",
+        "data/test.csv": "CRLF"
+      },
+      "exported_members": [
+        {
+          "member": "labels28/models/tfidf_lr/run.json",
+          "sha256": "effa20021c238b29d80aafaeab66ba1b47ca4a3de6d90218b92610eb275be946"
+        },
+        {
+          "member": "labels28/models/tfidf_lr/val_predictions.npz",
+          "sha256": "c0936ed7e7a09838d15774463c6957f146d99aafdec6a19d6bbd01ae8e3953e4"
+        },
+        {
+          "member": "labels28/models/gru/run.json",
+          "sha256": "55b8e53a085a6a94b433caf22ee22eec83dabb2854f2d2902e9d645607337a79"
+        },
+        {
+          "member": "labels28/models/gru/val_predictions.npz",
+          "sha256": "c3107a9546040d9810a232ac909afb684c39d950e875473717bd2e63624f3f48"
+        },
+        {
+          "member": "labels28/models/phobert/run.json",
+          "sha256": "cdad3d8c0e98ef1481f4e9617c5c65279f3e5b232da500e9a199c28d87bd3422"
+        },
+        {
+          "member": "labels28/models/phobert/val_predictions.npz",
+          "sha256": "3691497855f6447375cb8c91d05a636710cd0ce5684c1f76727414e1b119b467"
+        }
+      ],
+      "checkpoint_members_verified": true,
+      "raw_text_exported": false,
+      "test_model_scoring": false,
+      "environment": {
+        "python": "3.13.16",
+        "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+        "packages": {
+          "numpy": "2.1.3",
+          "pandas": "2.3.3",
+          "scikit-learn": "1.6.1",
+          "scipy": "1.16.3",
+          "torch": "2.11.0+cu130",
+          "transformers": "4.57.3",
+          "py-vncorenlp": "0.1.4"
+        },
+        "data_sha256": {
+          "train": "d8c5302bfbfd42c83fc873aff104918fae62da0bad69768c0b46a23a680a218f",
+          "val": "7a2da63676e4ba2ca4a8c97d61f5d731181083c236591e74a345f124e6d65ff3",
+          "test": "a82cda5da58b6e2043e3f05ae3971f7078630924c691c71ef4ad6eeecfa30a7f"
+        },
+        "gpu": "Tesla T4"
+      }
+    }
+  },
+  "verification": "Recomputed all six validation metrics from archived NPZ; verified histories, checkpoints, IDs, labels, config and source/data checksums",
+  "byte_differences": "28-label source/config/CSV hashes match exact CRLF variants; parsed profile and contents match 27-label inputs",
+  "historical_results_used": false,
+  "trained_locally": false
+}

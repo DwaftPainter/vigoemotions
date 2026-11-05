@@ -1,0 +1,4 @@
+model,highest,highest_f1,lowest,lowest_f1
+TF-IDF + OvR LR,gratitude,0.6797385620915033,realization,0.0
+BiGRU,gratitude,0.7701149425287356,realization,0.0939597315436241
+PhoBERT,gratitude,0.8369565217391305,disapproval,0.3622641509433962

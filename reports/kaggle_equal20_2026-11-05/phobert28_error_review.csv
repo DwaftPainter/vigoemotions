@@ -1,0 +1,7 @@
+sample_id,case_type,neutral_probability,true_labels,predicted_labels,observation,hypothesis,review_status
+30099,Neutral FP,0.9964698553085327,relief,neutral,Lời giải thích tình huống được gán relief; model chỉ dự đoán Neutral.,Cảm xúc hàm ý trong giải thích tình huống có thể khó nhận diện.,AI-assisted; pending team confirmation
+you003230,Neutral FP,0.9960052371025085,approval;realization,neutral,Nội dung liệt kê được gán approval và realization; model chỉ dự đoán Neutral.,Dạng liệt kê và HTML có thể che tín hiệu cảm xúc; cần ablation để kiểm chứng.,AI-assisted; pending team confirmation
+15569,Neutral FP,0.9949404001235962,surprise,neutral,Lời bình ngắn được gán surprise; model chỉ dự đoán Neutral.,Sắc thái ngạc nhiên phụ thuộc tiểu từ/ngữ cảnh ngắn.,AI-assisted; pending team confirmation
+6238,Neutral FN,5.2179020713083446e-05,neutral,anger;annoyance,Ground truth chỉ Neutral; model dự đoán anger và annoyance.,Từ tục và khẩu ngữ có thể kéo dự đoán sang cảm xúc tiêu cực.,AI-assisted; pending team confirmation
+21975,Neutral FN,0.0003700052620843053,neutral,anger,Ground truth chỉ Neutral; model dự đoán anger.,Tên riêng hoặc cụm từ theo ngữ cảnh có thể gây nhầm; chưa xác định cơ chế.,AI-assisted; pending team confirmation
+1134,Neutral FN,0.0005263554048724473,neutral,amusement;joy,Ground truth chỉ Neutral; model dự đoán amusement và joy.,Từ mang nghĩa ưa thích có thể bị đọc thành cảm xúc tích cực.,AI-assisted; pending team confirmation

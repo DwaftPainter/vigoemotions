@@ -1,0 +1,13 @@
+{
+  "status": "completed",
+  "label_spaces": [
+    28
+  ],
+  "completed_runs": 3,
+  "expected_runs": 3,
+  "neural_epochs": 20,
+  "tfidf_budget": "Same OvR Logistic Regression solver/max_iter in both label spaces; epochs not applicable",
+  "checkpoint_selection": "Highest validation emotion27 Macro-F1 at 0.5; ties keep earliest epoch",
+  "source_of_truth": "This Kaggle manifest, config snapshots, run metadata and verified probabilities; no legacy scores imported",
+  "limitation": "Equal epochs do not imply equal compute; GRU/PhoBERT use their documented batch sizes and architectures"
+}

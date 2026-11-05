@@ -278,7 +278,7 @@ Các bảng lấy từ CSV per-label đã kiểm chứng, không train lại. Sa
     return split, errors, appendix
 
 
-def main():
+def legacy_main():
     summary=pd.read_csv(TABLES/'dataset_summary.csv')
     freq=pd.read_csv(TABLES/'label_frequency.csv')
     lengths=pd.read_csv(TABLES/'text_lengths.csv')
@@ -647,6 +647,13 @@ Mã và tài liệu có hỗ trợ AI trong phiên hoàn thiện; số liệu TF
             'Lỗi JVM ở cell tìm ca validation đã sửa bằng xác suất lưu; không khẳng định đã chạy lại toàn bộ training GPU. Sweep 05 chưa chạy và không bắt buộc hoàn tất cho midterm.')
     register_fonts();render_report(text);render_slides(slides)
     print('Wrote midterm_report.md/pdf, midterm_slides.md/pdf, model comparison tables')
+
+
+def main():
+    # The saved Kaggle 20-epoch studies are the current reporting source.
+    # Fail on missing evidence instead of silently publishing legacy scores.
+    from build_equal20_report import main as current_report
+    current_report()
 
 
 if __name__ == '__main__':
