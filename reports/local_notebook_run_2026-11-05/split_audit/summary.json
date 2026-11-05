@@ -1,0 +1,64 @@
+{
+  "integrity_status": "PASS",
+  "distribution_status": "DESCRIPTIVE_ONLY",
+  "generating_algorithm": "UNVERIFIED",
+  "effective_split_sizes": {
+    "train": 16530,
+    "val": 2066,
+    "test": 2067
+  },
+  "excluded_train_rows": 1,
+  "per_label_drift": {
+    "emotion27_val_max_abs_drift_pp": 1.6324099630523046,
+    "emotion27_val_max_drift_label": "joy",
+    "emotion27_test_max_abs_drift_pp": 0.9387426827415866,
+    "emotion27_test_max_drift_label": "relief",
+    "labels28_val_max_abs_drift_pp": 1.6324099630523046,
+    "labels28_val_max_drift_label": "joy",
+    "labels28_test_max_abs_drift_pp": 0.9387426827415866,
+    "labels28_test_max_drift_label": "relief"
+  },
+  "cardinality_total_variation": [
+    {
+      "encoding": "emotion27",
+      "heldout": "val",
+      "total_variation_vs_train": 0.01587743602086967
+    },
+    {
+      "encoding": "emotion27",
+      "heldout": "test",
+      "total_variation_vs_train": 0.011718500996999764
+    },
+    {
+      "encoding": "labels28",
+      "heldout": "val",
+      "total_variation_vs_train": 0.012525087127807161
+    },
+    {
+      "encoding": "labels28",
+      "heldout": "test",
+      "total_variation_vs_train": 0.010695160402382272
+    }
+  ],
+  "missing_labels": [
+    {
+      "split": "train",
+      "zero_support_labels": ""
+    },
+    {
+      "split": "val",
+      "zero_support_labels": ""
+    },
+    {
+      "split": "test",
+      "zero_support_labels": ""
+    }
+  ],
+  "top_pairs_selection": "Train only; ID tie-break; validation comparison only",
+  "limitations": [
+    "No proof of original stratification algorithm",
+    "No post-hoc distribution pass threshold",
+    "No model/threshold tuning; no test co-occurrence matrix",
+    "No raw text exported"
+  ]
+}

@@ -5,6 +5,8 @@ Báo cáo/slide viết tiếng Việt; kết quả đo trên **validation**, tes
 
 ## Mở nội dung
 
+- **Notebook local đã chạy lại:** 01/02/03/07 giữ output tổng hợp an toàn; [kết quả lượt local riêng](reports/local_notebook_run_2026-11-05/README.md). TF-IDF được fit lại trên CPU; các kết quả baseline lịch sử giữ nguyên.
+
 - **Chốt nội dung 05/11:** [trạng thái các mục trước nộp](docs/midterm_readiness_2026-11-05.md), [profile và lệnh tái lập](docs/reproducibility_profiles.md), [audit split](notebooks/07_split_distribution_audit.ipynb), [thông tin nhóm chờ cung cấp](docs/team_information.md). Report đã thêm phụ lục per-label và chín ca đọc lỗi PhoBERT có hỗ trợ AI; nhóm cần xác nhận khi bảo vệ.
 
 - **Midterm cập nhật 04/11:** [Lời dẫn 20 slide và Q&A](docs/midterm_presentation_2026-11-04.md), [kết quả study 28 nhãn](reports/midterm_2026-11-04/neutral28_results.md), [bảng nguồn đã kiểm chứng](reports/midterm_2026-11-04/evidence/README.md).
