@@ -76,12 +76,15 @@ def verify_sources(markdown):
 def make_curve():
     ASSETS.mkdir(exist_ok=True)
     fig, axes = plt.subplots(1, 2, figsize=(10, 3.2))
-    for model, label, color in [('gru', 'BiGRU', '#087e8b'), ('phobert', 'PhoBERT 2e-5', '#d46b36')]:
-        history = json.loads((ROOT / f'reports/{model}_run.json').read_text())['history']
-        for ax, key in zip(axes, ('loss', 'macro_f1')):
-            ax.plot([h['epoch'] for h in history], [h[key] for h in history],
-                    'o-', label=label, color=color, linewidth=1.8, markersize=4)
-    for ax, title in zip(axes, ('BCE trên train', 'Macro-F1 validation tại 0,5')):
+    for model, label, color in [('gru', 'BiGRU', '#087e8b'), ('phobert', 'PhoBERT', '#d46b36')]:
+        for labels, line in ((27, '-'), (28, '--')):
+            path = ROOT/f'reports/kaggle_equal20_2026-11-05/evidence/{labels}/{model}/run.json'
+            history = json.loads(path.read_text())['history']
+            metric = 'macro_f1' if labels == 27 else 'selection_macro_f1'
+            for ax, key in zip(axes, ('loss', metric)):
+                ax.plot([h['epoch'] for h in history], [h[key] for h in history],
+                        line, label=f'{label} {labels}', color=color, linewidth=1.8)
+    for ax, title in zip(axes, ('BCE trên train', 'Emotion27 Macro-F1 validation tại 0,5')):
         ax.set(title=title, xlabel='Epoch')
         ax.grid(alpha=.2)
         ax.legend(fontsize=8)
@@ -151,7 +154,7 @@ class Guide(BaseDocTemplate):
         c.setFillColor(INK)
         c.drawString(MARGIN, HEIGHT-22, 'ViGoEmotions  /  Cẩm nang đọc mã và bảo vệ giữa kỳ')
         c.setFont('Vigo', 7)
-        c.drawString(MARGIN, 23, 'Đối chiếu mã nguồn: 23/10/2026  •  Kết quả validation')
+        c.drawString(MARGIN, 23, 'Kaggle 20 epoch: 05/11/2026  •  Kết quả validation')
         c.drawRightString(WIDTH-MARGIN, 23, f'{doc.page:02d}')
         c.restoreState()
 

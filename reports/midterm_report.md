@@ -1,527 +1,259 @@
 # ViGoEmotions — Báo cáo giữa kỳ
 
-ATI Course Project 2026 • Nhận diện đa nhãn cảm xúc tiếng Việt
+**Kết quả chính: Kaggle 05/11/2026, notebook 08/09 executed.** Cả bốn lượt neural đã chạy đủ 20 epoch. Sáu kết quả được tính lại từ xác suất validation trong hai ZIP đầu ra. Không dùng kết quả của các lượt ít epoch trong bảng, biểu đồ hoặc kết luận báo cáo này.
 
-**Trạng thái (05/11/2026):** Đã kiểm chứng ba baseline 27 nhãn và study mới 28 nhãn. PhoBERT mới đạt Macro-F1 0,5747 trên validation 28 nhãn; test chưa chấm. Mục 5.7 trình bày kết quả mới và giới hạn so sánh; mục 5.1–5.6 giữ nguồn baseline gốc.
+**Thông tin nhóm:** Chưa được cung cấp; bổ sung họ tên, MSSV và phân công trong docs/team_information.md trước khi nộp.
 
-**Thông tin nhóm:** Chưa được cung cấp. Bổ sung tên/MSSV/phân công tại docs/team_information.md trước khi nộp. Đã bổ sung audit split, phụ lục F1 từng nhãn và chín ca đọc lỗi PhoBERT; xem docs/midterm_readiness_2026-11-05.md.
+## 1. Bài toán và phạm vi
 
-## 1. Mục tiêu và phạm vi
+Nhận diện cảm xúc đa nhãn trên bình luận tiếng Việt. Một mẫu có thể có nhiều cảm xúc, nên mỗi nhãn là một quyết định nhị phân độc lập. Nhóm đánh giá ba mô hình trên hai cách mã hóa: 27 cảm xúc và 28 nhãn gồm Neutral. Mọi điểm mô hình trong báo cáo là validation, ngưỡng 0,5, seed 42; test được giữ cho Final.
 
-Đầu vào là một bình luận tiếng Việt. Baseline gốc có 27 cảm xúc; study bổ sung ngày 04/11 có 28 đầu ra, gồm cả Neutral (mục 5.7). Các mô tả 27 nhãn bên dưới nói về baseline gốc. Một bình luận có thể biểu đạt nhiều cảm xúc đồng thời. Vì vậy mô hình dùng 27 quyết định nhị phân độc lập, không dùng softmax để buộc chọn một lớp. Neutral được biểu diễn bằng vector cảm xúc bằng 0 theo quy ước project.
+Nguồn yêu cầu: student-guide.pdf, mục Midterm; 02-vigoemotions-vietnamese-emotion.pdf, mục Midterm A–E. Cần EDA, split/preprocessing hợp lệ, ba mô hình, Macro/Micro-F1, per-label F1, Hamming Loss, LRAP, tham số/thời gian, phân tích lỗi và RQ Final. Bộ slide có 20 trang; code và README tái lập đi cùng kết quả.
 
-Midterm chiếm 30% điểm môn học và là checkpoint thuyết trình. Hai tài liệu yêu cầu mô tả dữ liệu, EDA, split/preprocessing hợp lệ, ba baseline, các chỉ số phù hợp, phân tích lỗi, câu hỏi nghiên cứu Final và mã tái lập. Báo cáo này bám mục Midterm A–E của đề; phần Final chỉ trình bày thiết kế, không nhận là đã thực hiện thí nghiệm Final.
+## 2. Dữ liệu và EDA
 
-**Câu hỏi thực nghiệm giữa kỳ:** Baseline dựa trên từ vựng nhận diện tốt/khó những nhãn nào, có giữ được các cặp cảm xúc đồng xuất hiện không, và ngưỡng 0,5 ảnh hưởng thế nào đến kết quả?
+CSV nguồn có 20.664 bình luận: train 16.531, validation 2.066, test 2.067. Loại 1 mẫu train trùng văn bản held-out; train thực dùng là 16,530. Mapping 27 cảm xúc theo đúng thứ tự ID: amusement, excitement, joy, love, desire, optimism, caring, pride, admiration, gratitude, relief, approval, realization, surprise, curiosity, confusion, fear, nervousness, remorse, embarrassment, disappointment, sadness, grief, disgust, anger, annoyance, disapproval. Neutral có ID 27.
 
-## 2. Dữ liệu, quyền truy cập và kiểm tra chất lượng
+Phân nhóm head/mid/tail theo thứ hạng tần suất trên train, chín nhãn mỗi nhóm; đây là tier tương đối. Amusement có tần suất lớn nhất, relief ít nhất, chênh lệch khoảng 4.52 lần. Nhãn dương thưa: cardinality train trung bình 1.859, tối đa 5 cảm xúc. Median độ dài là 11 token khoảng trắng và 47 ký tự. Whitespace token không đồng nghĩa từ tiếng Việt hoặc BPE token.
 
-Bộ dữ liệu được cấp trong thư mục data gồm 20.664 bình luận: train 16.531, validation 2.066, test 2.067. Ba cột là id (định danh), text (bình luận), labels (danh sách ID). Dữ liệu nguồn thuộc phạm vi nghiên cứu/học thuật phi thương mại theo đề. Người dùng cần xin quyền và chấp nhận điều khoản tại https://huggingface.co/datasets/uitnlp/vigoemotions. Không đính kèm CSV nguồn, văn bản gốc hay vocabulary vào gói công khai.
+![Phân bố 27 cảm xúc trên train; cùng dữ liệu với hai study Kaggle.](figures/label_frequency.png)
 
-Không có trường thiếu hoặc ID trùng. Một văn bản xuất hiện ở train ID 1698 và test ID red000094, cùng nhãn approval. Pipeline so sánh NFC + gom khoảng trắng, loại bản train và giữ nguyên bản test; train thực nghiệm còn 16.530 mẫu. CSV gốc không bị sửa. Việc dò trùng chỉ dùng text, không dùng nhãn test để huấn luyện.
+![Cardinality, token khoảng trắng và ký tự theo split; không dùng để chọn mô hình bằng test.](figures/distributions.png)
 
-Có 306 mẫu neutral + cảm xúc (251 train, 19 validation, 36 test), 725 mẫu chỉ neutral và 1 mẫu test lặp ID nhãn. Neutral riêng lẻ thành vector 0; với mẫu mixed-neutral, bỏ ID 27 và giữ các cảm xúc. Nhãn lặp được gộp. Đây là quyết định xử lý nhất quán, không khẳng định đã sửa đúng ý định người gán nhãn. Notebook ban đầu đếm sai mixed-neutral do dùng print trong biểu thức boolean; đã sửa và kiểm tra lại.
+Disappointment–sadness đồng xuất hiện 904 lần trên train, anger–annoyance 699 và sadness–grief 620. Ma trận co-occurrence và tương quan phi chỉ xây từ train; tần suất đồng xuất hiện không chứng minh quan hệ nhân quả. Các đặc điểm tiếng Việt cần chú ý gồm teencode, khẩu ngữ, từ tục, emoji, HTML và cú pháp phi chuẩn.
 
-| split | samples | cardinality_mean | cardinality_max | neutral_only | neutral_mixed | repeated_label_rows |
+![Tương quan nhãn trên train, giữ thứ tự mapping 27 cảm xúc.](figures/train_correlation.png)
+
+## 3. Split, preprocessing và hai cách mã hóa
+
+Giữ split được cấp, fit vocabulary và IDF chỉ trên train; chuẩn hóa NFC/gom khoảng trắng, giữ dấu và phủ định. TF-IDF dùng regex unigram/bigram, BiGRU dùng lowercase/whitespace, PhoBERT dùng VnCoreNLP rồi BPE. Không thêm luật sửa annotation.
+
+Notebook 07 xác nhận toàn vẹn PASS, fixed IDs khớp và không còn overlap sau lọc. Lệch prevalence lớn nhất so với train là 1.6324 điểm phần trăm ở validation và 0.9387 ở test. Audit phân bố không chứng minh thuật toán stratification gốc; việc chấp nhận official split theo đề còn cần xác nhận với giảng viên. Test chỉ tham gia audit, không chấm mô hình/chọn ngưỡng.
+
+Với 27 đầu ra, [27] thành vector cảm xúc toàn 0; [2,27] giữ joy. Với 28 đầu ra, [27] là Neutral dương; [2,27] giữ cả joy và Neutral. CSV nguồn có 725 Neutral-only và 306 mixed-neutral; validation có 75 Neutral-only + 19 mixed = 94 Neutral dương. Giữ annotation mixed và công bố bất nhất; không dùng softmax hoặc ép Neutral loại trừ cảm xúc. Dự đoán rỗng không tự động đồng nghĩa Neutral.
+
+## 4. Giao thức Kaggle 20 epoch
+
+Hai notebook chạy độc lập, cùng profile configs/kaggle_equal_20ep.json, seed 42, cùng split và tiêu chí chọn checkpoint: emotion27 Macro-F1 validation tại 0,5; hòa chọn epoch sớm nhất. Tất cả neural chạy đủ 20 epoch, không early stopping. 28 nhãn dùng selection_macro_f1 trên IDs 0–26; metric 28 nhãn được báo cáo riêng.
+
+TF-IDF: max_features=40.000, unigram/bigram, min_df=2, sublinear_tf; 27 hoặc 28 Logistic Regression OvR, liblinear, C=1, max_iter=1000. TF-IDF không có epoch tương đương neural. BiGRU: train từ đầu, embedding/hidden 128, dropout 0,3, max_length=128, batch=64, AdamW lr=0,001. PhoBERT-base-v2: full fine-tuning, max_length=256, batch=16, AdamW lr=2e-5, weight_decay=0,01, revision 86cd7fd4c148980922ac11a2cf5e257f2ba639e1. Neural dùng BCEWithLogitsLoss, sigmoid độc lập và gradient clipping 1,0; không có scheduler/warmup/AMP được cấu hình.
+
+Hai môi trường manifest cùng Tesla T4, Python 3.13.16, Torch 2.11.0+cu130, Transformers 4.57.3, scikit-learn 1.6.1. Code dùng một GPU mỗi process dù Kaggle hiển thị T4 x2. Một seed và hai session riêng chưa đo độ biến thiên.
+
+## 5. Kết quả chính trên validation
+
+### 5.1. Ba mô hình, 27 cảm xúc
+
+| model | macro_f1 | micro_f1 | hamming_loss | lrap |
+| --- | --- | --- | --- | --- |
+| TF-IDF + OvR LR | 0.2388 | 0.2712 | 0.0606 | 0.6407 |
+| BiGRU | 0.4220 | 0.4590 | 0.0626 | 0.6191 |
+| PhoBERT | 0.5974 | 0.5996 | 0.0550 | 0.7419 |
+
+### 5.2. Ba mô hình, 28 nhãn gồm Neutral
+
+| model | macro_f1 | micro_f1 | hamming_loss | lrap |
+| --- | --- | --- | --- | --- |
+| TF-IDF + OvR LR | 0.2310 | 0.2662 | 0.0601 | 0.6096 |
+| BiGRU | 0.4086 | 0.4483 | 0.0628 | 0.5851 |
+| PhoBERT | 0.5783 | 0.5829 | 0.0575 | 0.7077 |
+
+![Macro-F1 tại 0,5; mỗi panel giữ riêng tập nhãn và không dùng chênh lệch trực tiếp 27/28 như hiệu ứng Neutral.](kaggle_equal20_2026-11-05/figures/model_metrics.png)
+
+PhoBERT cao nhất trong mỗi study theo bốn metric tổng hợp (Hamming Loss thấp hơn là tốt hơn). Macro-F1 27 của PhoBERT là 0.597410; Macro-F1 28 là 0.578341. Macro-F1 và Micro-F1 đánh giá dự đoán sau ngưỡng; LRAP đánh giá thứ hạng xác suất. Subset accuracy không dùng làm metric chính. Chưa có kiểm định ý nghĩa thống kê hoặc metric test.
+
+### 5.3. Epoch, tham số và thời gian
+
+| model | label_count | epochs_trained | best_epoch | parameter_count | train_seconds | device |
 | --- | --- | --- | --- | --- | --- | --- |
-| train | 16530 | 1.8586 | 5 | 570 | 251 | 0 |
-| val | 2066 | 1.8703 | 5 | 75 | 19 | 0 |
-| test | 2067 | 1.8510 | 5 | 80 | 36 | 1 |
+| TF-IDF + OvR LR | 27 | Không áp dụng | Không áp dụng | 940626 | 2.7524 | cpu |
+| BiGRU | 27 | 20 | 17 | 2128283 | 80.3307 | Tesla T4 |
+| PhoBERT | 27 | 20 | 14 | 135019035 | 14589.6182 | Tesla T4 |
+| TF-IDF + OvR LR | 28 | Không áp dụng | Không áp dụng | 975464 | 2.5247 | cpu |
+| BiGRU | 28 | 20 | 20 | 2128540 | 83.6053 | Tesla T4 |
+| PhoBERT | 28 | 20 | 15 | 135019804 | 14057.7186 | Tesla T4 |
 
-Mapping ID 0–26 đã đối chiếu ngày 22/10/2026 với ảnh bảng nhãn Hugging Face do người dùng cung cấp và khớp code; ID 27 là neutral. Nguồn và bảng đầy đủ: docs/label_mapping.md. Paper mục 5.1, trang PDF 6 (2810), nêu split 8:1:1 nhưng không mô tả thuật toán; nhóm giữ split được cấp, chưa xác nhận stratification. Không sắp nhãn lại theo alphabet.
+Thời gian TF-IDF gồm fit vectorizer và LR, neural gồm train, validation từng epoch và ghi checkpoint; không gồm preprocessing/download. Không so tỷ lệ tốc độ CPU/GPU hoặc xem cùng epoch là cùng compute. PhoBERT 27 train khoảng 4.05 giờ, 28 khoảng 3.90 giờ. Chạy đủ 20 rồi nạp best: epoch chọn của PhoBERT là 14 và 15; BiGRU chọn 17 và 20.
 
-### 2.1. Danh mục đủ 27 nhãn và tần suất
+![Đường học từ bốn history 20 epoch: train BCE và tiêu chí chọn checkpoint chung emotion27 Macro-F1.](kaggle_equal20_2026-11-05/figures/learning_curves.png)
 
-| label_id | label | train_count | val_count | test_count | tier |
+PhoBERT 27 có F1=0 ở epoch 1 nhưng về sau cải thiện, nên không kết luận lỗi từ epoch đầu. F1 validation biến động sau best trong khi train loss tiếp tục giảm. Không có validation loss; không tuyên bố hội tụ hoặc chẩn đoán overfitting chỉ từ đường loss train.
+
+### 5.4. So sánh cùng 27 cảm xúc
+
+| model | macro27 | macro28_projected27 | delta_pp | hamming27 | hamming28_projected27 |
 | --- | --- | --- | --- | --- | --- |
-| 0 | amusement | 2868 | 327 | 374 | head |
-| 1 | excitement | 824 | 91 | 98 | mid |
-| 2 | joy | 1614 | 168 | 204 | head |
-| 3 | love | 1175 | 148 | 143 | head |
-| 4 | desire | 762 | 102 | 80 | tail |
-| 5 | optimism | 1046 | 122 | 142 | mid |
-| 6 | caring | 1062 | 131 | 150 | head |
-| 7 | pride | 774 | 87 | 86 | mid |
-| 8 | admiration | 883 | 107 | 101 | mid |
-| 9 | gratitude | 765 | 96 | 108 | mid |
-| 10 | relief | 635 | 58 | 60 | tail |
-| 11 | approval | 916 | 119 | 115 | mid |
-| 12 | realization | 687 | 96 | 95 | tail |
-| 13 | surprise | 651 | 87 | 85 | tail |
-| 14 | curiosity | 840 | 112 | 100 | mid |
-| 15 | confusion | 676 | 89 | 84 | tail |
-| 16 | fear | 745 | 117 | 98 | tail |
-| 17 | nervousness | 728 | 109 | 96 | tail |
-| 18 | remorse | 707 | 96 | 87 | tail |
-| 19 | embarrassment | 885 | 137 | 107 | mid |
-| 20 | disappointment | 1522 | 211 | 197 | head |
-| 21 | sadness | 2785 | 354 | 345 | head |
-| 22 | grief | 747 | 97 | 86 | tail |
-| 23 | disgust | 1206 | 164 | 141 | head |
-| 24 | anger | 1589 | 185 | 189 | head |
-| 25 | annoyance | 2662 | 331 | 343 | head |
-| 26 | disapproval | 969 | 123 | 112 | mid |
+| TF-IDF + OvR LR | 0.2388 | 0.2388 | 0.0000 | 0.0606 | 0.0606 |
+| BiGRU | 0.4220 | 0.4195 | -0.2490 | 0.0626 | 0.0629 |
+| PhoBERT | 0.5974 | 0.5836 | -1.3830 | 0.0550 | 0.0575 |
 
-Phân tầng theo thứ hạng tần suất train: head là hạng 1–9, mid là 10–18, tail là 19–27; nếu bằng nhau thì ưu tiên ID nhỏ. Tier chỉ dùng train, cố định trước đánh giá test. Tail là khái niệm tương đối trong bộ dữ liệu này, không hàm ý chỉ có vài mẫu.
+Chiếu model 28 về cùng IDs 0–26, giữ cùng 2.066 ID/targets và ngưỡng 0,5. Kết quả: TF-IDF không đổi; BiGRU giảm 0.2490 điểm phần trăm; PhoBERT giảm 1.3830 điểm phần trăm. Với PhoBERT, Hamming Loss và LRAP trên 27 cảm xúc cũng kém hơn ở bản 28. Lượt đo này không cung cấp bằng chứng thêm Neutral cải thiện 27 cảm xúc. Cùng ngân sách và checkpoint criterion đã giảm nhiễu so sánh; vẫn chưa suy ra hiệu ứng nhân quả hay ý nghĩa thống kê từ một seed.
 
-| tier | labels | minimum | maximum |
-| --- | --- | --- | --- |
-| head | 9 | 1062 | 2868 |
-| mid | 9 | 765 | 1046 |
-| tail | 9 | 635 | 762 |
+### 5.5. Neutral riêng
 
-Tỷ lệ nhãn phổ biến nhất/hiếm nhất là 4.52 lần. Mức lệch giữa các lớp không quá cực đoan; thách thức khác là nhãn dương thưa: trung bình 6.88% trong 27 đầu ra là dương trên train. Không nên lặp lại nhận định “mất cân bằng nghiêm trọng” mà không phân biệt hai dạng này.
-
-![Tần suất nhãn tính trên train sau loại trùng.](figures/label_frequency.png)
-
-### 2.2. Cardinality và độ dài văn bản
-
-Label cardinality là số cảm xúc dương sau khi bỏ neutral và gộp nhãn lặp. Trung bình train 1.859, validation 1.870, test 1.851; lớn nhất 5. Có nhóm cardinality 0 nên cần quy ước metric rõ ràng.
-
-| split | unit | mean | median | p95 | p99 | minimum | maximum |
+| model | precision | recall | f1 | support | TP | FP | FN |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| train | whitespace_tokens | 16.0551 | 11.0000 | 44.0000 | 84.0000 | 1 | 214 |
-| train | characters | 66.4320 | 47.0000 | 185.0000 | 353.4200 | 1 | 906 |
-| val | whitespace_tokens | 16.0595 | 12.0000 | 44.0000 | 88.0000 | 1 | 143 |
-| val | characters | 66.4802 | 47.0000 | 187.7500 | 363.4000 | 1 | 641 |
-| test | whitespace_tokens | 16.8200 | 11.0000 | 47.0000 | 90.6800 | 1 | 171 |
-| test | characters | 69.4601 | 47.0000 | 193.7000 | 380.0400 | 1 | 693 |
+| TF-IDF + OvR LR | 0.5000 | 0.0106 | 0.0208 | 94 | 1 | 1 | 93 |
+| BiGRU | 0.1778 | 0.0851 | 0.1151 | 94 | 8 | 37 | 86 |
+| PhoBERT | 0.4018 | 0.4787 | 0.4369 | 94 | 45 | 67 | 49 |
 
-Độ dài token trong EDA đo bằng tách khoảng trắng, không phải số từ sau tách từ tiếng Việt hay số BPE token của PhoBERT. Trung vị train là 11 đơn vị khoảng trắng, 47 ký tự; đuôi dài đến 214 đơn vị và 906 ký tự. GRU giới hạn 128 token; PhoBERT giới hạn 256 BPE token. Pipeline neural ghi tỷ lệ bị cắt riêng, không suy ra nó từ số token khoảng trắng.
+PhoBERT có Neutral F1=0.4369, tìm được 45/94 mẫu, còn 49 FN và 67 FP. Neutral đã có đầu ra học được nhưng còn khó. Model 27 không có đầu ra Neutral: không tự gán Neutral F1=0 cho model đó.
 
-![Phân bố cardinality, token khoảng trắng và ký tự theo split.](figures/distributions.png)
+## 6. Trả lời năm câu hỏi midterm bằng study 27 nhãn mới
 
-### 2.3. Đồng xuất hiện và tương quan
+### Q1. Nhãn nào có F1 cao/thấp nhất?
 
-Ma trận co-occurrence dùng Y_train.T × Y_train; đường chéo là tần suất nhãn. Ma trận correlation dùng Pearson trên biến nhị phân (phi). Hai ma trận chỉ xây từ train. Đếm đồng xuất hiện lớn có thể do nhãn vốn phổ biến; vì vậy cần xem cả phi, không suy ra quan hệ nhân quả.
-
-| label_a | label_b | count | phi |
-| --- | --- | --- | --- |
-| disappointment | sadness | 904 | 0.3620 |
-| anger | annoyance | 699 | 0.2474 |
-| sadness | grief | 620 | 0.3845 |
-| amusement | joy | 568 | 0.1550 |
-| annoyance | disapproval | 469 | 0.2193 |
-| joy | love | 395 | 0.2223 |
-| disgust | anger | 379 | 0.2076 |
-| embarrassment | sadness | 366 | 0.1557 |
-
-![Tương quan phi giữa 27 cảm xúc, chỉ tính train.](figures/train_correlation.png)
-
-### 2.4. Văn phong tiếng Việt phi chuẩn
-
-Kiểm tra các ca validation cho thấy viết tắt/teencode, từ vay mượn, thiếu dấu câu, dấu lặp và emoji có thể góp nghĩa cảm xúc. Emoji có thể bổ sung sắc thái vui vào một phát biểu hối tiếc; cách viết gần giống một cụm từ quen thuộc có thể làm mô hình từ vựng dự đoán sai. Câu rất ngắn và câu hỏi lịch sự thường cần ngữ cảnh. Đây là nhận xét từ mẫu đã đọc, không phải thống kê gán nhãn ngôn ngữ toàn tập.
-
-Để so sánh định lượng: short có ≤5 token khoảng trắng; emoji-heavy có ≥2 ký tự trong các dải Unicode emoji định nghĩa ở common.py; teencode có ít nhất một token trong từ điển heuristic. Các nhóm có thể chồng lấn. Regex có thể bắt nhầm từ hợp lệ và bỏ sót nhiều dạng mới; số đếm emoji là ký tự mã hóa, không phải cụm grapheme hoàn chỉnh.
-
-## 3. Split và pipeline tiền xử lý
-
-Giữ ba split được cung cấp, tỷ lệ xấp xỉ 80/10/10; xuất ID cố định ở splits/ và SHA-256 của CSV trong run JSON. Tất cả mô hình dùng cùng train sau loại trùng và cùng validation. Chuẩn hóa NFC, gom khoảng trắng, giữ dấu tiếng Việt, emoji, phủ định và teencode ở bước chung; không học từ vựng/IDF trên validation hoặc test.
-
-TF-IDF và GRU dùng lowercase. TF-IDF lấy word unigram/bigram, min_df=2, tối đa 40.000 features, sublinear TF; regex token một ký tự trở lên. Do regex word-token, emoji/dấu câu không trở thành feature TF-IDF: đây là hạn chế có chủ đích được công bố. GRU học vocab trên train, dùng PAD=0, UNK=1, tối đa 30.000 mục. PhoBERT tách từ bằng VnCoreNLP rồi BPE, không lowercase thủ công.
-
-**Giới hạn stratification:** chưa có mã tạo split ban đầu nên không thể chứng nhận chúng được iterative multi-label stratified. Audit tỷ lệ từng nhãn theo split đã có trong label_frequency.csv; chênh lệch tuyệt đối lớn nhất so với train là 1.63 điểm phần trăm ở validation và 0.94 ở test. Đây là kiểm tra mô tả, không chứng minh stratification. Cần xác nhận với nguồn cấp dữ liệu/giảng viên rằng giữ official split có đáp ứng mục A hay không. Nếu phải tạo split mới: nhóm văn bản trùng trước, dùng iterative multi-label stratification 80/10/10 với seed 42, khóa ID, rồi chạy lại tất cả mô hình; không trộn kết quả hai giao thức.
-
-Test chỉ được audit schema/phân bố biên/trùng lặp; chưa dùng để tính kết quả mô hình hay chọn ngưỡng. Midterm dùng validation cho so sánh thăm dò để bảo toàn test cho RQ Final. Validation đã dùng chọn checkpoint/ngưỡng nên điểm này không phải ước lượng độc lập của khả năng tổng quát hóa.
-
-### 3.1. Bằng chứng audit split bổ sung ngày 05/11
-
-Notebook 07 kiểm tra lại ba CSV và fixed IDs, không sửa split hoặc train mô hình. Trạng thái toàn vẹn: PASS; train/validation/test là 16.530/2.066/2.067, loại một overlap train–test. Sau xử lý không giao ID hoặc văn bản NFC/gom khoảng trắng; cả 28 nhãn đều được đại diện ở từng split.
-
-Độ lệch prevalence lớn nhất trên 27 cảm xúc so với train: validation 1.6324 điểm phần trăm (joy), test 0.9387 (relief). Khoảng cách total variation cardinality 27 lần lượt 0,01588 và 0,01172. Các chẩn đoán này hỗ trợ việc giữ split được cấp; không chứng nhận thuật toán tạo split gốc hoặc tự xác nhận yêu cầu stratification của giảng viên. Không có cơ sở chỉ từ audit này để yêu cầu chia lại. Cặp nhãn chọn từ train chỉ đối chiếu validation, không tạo ma trận nhãn test.
-
-Nguồn: notebooks/07_split_distribution_audit.ipynb, reports/split_audit/README.md, các CSV và provenance.json cùng thư mục. Kết luận mô tả không dùng ngưỡng chấp nhận đặt sau khi xem dữ liệu. Việc chấp nhận official split theo đề còn cần xác nhận bên giảng viên.
-
-## 4. Mô hình và giao thức thực nghiệm
-
-TF-IDF + OvR Logistic Regression: C=1, solver liblinear, max_iter=1000, seed=42, 27 bộ phân loại nhị phân. Có 34,837 features thực tế, 940,626 tham số hệ số + bias; số IDF và từ điển không tính vào số tham số. Nếu tối ưu không hội tụ, script báo lỗi thay vì âm thầm xuất kết quả.
-
-BiGRU: embedding 128, hidden 128 mỗi hướng, nối trạng thái cuối hai chiều, dropout 0,3, linear head 27 logits; pack sequence theo độ dài thật để padding không trở thành tín hiệu. AdamW, lr=0,001, batch=64, 10 epoch, gradient clip=1. Chọn checkpoint có Macro-F1 validation cao nhất tại ngưỡng 0,5, hòa chọn epoch sớm hơn.
-
-PhoBERT: vinai/phobert-base-v2, revision khóa trong configs/baseline27_4ep.json; head 27 logits, AdamW lr=2e-5, weight_decay=0,01, batch=16, 4 epoch, max_length=256, cùng quy tắc chọn checkpoint. Tách từ VnCoreNLP trước tokenizer theo model card. Cả hai neural model dùng BCEWithLogitsLoss rồi sigmoid, không dùng cross-entropy một nhãn. Chưa chạy sweep kiến trúc hoặc weighted loss để giữ baseline đơn giản.
-
-Seed 42 được đặt cho Python, NumPy, PyTorch và DataLoader; cuDNN deterministic và tắt benchmark. Không hứa bitwise-identical giữa loại GPU hoặc phiên bản thư viện khác nhau. Run JSON ghi hardware, package versions, config, checkpoint epoch, thời gian và checksum dữ liệu. Máy chạy TF-IDF: Linux-6.6.122+-x86_64-with-glibc2.39; Python 3.13.15.
-
-### 4.1. Chỉ số
-
-- Macro-F1: trung bình F1 của đủ 27 nhãn, nhãn không có dự đoán đúng lấy 0 theo zero_division=0; nhấn mạnh các lớp ít gặp.
-- Micro-F1: gộp TP/FP/FN trên tất cả nhãn rồi tính F1; lớp phổ biến đóng góp nhiều hơn.
-- Per-label F1: báo cáo riêng từng cảm xúc, kèm precision, recall, support trong CSV.
-- Hamming Loss: số quyết định nhãn sai chia N × 27; càng thấp càng tốt. Có thể thấp dù recall kém do nhiều nhãn âm.
-- LRAP: đánh giá thứ hạng từ xác suất liên tục, không dùng dự đoán đã nhị phân. Với mẫu không có nhãn dương, sklearn trả 1; cần đọc cùng F1 và Hamming, không diễn giải là neutral đã dự đoán đúng.
-- Số tham số và thời gian train: đếm trực tiếp và đo wall-clock. TF-IDF gồm fit vectorizer + fit LR; neural gồm training, validation mỗi epoch và lưu checkpoint, không gồm tải mô hình/tách từ. Khác phần cứng và phạm vi đo nên không kết luận tốc độ tương đối tuyệt đối.
-
-Subset accuracy không là metric chính vì sai một nhãn làm toàn bộ mẫu bị tính sai. Hamming Loss cũng không dùng độc lập: dự đoán mọi nhãn âm có thể có loss thấp nhưng F1 bằng 0.
-
-## 5. Kết quả thực nghiệm trên validation
-
-Bảng baseline và phân tích Q1–Q5 bên dưới dùng artifact gốc 14/10, không phải lượt chạy lại 23/10 hoặc study 28 nhãn 04/11. Không trộn số liệu giữa ba lượt; kết quả mới và nguồn đối chiếu ở mục 5.7.
-
-Tất cả dòng baseline dưới đây dùng threshold=0,5. Dấu “—” nghĩa là chưa có thực nghiệm, không phải điểm 0.
-
-| model | status | macro_f1 | micro_f1 | hamming_loss | lrap | parameter_count | train_seconds |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| TF-IDF + OvR LR | Đã chạy | 0.2388 | 0.2712 | 0.0606 | 0.6407 | 940,626 | 2.5210 |
-| BiGRU | Đã chạy | 0.4060 | 0.4526 | 0.0604 | 0.6322 | 2,128,283 | 37.4955 |
-| PhoBERT | Đã chạy | 0.4393 | 0.5160 | 0.0533 | 0.7158 | 135,019,035 | 3047.1092 |
-
-BiGRU chạy 10 epoch, checkpoint tốt nhất epoch 10, thời gian 37.50 giây. PhoBERT chạy 4 epoch, checkpoint tốt nhất epoch 4, thời gian 50.79 phút. Thiết bị BiGRU/PhoBERT: Tesla T4 / Tesla T4. Macro-F1 validation cao nhất tại ngưỡng 0,5: PhoBERT. Checkpoint được chọn theo validation; vị trí epoch tốt nhất chưa đủ chứng minh hội tụ. Số liệu lấy từ run JSON và xác suất đã lưu; không huấn luyện lại khi build report. ZIP kết quả không chứa checkpoint/vocab nên cần lưu riêng chúng.
-
-### 5.1. Per-label F1: TF-IDF tại 0,5
-
-| label | support | precision | recall | f1 |
+| model | highest | highest_f1 | lowest | lowest_f1 |
 | --- | --- | --- | --- | --- |
-| amusement | 327 | 0.7143 | 0.1223 | 0.2089 |
-| excitement | 91 | 0.6667 | 0.0220 | 0.0426 |
-| joy | 168 | 0.8333 | 0.1488 | 0.2525 |
-| love | 148 | 0.8182 | 0.1824 | 0.2983 |
-| desire | 102 | 0.6000 | 0.0294 | 0.0561 |
-| optimism | 122 | 0.8621 | 0.2049 | 0.3311 |
-| caring | 131 | 0.8750 | 0.2137 | 0.3436 |
-| pride | 87 | 1.0000 | 0.3793 | 0.5500 |
-| admiration | 107 | 1.0000 | 0.0841 | 0.1552 |
-| gratitude | 96 | 0.9123 | 0.5417 | 0.6797 |
-| relief | 58 | 0.6667 | 0.0345 | 0.0656 |
-| approval | 119 | 0.9286 | 0.1092 | 0.1955 |
-| realization | 96 | 0.0000 | 0.0000 | 0.0000 |
-| surprise | 87 | 1.0000 | 0.0230 | 0.0449 |
-| curiosity | 112 | 0.9091 | 0.0893 | 0.1626 |
-| confusion | 89 | 0.7500 | 0.0337 | 0.0645 |
-| fear | 117 | 0.9118 | 0.2650 | 0.4106 |
-| nervousness | 109 | 0.7000 | 0.0642 | 0.1176 |
-| remorse | 96 | 0.8929 | 0.2604 | 0.4032 |
-| embarrassment | 137 | 0.9420 | 0.4745 | 0.6311 |
-| disappointment | 211 | 1.0000 | 0.0142 | 0.0280 |
-| sadness | 354 | 0.8136 | 0.2712 | 0.4068 |
-| grief | 97 | 0.8333 | 0.1546 | 0.2609 |
-| disgust | 164 | 0.8000 | 0.0732 | 0.1341 |
-| anger | 185 | 0.6182 | 0.1838 | 0.2833 |
-| annoyance | 331 | 0.6535 | 0.1994 | 0.3056 |
-| disapproval | 123 | 0.5000 | 0.0081 | 0.0160 |
+| TF-IDF + OvR LR | gratitude | 0.6797 | realization | 0.0000 |
+| BiGRU | gratitude | 0.7701 | realization | 0.0940 |
+| PhoBERT | gratitude | 0.8370 | disapproval | 0.3623 |
 
-**Q1 — Nhãn tốt nhất/kém nhất:** gratitude có F1 cao nhất (0.6797); realization có F1 thấp nhất (0.0000). Các nhãn có thể đồng hạng; xem toàn bộ bảng để tránh bỏ sót các trường hợp cùng điểm. Đây là kết quả TF-IDF tại ngưỡng 0,5.
+Tất cả tại 0,5; xem phụ lục đủ từng nhãn. Các nhãn đồng hạng được liệt kê, không khái quát một nhãn dễ/khó cho mọi model.
 
-**Q2 — Tần suất liên hệ với hiệu năng thế nào?** Spearman giữa số mẫu dương train và F1 validation trên 27 nhãn là rho=0.242, p=0.223. Cần đọc cả dấu, độ lớn và p-value của lượt chạy này. Đây là tương quan mô tả trên 27 nhãn phụ thuộc nhau, không phải chứng minh quan hệ nhân quả.
+### Q2. Tần suất train liên hệ với F1 ra sao?
 
-### 5.2. Phụ thuộc nhãn và cardinality
-
-**Q3 — Baseline có giữ đồng xuất hiện?** Chọn 10 cặp phổ biến nhất chỉ từ train; sau đó đo cùng cặp trên validation. Joint recall là số mẫu dự đoán đúng cả hai nhãn / số mẫu thật có cả hai. Không xây ma trận test.
-
-| label_a | label_b | train_count | val_true_count | val_pred_count | joint_true_positive | joint_recall |
-| --- | --- | --- | --- | --- | --- | --- |
-| disappointment | sadness | 904 | 122 | 2 | 2 | 0.0164 |
-| anger | annoyance | 699 | 77 | 26 | 6 | 0.0779 |
-| sadness | grief | 620 | 81 | 18 | 15 | 0.1852 |
-| amusement | joy | 568 | 48 | 5 | 1 | 0.0208 |
-| annoyance | disapproval | 469 | 67 | 2 | 1 | 0.0149 |
-| joy | love | 395 | 50 | 9 | 6 | 0.1200 |
-
-Disappointment–sadness có 904 mẫu train; trên validation có 2/122 ca thật được dự đoán đủ hai nhãn tại ngưỡng 0,5. OvR có thể tạo phụ thuộc gián tiếp qua đặc trưng chung nhưng không tối ưu cấu trúc nhãn. Không kết luận mô hình “không học được bất kỳ phụ thuộc nào” chỉ từ thống kê này.
-
-| cardinality | n | macro_f1 | micro_f1 | hamming_loss |
-| --- | --- | --- | --- | --- |
-| 0 | 75 | 0.0000 | 0.0000 | 0.0020 |
-| 1 | 622 | 0.2543 | 0.3407 | 0.0320 |
-| 2 | 927 | 0.2459 | 0.2842 | 0.0638 |
-| 3 | 387 | 0.1730 | 0.2155 | 0.0996 |
-| >=4 | 55 | 0.1695 | 0.2308 | 0.1347 |
-
-Nhóm ≥4 cảm xúc chỉ có 55 mẫu validation, nên kết quả biến động lớn. Nhóm cardinality=0 không có cảm xúc dương; F1=0 theo quy ước thư viện không đo trực tiếp chất lượng nhận diện neutral. Cần đọc Hamming cho nhóm này.
-
-### 5.3. Phong cách văn bản
-
-| style | n | macro_f1 | micro_f1 | hamming_loss | lrap |
-| --- | --- | --- | --- | --- | --- |
-| all | 2066 | 0.2388 | 0.2712 | 0.0606 | 0.6407 |
-| short_le_5 | 343 | 0.3310 | 0.4050 | 0.0460 | 0.6754 |
-| emoji_heavy_ge_2 | 199 | 0.1690 | 0.1938 | 0.0681 | 0.5839 |
-| teencode | 307 | 0.1671 | 0.2558 | 0.0660 | 0.6033 |
-
-So sánh Macro-F1 của từng nhóm với dòng all để xác định nhóm nào tốt/kém hơn trong lượt chạy hiện tại. Đây là mô tả theo nhóm, chưa chứng minh các đặc trưng này là nguyên nhân vì phân bố nhãn/cỡ mẫu giữa các nhóm khác nhau. Không nên mặc định mọi câu ngắn đều khó.
-
-**Q4 — PhoBERT vượt GRU rõ nhất ở nhóm nào?**
-
-| style | n | gru_macro_f1 | phobert_macro_f1 | delta_macro_f1 |
-| --- | --- | --- | --- | --- |
-| all | 2066 | 0.4060 | 0.4393 | 0.0333 |
-| short_le_5 | 343 | 0.4290 | 0.4505 | 0.0215 |
-| emoji_heavy_ge_2 | 199 | 0.3255 | 0.3479 | 0.0224 |
-| teencode | 307 | 0.3170 | 0.4111 | 0.0941 |
-
-Chênh lệch lớn nhất trong các nhóm khảo sát: teencode, delta Macro-F1 = 0.0941. Delta dương nghĩa là PhoBERT cao hơn GRU; nếu không có delta dương thì không có bằng chứng PhoBERT vượt GRU trong các nhóm này. Đây là chênh lệch mô tả, chưa kiểm định ý nghĩa thống kê.
-
-### 5.4. Độ nhạy của ngưỡng
-
-**Q5 — Threshold 0,5 có nhạy không?** Thử lưới 0,05–0,80, bước 0,05 trên cùng xác suất validation, không huấn luyện lại. Trong lưới này, Macro-F1 tốt nhất tại 0.15: 0.4844 thay vì 0.2388, chênh lệch +24.55 điểm phần trăm. Micro-F1 là 0.4827; Hamming Loss tăng từ 0.0606 đến 0.0867. Cần đọc sự đánh đổi trên từng metric. LRAP giữ nguyên vì thứ hạng xác suất không đổi.
-
-| threshold | macro_f1 | micro_f1 | hamming_loss | lrap |
-| --- | --- | --- | --- | --- |
-| 0.1000 | 0.4696 | 0.4314 | 0.1321 | 0.6407 |
-| 0.1500 | 0.4844 | 0.4827 | 0.0867 | 0.6407 |
-| 0.2000 | 0.4542 | 0.4859 | 0.0692 | 0.6407 |
-| 0.3500 | 0.3421 | 0.3945 | 0.0581 | 0.6407 |
-| 0.5000 | 0.2388 | 0.2712 | 0.0606 | 0.6407 |
-
-![Khảo sát ngưỡng và quan hệ tần suất–F1, chỉ validation.](figures/tfidf_lr_diagnostics.png)
-
-Không gọi 0.15 là ngưỡng tối ưu tổng quát: nó chỉ tốt nhất trên lưới và validation đã dùng để chọn. Cần khóa ngưỡng rồi kiểm tra trên test ở Final.
-
-### 5.5. Ablation xử lý nhãn mixed-neutral
-
-**Câu hỏi bổ sung cho Midterm:** Giữ lại nhãn cảm xúc của các mẫu mixed-neutral trong train có cải thiện hiệu năng so với loại bỏ hoàn toàn các mẫu đó không?
-
-Neutral (ID 27) đôi khi xuất hiện cùng cảm xúc, tạo mâu thuẫn theo quy ước 27 đầu ra của project. Thí nghiệm A giữ toàn bộ 16.530 mẫu train đã loại trùng, bỏ ID 27 và giữ nhãn cảm xúc. Thí nghiệm B xuất phát từ cùng tập train nhưng loại đúng 251 mẫu mixed-neutral, còn 16.279 mẫu. Cả hai giữ mẫu neutral-only với vector 27 chiều bằng 0. Đây là kiểm tra bổ sung cho quyết định tiền xử lý tại mục 2.
-
-Giữ cố định chuẩn hóa, cấu hình TF-IDF + OvR Logistic Regression từ configs/midterm.json, seed 42 và threshold 0,5. Mỗi điều kiện fit vocabulary và IDF riêng, chỉ trên train tương ứng. Hai điều kiện dùng chính xác cùng 2.066 ID và vector nhãn validation, giữ nguyên cả 19 mẫu mixed-neutral. Không tìm ngưỡng và không đánh giá, tuning hay chọn mô hình bằng test; test chỉ tham gia kiểm tra trùng lặp sẵn có. CSV gốc không thay đổi.
-
-| Chỉ số | A | B | B − A |
-| --- | --- | --- | --- |
-| macro_f1 | 0.238825 | 0.240414 | +0.001588 |
-| micro_f1 | 0.271238 | 0.272904 | +0.001666 |
-| hamming_loss | 0.060593 | 0.060468 | -0.000125 |
-| lrap | 0.640745 | 0.640218 | -0.000527 |
-| train_seconds | 3.145404 | 2.976026 | -0.169378 |
-| training_samples | 16530 | 16279 | -251 |
-| tfidf_features | 34837 | 34403 | -434 |
-
-B − A là chênh lệch trên thang đo gốc, không phải tỷ lệ phần trăm tương đối. F1/LRAP càng cao càng tốt; Hamming Loss càng thấp càng tốt. Thời gian tính bằng giây, gồm fit TF-IDF và classifier, không gồm tải dữ liệu hay dự đoán validation; chỉ là một lượt đo trên máy chạy ablation. A tái lập cả bốn metric baseline hiện có, nhưng thời gian đo mới không thay thế thời gian baseline ở mục 5.
-
-**Diễn giải:** Loại mixed-neutral làm Macro-F1 tăng khoảng 0.159 điểm phần trăm; Micro-F1 và Hamming Loss cũng cải thiện nhẹ, trong khi LRAP giảm nhẹ. Vì vậy kết quả không ủng hộ giả thuyết rằng giữ các mẫu này cải thiện F1 trong cấu hình đang xét, nhưng cũng chưa cho thấy loại mẫu tốt hơn trên mọi chỉ số. Giữ nguyên baseline chính để so sánh ba mô hình; không thay đổi quy tắc tiền xử lý chung từ thí nghiệm nhỏ này.
-
-| Nhóm | A Macro-F1 | B Macro-F1 | B − A |
-| --- | --- | --- | --- |
-| head | 0.251232 | 0.255629 | +0.004397 |
-| mid | 0.307083 | 0.307450 | +0.000367 |
-| tail | 0.158161 | 0.158161 | +0.000000 |
-| mixed_neutral | 0.051852 | 0.051852 | +0.000000 |
-| non_mixed_neutral | 0.239235 | 0.240823 | +0.001587 |
-
-Head/mid/tail được cố định theo tần suất train của A: xếp giảm dần, hòa theo ID, chín nhãn mỗi nhóm. Head và mid tăng nhẹ Macro-F1, tail không đổi. Phân tích validation tách 19 mẫu mixed-neutral và 2.047 mẫu còn lại; F1 và Hamming Loss trên nhóm 19 mẫu không đổi. Nhóm nhỏ này chỉ mang tính bổ sung, không đủ cơ sở cho kết luận thống kê. Bảng đầy đủ theo tier/nhóm và precision, recall, F1 từng nhãn nằm trong reports/ablation_mixed_neutral/.
-
-**Giới hạn:** Chỉ một split, một seed, một mô hình và một ngưỡng; chưa kiểm định ý nghĩa thống kê. Loại mẫu đồng thời giảm lượng dữ liệu, thay đổi tần suất nhãn và vocabulary. Chưa chạy random-exclusion control nên chưa tách được ảnh hưởng của mâu thuẫn nhãn khỏi ảnh hưởng giảm dữ liệu. Ground truth validation vẫn dùng quy ước ưu tiên cảm xúc. Điểm dự đoán tốt hơn không chứng minh nhãn gốc nào đúng. Ablation này không thay thế câu hỏi nghiên cứu Final về tối ưu ngưỡng tại mục 7.
-
-**Tái lập:** Chạy .venv/bin/python scripts/ablate_mixed_neutral.py --output reports/ablation_mixed_neutral/rerun_01 với thư mục đầu ra chưa tồn tại. Cấu hình, checksum dữ liệu, ID train và xác suất validation liên tục được lưu cùng kết quả; không xuất bình luận gốc. Chi tiết tại reports/ablation_mixed_neutral/experiment_summary.md.
-
-### 5.6. Fine-tuning và thử nghiệm learning rate PhoBERT
-
-**Đã thực hiện:** PhoBERT pretrained được fine-tune toàn bộ backbone cùng head 27 logits trên train; AdamW lr=2e-5, batch=16, weight_decay=0,01, 4 epoch, max_length=256 BPE tokens, BCEWithLogitsLoss. Chọn checkpoint bằng Macro-F1 validation tại ngưỡng 0,5. BiGRU được huấn luyện từ đầu. Fine-tuning pretrained và tìm kiếm hyperparameter là hai công việc khác nhau.
-
-**Thiết kế bổ sung:** So sánh learning rate 1e-5, 2e-5 và 3e-5; giữ nguyên seed 42, split, preprocessing, checkpoint revision, batch size, số epoch, optimizer và loss. Chạy lại cả 2e-5 trong cùng runtime làm đối chứng; kết quả baseline gốc ở mục 5 được giữ riêng. Chọn learning rate bằng Macro-F1 validation tại 0,5, hòa chọn learning rate nhỏ hơn; checkpoint trong mỗi lượt hòa chọn epoch sớm hơn. Không chọn learning rate bằng điểm đã tune threshold. Không đánh giá hay điều chỉnh bằng test.
-
-**Trạng thái: đã chuẩn bị code/notebook, chưa có kết quả GPU của sweep.** Cả ba learning rate đang chờ chạy; chưa chọn được cấu hình tốt nhất và chưa có insight về tác động của learning rate. Chạy notebook 05 trên Colab; script lưu config, run JSON, xác suất, biểu đồ train loss/validation F1, bảng per-label/style và mẫu ca lỗi riêng cho từng lượt.
-
-Sau khi chạy, cần đọc đường học và chênh lệch từng nhãn/phong cách, điền neural_error_review.csv bằng quan sát thủ công rồi viết insight. Không coi danh sách lỗi tự sinh là đã audit. Một seed và bốn epoch không đủ để kết luận ý nghĩa thống kê hoặc hội tụ. Chi tiết và cách chạy: docs/phobert_tuning.md.
-
-### 5.7. Cập nhật 04/11/2026 — dự đoán thêm Neutral, đủ 28 nhãn
-
-**Nguồn và phạm vi.** Đã nhận `vigoemotions_neutral28_private_results.zip` và notebook `06_kaggle_neutral_28_labels.ipynb` có output. Ba mô hình đã huấn luyện xong; kết quả dưới đây chỉ trên 2.066 mẫu validation tại ngưỡng 0,5, seed 42. Test chưa được chấm (`RUN_FINAL_TEST=False`, ZIP không có test predictions/test lock). Đây là thí nghiệm bổ sung, giữ nguyên các artifact baseline 27 nhãn ở mục 5.1–5.6. Các bảng, NPZ validation không chứa text và metadata được trích nguyên tại `reports/midterm_2026-11-04/evidence/`; `provenance.json` ghi SHA-256 và các bước kiểm chứng.
-
-**Hai cách mã hóa.** Baseline 27 nhãn bỏ ID 27: `[27]` thành vector toàn 0 và `[2,27]` chỉ giữ joy. Study 28 nhãn giữ Neutral thành đầu ra riêng: `[27]` có Neutral dương, `[2,27]` có cả joy và Neutral dương. Dùng multi-hot, sigmoid độc lập và BCE; không dùng softmax hoặc luật ép Neutral loại trừ cảm xúc. Có 725 mẫu Neutral-only và 306 mixed-neutral trong CSV gốc. Giữ annotation để đo, không suy đoán nhãn nào sai. Validation có 75 Neutral-only + 19 mixed = 94 mẫu Neutral dương (4,55%).
-
-**Kết quả validation trên đủ 28 nhãn.** Hamming Loss càng thấp càng tốt; các metric còn lại càng cao càng tốt.
-
-| Mô hình | Macro-F1 | Micro-F1 | Hamming Loss | LRAP |
-| --- | --- | --- | --- | --- |
-| TF-IDF + OvR LR | 0,231040 | 0,266160 | 0,060054 | 0,609645 |
-| BiGRU | 0,399227 | 0,459095 | 0,058861 | 0,605071 |
-| PhoBERT | 0,574653 | 0,577672 | 0,055127 | 0,712201 |
-
-PhoBERT cao nhất trong study này theo Macro-F1, Micro-F1 và LRAP, đồng thời có Hamming Loss thấp nhất. Đây là xếp hạng trong cùng thiết lập 28 nhãn; chưa có kiểm định ý nghĩa thống kê hoặc kết quả test. BiGRU có F1 cao hơn TF-IDF nhưng LRAP thấp hơn một chút; không khẳng định mọi metric đều tăng.
-
-![Macro-F1 đủ 28 nhãn và F1 Neutral, validation tại 0,5; không đặt metric baseline 27 nhãn vào cùng phép so sánh.](midterm_2026-11-04/neutral28_metrics.png)
-
-**Neutral có được học thực sự không?** Support là 94 cho cả ba mô hình và bao gồm mixed-neutral.
-
-| Mô hình | Precision | Recall | F1 | Dự đoán dương | TP / FP / FN |
-| --- | --- | --- | --- | --- | --- |
-| TF-IDF + OvR LR | 0,5000 | 0,0106 | 0,0208 | 2 | 1 / 1 / 93 |
-| BiGRU | 0,2500 | 0,0532 | 0,0877 | 20 | 5 / 15 / 89 |
-| PhoBERT | 0,4151 | 0,4681 | 0,4400 | 106 | 44 / 62 / 50 |
-
-TF-IDF và BiGRU bỏ sót phần lớn Neutral ở 0,5. PhoBERT tìm được 44/94 mẫu Neutral nhưng còn 62 false positives và 50 false negatives. Precision 0,4151 cho thấy đầu ra Neutral còn nhiều dự đoán sai; không trình bày F1 0,4400 như đã giải quyết xong bài toán. Baseline 27 nhãn không có đầu ra Neutral nên không gán Neutral F1 bằng 0 cho baseline đó. Tập dự đoán rỗng trong mô hình 28 nhãn cũng không tự động là Neutral.
-
-**So sánh trên cùng 27 cảm xúc.** Chiếu xác suất mô hình 28 nhãn về IDs 0–26 rồi tính `emotion27_macro_f1`. Đã kiểm tra cùng ID, targets validation và tính lại metric baseline gốc từ NPZ.
-
-| Mô hình | Baseline 27 nhãn gốc | Study 28 chiếu về 27 | Chênh lệch điểm phần trăm |
-| --- | --- | --- | --- |
-| TF-IDF + OvR LR | 0,238825 | 0,238825 | +0,0000 |
-| BiGRU | 0,406002 | 0,410764 | +0,4762 |
-| PhoBERT | 0,439320 | 0,579640 | +14,0321 |
-
-Baseline trong bảng là bộ gốc tại `reports/tables/` và `reports/predictions/`, được study 06 dùng làm nguồn so sánh. Lượt chạy lại 27 nhãn dùng cho lời thoại ngày 23/10 có PhoBERT Macro-F1 0,467850, lưu riêng tại `reports/pre_midterm_2026-10-23/evidence/`; nó không phải đối chứng trong bảng này. Không thay lẫn 0,439320 và 0,467850 khi nói về delta.
-
-Delta trên cùng 27 cảm xúc cho biết khác biệt quan sát được, chưa cô lập tác động của thêm Neutral. PhoBERT mới chạy 12 epoch, chọn epoch 11 theo Macro-F1 28 nhãn; baseline gốc chỉ chạy 4 epoch và chọn bằng Macro-F1 27 nhãn. Runtime/package cũng khác. Đặc biệt `study.json.baseline_config` là config sao chép khi init (PhoBERT 12 epoch), không phải bằng chứng baseline gốc đã chạy 12 epoch: phải đọc `reports/phobert_run.json`. Muốn quy nguyên nhân cho Neutral cần chạy đối chứng 27/28 cùng runtime, ngân sách epoch và quy tắc chọn checkpoint đã định trước, tốt hơn với nhiều seed.
-
-Trên cùng 27 cảm xúc, Hamming Loss PhoBERT tăng từ 0,053261 lên 0,055161 dù Macro-F1 tăng; LRAP tăng từ 0,715767 lên 0,732624. Không so trực tiếp Macro-F1/LRAP toàn bộ 27 với toàn bộ 28: tập nhãn và ý nghĩa của Neutral-only đã đổi. Hamming cũng đổi mẫu số khi thêm một đầu ra; dùng phép chiếu 27 khi đối chiếu baseline.
-
-**Cấu hình và đường học từ lượt chạy thật.** Cả hai neural chạy trên Tesla T4; fine-tune toàn bộ PhoBERT, revision cố định, lr=2e-5, batch=16, max_length=256, weight_decay=0,01. BiGRU giữ embedding/hidden 128, batch=64, lr=0,001. Seed 42; chọn checkpoint theo validation Macro-F1 28 nhãn tại 0,5, hòa chọn epoch sớm nhất.
-
-| Mô hình | Epoch chạy / chọn | Tham số | Thời gian train |
-| --- | --- | --- | --- |
-| TF-IDF + OvR LR | Không áp dụng | 975.464 | 2,59 giây CPU |
-| BiGRU | 10 / 10 | 2.128.540 | 34,98 giây T4 |
-| PhoBERT | 12 / 11 | 135.019.804 | 8.930,75 giây T4 (148,85 phút) |
-
-Thời gian TF-IDF gồm fit vectorizer + LR, còn neural gồm vòng train, validation từng epoch và ghi checkpoint, không gồm preprocessing. Không dùng bảng này để so tốc độ tuyệt đối giữa CPU và GPU. ZIP riêng tư có checkpoint, tokenizer và vocabulary cho study 28, khác ZIP baseline gốc chỉ có kết quả.
-
-![Train loss và validation Macro-F1 28 nhãn theo epoch; PhoBERT chọn epoch 11, không chọn epoch cuối.](midterm_2026-11-04/neutral28_learning_curves.png)
-
-PhoBERT tăng Macro-F1 từ 0,4753 ở epoch 4 lên 0,5747 ở epoch 11 rồi giảm còn 0,5630 ở epoch 12; train loss vẫn giảm. Chỉ nêu biến động quan sát được: không có validation loss, chưa đủ cơ sở kết luận hội tụ hay overfitting. Đây là một lượt lr=2e-5, không hoàn tất sweep learning rate notebook 05.
-
-**Inference và giới hạn notebook.** Cell inference trên bốn câu tự viết đã xuất kết quả cho cả ba mô hình. Cell code tìm kiểu dự đoán validation tiếp theo (chỉ số cell 24, execution_count 16) dừng với `ValueError: VM is already running, can't set classpath/options` khi nạp lại VnCoreNLP. ZIP không có `validation_prediction_cases.csv`; không khẳng định cell đó chạy xong. Các metric và xác suất validation đã xuất trước lỗi và đã được tính lại độc lập. Bảng `prediction_category_counts.csv` ở evidence được tính trực tiếp từ NPZ tại ngưỡng 0,5; đây là thống kê dự đoán, không phải audit ngữ nghĩa thủ công. Bản notebook chia sẻ ngày 05/11 đã xóa output. Hàm tìm ca validation đã sửa để dùng xác suất NPZ lưu sẵn, tránh nạp lại JVM; kiểm chứng được đủ bảng ID của ba model. Đọc định tính chín ca PhoBERT hỗ trợ AI nằm ở mục 6.1; nhóm cần xác nhận. Lượt training nguồn giữ nguyên, không được gọi là đã chạy lại GPU.
-
-**Kết luận dùng khi thuyết trình.** Nhóm đã mở rộng đầu ra thành 28 nhãn và kiểm chứng đầy đủ kết quả validation của ba mô hình. PhoBERT tốt nhất trong study, nhưng Neutral còn khó và phép so sánh với baseline chịu ảnh hưởng số epoch/quy tắc chọn checkpoint. Bước Final vẫn là chọn và khóa một checkpoint, kiểm tra ngưỡng fixed/global/per-label trên validation rồi chấm test sau khi khóa mọi lựa chọn. Nếu dùng 28 nhãn, báo cáo cả metric 28, phép chiếu 27 và Neutral riêng; không tự coi ngưỡng 0,15 của TF-IDF 27 nhãn là ngưỡng của PhoBERT 28 nhãn.
-
-
-## 6. Phân tích lỗi và trường hợp biên
-
-File tfidf_lr_error_cases_val.csv chứa 20 FN có xác suất thấp nhất và 20 FP có xác suất cao nhất, kèm ID, nhãn thật, nhãn dự đoán, xác suất, cardinality và style flags. Một mẫu có thể xuất hiện nhiều lần vì lỗi tính theo cặp mẫu–nhãn. Mẫu này ưu tiên lỗi tự tin, không đại diện ngẫu nhiên cho toàn bộ lỗi. Đã đọc thủ công 10 bình luận khác nhau trong danh sách của lượt baseline đã kiểm chứng ngày 14/10/2026; bảng dưới dùng mô tả trừu tượng, không chép nguyên bình luận. Các quan sát thủ công này không tự cập nhật khi huấn luyện lại: nhóm cần đối chiếu CSV ca lỗi mới trước khi dùng chúng để mô tả lượt chạy mới.
-
-| ID validation | Lỗi quan sát | Diễn giải thận trọng |
+| model | spearman_rho | p_value |
 | --- | --- | --- |
-| 3069 | FN pride; true cardinality 4 | Lời khen thân mật/slang; baseline bắt được một số cảm xúc tích cực nhưng thiếu pride/admiration. Có thể cần quan hệ giữa người nói và đối tượng. |
-| 4712 | FN approval | Lời khen pha yêu cầu so sánh; mô hình không vượt ngưỡng ở nhãn nào. Chưa đủ bằng chứng để quy lỗi riêng cho ngưỡng. |
-| 1930 | FN realization | Nhận xét mang ý suy ra nguyên nhân, có viết phi chuẩn; nét nghĩa suy luận không dễ biểu diễn bằng n-gram. |
-| 2159 | FN caring | Câu hỏi ngắn kèm emoticon; ngữ cảnh thiếu nên caring khó tách khỏi sắc thái đùa. |
-| tik011933 | FN amusement, giữ được remorse | Emoji bổ sung cảm xúc ngoài từ chính; word-token TF-IDF bỏ emoji, là giả thuyết nguyên nhân phù hợp. |
-| 1148 | FP annoyance, giữ được anger | Đoạn dài với từ ngữ mạnh; annoyance gần anger/disgust về ngữ nghĩa nhưng không có trong nhãn chuẩn của mẫu. Không tự sửa ground truth. |
-| tik014999 | FP remorse | Biểu đạt mong muốn/hối tiếc rất ngắn; nhầm các cảm xúc gần nhau khi thiếu ngữ cảnh. |
-| tik008648 | FP gratitude, ground truth sadness | Viết phi chuẩn và nhiều emoji; khả năng mô hình dựa quá mạnh vào tín hiệu từ vựng gần nghĩa. |
-| 1031 | FP love | Lời khen đối tượng được gán joy/admiration; mô hình dự đoán cảm xúc tích cực gần nhưng không khớp nhãn. |
-| tik003388 | FP curiosity | Câu hỏi phục vụ đề nghị giúp đỡ; hình thức hỏi không nhất thiết biểu đạt tò mò. |
+| TF-IDF + OvR LR | 0.2424 | 0.2232 |
+| BiGRU | 0.3132 | 0.1117 |
+| PhoBERT | 0.0183 | 0.9278 |
 
-Các nhận định trên là giả thuyết từ đọc ca lỗi, chưa phải kết quả ablation. Có thể kiểm chứng ở Final bằng so sánh xử lý emoji, masking từ khóa hoặc phân tích attention chỉ như bằng chứng phụ; ưu tiên hoàn tất RQ bắt buộc trước.
+Spearman mô tả tương quan trên 27 nhãn; các nhãn phụ thuộc nhau. Không suy ra quan hệ nhân quả hoặc rằng chỉ tăng số mẫu sẽ giải quyết mọi nhãn khó.
 
-### 6.1. Đọc định tính chín ca PhoBERT 28 nhãn
+### Q3. Model giữ được cặp thường đồng xuất hiện không?
 
-Đã đọc nội dung riêng tư của chín mẫu: ba Neutral FP tự tin nhất, ba Neutral FN có xác suất Neutral thấp nhất và ba mẫu có cardinality cảm xúc lớn nhất, hòa theo thứ tự validation. Lựa chọn dựa trên xác suất đã lưu, không đổi ngưỡng 0,5 và không suy luận lại. Bảng chỉ giữ ID và diễn giải trừu tượng. Đây là đọc định tính có hỗ trợ AI; nhóm cần xác nhận khi bảo vệ, không được trình bày như chín mẫu đã do thành viên nhóm kiểm duyệt. Các mẫu được chọn có chủ đích, không đại diện ngẫu nhiên cho tỷ lệ lỗi.
-
-| ID validation | Loại ca | Quan sát định tính | Diễn giải cần kiểm chứng |
+| model | val_true | joint_TP | joint_recall |
 | --- | --- | --- | --- |
-| 14202 | Neutral FP | Câu hỏi ngắn, có tên riêng và cách viết địa phương, không có dấu hỏi. | Thiếu dạng hỏi chuẩn có thể góp phần bỏ curiosity; cần đối chứng trước khi kết luận cơ chế. |
-| tik009855 | High cardinality, FN remorse | Hồi tưởng mất mát với tình cảm và biết ơn đan xen đau buồn. | Giữ 4/5 cảm xúc nhưng bỏ remorse; chỉ số exact match sẽ che mức đúng một phần này. |
-| 14751 | Neutral FP | Tường thuật tình huống bất lợi, cách viết phi chuẩn; cảm xúc chủ yếu hàm ý. | Neutral lấn át nervousness/anger; có thể cần ngữ cảnh để suy ra cảm xúc. |
-| you001020 | High cardinality, FN + FP | Lời cảm ơn đi cùng lo lắng và mong muốn thay đổi cá nhân. | Giữ gratitude/nervousness, bỏ desire/realization/fear và thêm remorse; khó giữ đủ nhiều sắc thái. |
-| 16636 | High cardinality, FN love | Lời khen ngắn có emoji; nhiều cảm xúc tích cực cùng được gán. | Giữ 4/5 cảm xúc, thiếu love; cần phân biệt các nhãn tích cực gần nhau. |
-| 215 | Neutral FN, mixed annotation | Hồi tưởng thân mật bằng cách viết tắt, ground truth có cả love và Neutral. | Mô hình chọn amusement/joy, bỏ cả love và Neutral; cho thấy mơ hồ giữa các cảm xúc tích cực. |
-| 15545 | Neutral FN | Tương tác mạng xã hội rất ngắn, có tên riêng và viết tắt. | Mô hình gán annoyance thay Neutral; chưa đủ ngữ cảnh để quy lỗi riêng cho một từ. |
-| you003230 | Neutral FP | Dạng liệt kê hướng dẫn, sắc thái nhận thức/chấp nhận gián tiếp. | Mô hình bỏ approval/realization và ưu tiên Neutral; có thể thiếu tín hiệu cảm xúc trực tiếp. |
-| 6238 | Neutral FN | Lối kể chuyện khẩu ngữ, có từ tục trong mẫu được gán Neutral. | Tín hiệu từ vựng tiêu cực có thể kích hoạt anger/annoyance; không tự sửa ground truth. |
+| TF-IDF + OvR LR | 122 | 2 | 0.0164 |
+| BiGRU | 122 | 37 | 0.3033 |
+| PhoBERT | 122 | 63 | 0.5164 |
 
-Ground truth/predicted labels và xác suất Neutral của từng ID có trong reports/midterm_2026-11-04/evidence/phobert28_error_review.csv, không chứa văn bản gốc. Quan sát gợi ý khó khăn với cảm xúc hàm ý, khẩu ngữ/từ tục và nhãn tích cực gần nhau; đây là giả thuyết từ đọc ca lỗi, chưa phải kết luận nhân quả. Không tự sửa annotation mixed hoặc Neutral. Phần này không thay thế yêu cầu audit ít nhất 20 FN/20 FP của Final.
+Cặp disappointment–sadness chọn từ train trước khi đo validation. Joint recall là tỷ lệ mẫu có cả hai nhãn thật được đoán đủ cả hai. OvR không mô hình hóa cấu trúc nhãn trực tiếp; tỷ lệ thấp còn có thể liên quan ngưỡng bỏ sót.
 
-## 7. Câu hỏi nghiên cứu cho Final và thiết kế kiểm chứng
+### Q4. PhoBERT hơn BiGRU ở phong cách nào?
 
-**RQ1:** Một ngưỡng chung 0,5 có tối ưu cho đủ 27 cảm xúc khi phân bố nhãn khác nhau và nhãn dương thưa không?
+| style | n | gru | phobert | delta_pp |
+| --- | --- | --- | --- | --- |
+| all | 2066 | 0.4220 | 0.5974 | 17.5434 |
+| emoji_heavy_ge_2 | 199 | 0.3506 | 0.4789 | 12.8265 |
+| short_le_5 | 343 | 0.4303 | 0.5654 | 13.5113 |
+| teencode | 307 | 0.3333 | 0.5547 | 22.1348 |
 
-Giả thuyết: ngưỡng global/per-label được chọn trên validation có thể tăng Macro-F1, nhưng per-label dễ overfit ở nhãn ít mẫu. Kết quả TF-IDF giữa kỳ chỉ là động lực khảo sát, không thay thế thí nghiệm trên neural backbone.
+Trong các nhóm khảo sát, teencode có chênh lệch Macro-F1 lớn nhất: +22.13 điểm phần trăm. Nhóm short có ≤5 token khoảng trắng, emoji-heavy có ≥2 ký tự emoji theo regex và teencode theo từ điển heuristic; các nhóm chồng lấn và có nhiễu. Bảng dùng hai model 27 nhãn mới, không chuyển kết luận sang study khác.
 
-- Chọn kiến trúc neural có Macro-F1 validation cao nhất theo giao thức midterm và đóng băng checkpoint. Không chọn bằng test, không retrain backbone khi đổi decoder.
-- Lưu xác suất validation. So sánh fixed 0,5; global tuned tối đa Macro-F1; per-label tuned tối đa F1 từng nhãn. Khóa lưới và quy tắc hòa trước khi chạy; mặc định hòa chọn ngưỡng cao hơn để giảm FP.
-- Chốt toàn bộ ngưỡng trước khi chạy test. Thực hiện một lần inference trên test và chấm cả ba decoder từ cùng xác suất; không thử nhiều vòng trên test.
-- Báo cáo Macro/Micro/per-label F1, Hamming, theo tier và cardinality 1/2/3/≥4; tách thêm nhóm neutral-only. Vẽ profile 27 ngưỡng và gap F1 validation − test để quan sát overfitting.
-- Audit ít nhất 20 FN, 20 FP của neural model, mẫu nhiều cảm xúc và cặp nhãn dễ lẫn; không thay audit TF-IDF hiện tại cho yêu cầu Final.
-- Lưu ID, true vector, probability vector và ba vector decoded cùng cardinality; chia sẻ theo giới hạn giấy phép, không kèm raw text. Nếu đi paper-track, chạy ≥3 seed và báo cáo độ lệch chuẩn.
+### Q5. Nhạy với ngưỡng 0,5 đến đâu?
 
-## 8. Tái lập, giới hạn và đối chiếu yêu cầu
+| model | default_macro | best_exploratory_threshold | exploratory_macro | exploratory_hamming |
+| --- | --- | --- | --- | --- |
+| TF-IDF + OvR LR | 0.2388 | 0.1500 | 0.4844 | 0.0867 |
+| BiGRU | 0.4220 | 0.2000 | 0.4406 | 0.0784 |
+| PhoBERT | 0.5974 | 0.3500 | 0.5978 | 0.0587 |
 
-Chạy README theo thứ tự: tests → analyze_data.py → train_tfidf.py → build_report.py. Notebook 04 xử lý setup Colab, GRU/PhoBERT, xuất bảng/hình/probability và tạo lại báo cáo/slide. Đã có và kiểm chứng run JSON/xác suất của cả hai mô hình neural chạy trên Colab GPU.
+Khảo sát lại trên xác suất của study 27 mới, lưới 0,05–0,80 bước 0,05. Giữ checkpoint đã chọn tại 0,5; sweep chỉ là phân tích hậu nghiệm trên validation, không thay điểm bảng chính hay chọn lại checkpoint. LRAP không đổi khi đổi ngưỡng. Ngưỡng tối ưu trên validation chưa chứng minh cải thiện test, không áp thẳng cho model/tập nhãn khác.
 
-| Yêu cầu | Minh chứng / trạng thái |
-| --- | --- |
-| A: số mẫu, 27 nhãn, frequency, cardinality, length | CSV và hình trong reports/tables, reports/figures; đã chạy |
-| A: co-occurrence, correlation, văn phong | Ma trận train-only và mô tả/heuristic; đã chạy |
-| A: stratified split protocol | ID cố định + prevalence audit; nguồn thuật toán split gốc chưa được xác minh |
-| B: TF-IDF, recurrent, PhoBERT | TF-IDF đã chạy; neural đã có file kết quả |
-| C: đủ metric, per-label, tham số, thời gian | Đủ cả ba mô hình; phụ lục A có F1 của mọi nhãn cho baseline 27 và study 28 |
-| D: năm câu hỏi | Q1–Q3/Q5 có bằng chứng TF-IDF; Q4 có bảng chênh lệch neural |
-| E: slide, code, EDA, error analysis, RQ, README | Đã có; đọc lỗi PhoBERT có hỗ trợ AI, nhóm cần xác nhận; chưa cung cấp thông tin nhóm |
+## 7. Phân tích lỗi trên lượt mới
 
-Giới hạn chính: một seed, validation đã dùng chọn cấu hình/ngưỡng, chưa đo tổng quát hóa test, heuristic style chưa được gán nhãn thủ công, mapping ID đã khớp ảnh dataset card cung cấp ngày 22/10, paper nêu 8:1:1 nhưng chưa có bằng chứng stratification. Quy ước 27 output khác thiết lập 28 output có neutral riêng trong bài báo gốc; không so sánh trực tiếp số điểm hai giao thức. Các nhãn cùng mẫu phụ thuộc nhau nên F1 theo nhãn và kiểm định tương quan cần được diễn giải thận trọng.
+Đọc sáu ca PhoBERT 28: ba Neutral FP tự tin nhất và ba Neutral FN có xác suất thấp nhất. Chọn theo NPZ của lượt mới; không dùng lại các ca và kết luận dự đoán từ run cũ. Có hỗ trợ AI, nhóm cần xác nhận. Không xuất nguyên văn bình luận và không coi các ca chọn có chủ đích là mẫu ngẫu nhiên.
 
-## Phụ lục A. F1 đủ từng nhãn của cả ba mô hình
+| sample_id | case_type | observation | hypothesis |
+| --- | --- | --- | --- |
+| 30099 | Neutral FP | Lời giải thích tình huống được gán relief; model chỉ dự đoán Neutral. | Cảm xúc hàm ý trong giải thích tình huống có thể khó nhận diện. |
+| you003230 | Neutral FP | Nội dung liệt kê được gán approval và realization; model chỉ dự đoán Neutral. | Dạng liệt kê và HTML có thể che tín hiệu cảm xúc; cần ablation để kiểm chứng. |
+| 15569 | Neutral FP | Lời bình ngắn được gán surprise; model chỉ dự đoán Neutral. | Sắc thái ngạc nhiên phụ thuộc tiểu từ/ngữ cảnh ngắn. |
+| 6238 | Neutral FN | Ground truth chỉ Neutral; model dự đoán anger và annoyance. | Từ tục và khẩu ngữ có thể kéo dự đoán sang cảm xúc tiêu cực. |
+| 21975 | Neutral FN | Ground truth chỉ Neutral; model dự đoán anger. | Tên riêng hoặc cụm từ theo ngữ cảnh có thể gây nhầm; chưa xác định cơ chế. |
+| 1134 | Neutral FN | Ground truth chỉ Neutral; model dự đoán amusement và joy. | Từ mang nghĩa ưa thích có thể bị đọc thành cảm xúc tích cực. |
 
-Tất cả dùng validation tại ngưỡng 0,5. Hai bảng giữ riêng tập nhãn và lượt chạy; Neutral của baseline 27 không được gán bằng 0.
+Quan sát được tách với giả thuyết: ngữ cảnh hàm ý, câu ngắn, HTML và từ tục là hướng cần kiểm chứng bằng phân tích tiếp. CSV đi kèm có ground truth, dự đoán và xác suất Neutral. Mỗi model còn có 20 ứng viên FN và 20 FP tự sinh trong analysis; đó là danh sách để đọc, không phải bằng chứng tất cả đã được nhóm audit. Yêu cầu Final ít nhất 20 FN/20 FP vẫn chưa hoàn tất.
 
-### A.1. Baseline gốc 27 cảm xúc, PhoBERT 4 epoch
+## 8. RQ và kế hoạch Final
+
+Một ngưỡng chung 0,5 có tối ưu cho mọi nhãn không? Dùng neural backbone tốt nhất của midterm; hiện PhoBERT 27 có emotion27 Macro-F1 cao nhất. Khóa checkpoint, không retrain backbone khi đổi decoder; so sánh fixed 0,5, global tuned và per-label tuned. Chọn ngưỡng chỉ trên validation; khóa mọi lựa chọn rồi chấm held-out test đúng một lần. Phân tích theo tier/cardinality, profile ngưỡng, khoảng cách validation–test và ít nhất 20 FN/20 FP. Nếu tiếp tục dùng 28 nhãn, báo cáo riêng Neutral và phép chiếu 27.
+
+## 9. Tái lập, nguồn và giới hạn
+
+Hai ZIP Kaggle và notebook executed 08/09 là source of truth. scripts/import_equal20_results.py kiểm chứng manifest notebook khớp ZIP, sáu NPZ khớp ID/target/label order và metric CSV, history đủ 20, epoch best đúng tiêu chí và checkpoint có trong archive. Không nạp pickle/checkpoint, không train hay inference lại. Evidence được xuất bằng allowlist gồm JSON và NPZ ID-only.
+
+Checksum file thô ở lượt 28 khác vì CRLF: đã xác minh từng checksum là biến thể LF/CRLF chính xác của source/config/CSV local. Không chỉ giả định hai file JSON có cùng nghĩa. Cấu hình sau parse và split IDs khớp giữa hai lượt; môi trường và GPU cùng thông tin manifest. provenance.json lưu checksum ZIP, notebook, thành viên đã trích và loại biến thể từng file; không sửa manifest gốc để ép khớp.
+
+Giới hạn: một seed, checkpoint và khảo sát ngưỡng dùng validation; test chưa chấm; style heuristic; sáu ca lỗi có hỗ trợ AI cần nhóm xác nhận; chưa xác minh thuật toán split gốc và chưa có thông tin nhóm. Kết quả ít epoch được lưu như lịch sử, không là bằng chứng cho các bảng/kết luận chính hiện tại.
+
+Lệnh tái tạo: python scripts/import_equal20_results.py; python scripts/build_report.py; python scripts/build_study_guide.py. Cần hai ZIP/notebook executed gốc và CSV được cấp quyền để import; các PDF/tổng hợp chỉ cần evidence đã kiểm chứng và EDA. Không phân phối raw text, vocabulary hoặc checkpoint công khai.
+
+## Phụ lục A. F1 mọi nhãn của ba model
+
+### A.27. 27 nhãn, neural 20 epoch
 
 | label | tfidf_lr | gru | phobert |
 | --- | --- | --- | --- |
-| amusement | 0.2089 | 0.5919 | 0.6361 |
-| excitement | 0.0426 | 0.1111 | 0.0638 |
-| joy | 0.2525 | 0.4372 | 0.5411 |
-| love | 0.2983 | 0.4700 | 0.4818 |
-| desire | 0.0561 | 0.2721 | 0.0192 |
-| optimism | 0.3311 | 0.3892 | 0.6291 |
-| caring | 0.3436 | 0.4851 | 0.5463 |
-| pride | 0.5500 | 0.5926 | 0.7152 |
-| admiration | 0.1552 | 0.2897 | 0.4935 |
-| gratitude | 0.6797 | 0.7470 | 0.7765 |
-| relief | 0.0656 | 0.2558 | 0.2059 |
-| approval | 0.1955 | 0.3444 | 0.5198 |
-| realization | 0.0000 | 0.1197 | 0.1359 |
-| surprise | 0.0449 | 0.1765 | 0.2308 |
-| curiosity | 0.1626 | 0.4353 | 0.4875 |
-| confusion | 0.0645 | 0.2712 | 0.1064 |
-| fear | 0.4106 | 0.6832 | 0.6211 |
-| nervousness | 0.1176 | 0.3429 | 0.3056 |
-| remorse | 0.4032 | 0.5563 | 0.5811 |
-| embarrassment | 0.6311 | 0.5956 | 0.7462 |
-| disappointment | 0.0280 | 0.2953 | 0.3251 |
-| sadness | 0.4068 | 0.5824 | 0.6616 |
-| grief | 0.2609 | 0.4419 | 0.5823 |
-| disgust | 0.1341 | 0.3347 | 0.3451 |
-| anger | 0.2833 | 0.4576 | 0.5496 |
-| annoyance | 0.3056 | 0.5050 | 0.5552 |
-| disapproval | 0.0160 | 0.1786 | 0.0000 |
+| amusement | 0.2089 | 0.5822 | 0.6435 |
+| excitement | 0.0426 | 0.1406 | 0.4606 |
+| joy | 0.2525 | 0.4722 | 0.5321 |
+| love | 0.2983 | 0.5311 | 0.5833 |
+| desire | 0.0561 | 0.3333 | 0.5370 |
+| optimism | 0.3311 | 0.4369 | 0.6719 |
+| caring | 0.3436 | 0.4786 | 0.6397 |
+| pride | 0.5500 | 0.5942 | 0.7397 |
+| admiration | 0.1552 | 0.3490 | 0.5882 |
+| gratitude | 0.6797 | 0.7701 | 0.8370 |
+| relief | 0.0656 | 0.3011 | 0.5785 |
+| approval | 0.1955 | 0.4142 | 0.6552 |
+| realization | 0.0000 | 0.0940 | 0.4641 |
+| surprise | 0.0449 | 0.2162 | 0.5087 |
+| curiosity | 0.1626 | 0.4590 | 0.6266 |
+| confusion | 0.0645 | 0.2615 | 0.4916 |
+| fear | 0.4106 | 0.6732 | 0.6971 |
+| nervousness | 0.1176 | 0.3420 | 0.5388 |
+| remorse | 0.4032 | 0.5868 | 0.7192 |
+| embarrassment | 0.6311 | 0.5764 | 0.7729 |
+| disappointment | 0.0280 | 0.3452 | 0.4988 |
+| sadness | 0.4068 | 0.5677 | 0.6819 |
+| grief | 0.2609 | 0.4286 | 0.6736 |
+| disgust | 0.1341 | 0.2979 | 0.4765 |
+| anger | 0.2833 | 0.4489 | 0.5762 |
+| annoyance | 0.3056 | 0.5095 | 0.5751 |
+| disapproval | 0.0160 | 0.1829 | 0.3623 |
 
-### A.2. Study 28 nhãn, PhoBERT 12 epoch chọn 11
+### A.28. 28 nhãn, neural 20 epoch
 
 | label | tfidf_lr | gru | phobert |
 | --- | --- | --- | --- |
-| amusement | 0.2089 | 0.6162 | 0.6202 |
-| excitement | 0.0426 | 0.1373 | 0.3974 |
-| joy | 0.2525 | 0.4351 | 0.5439 |
-| love | 0.2983 | 0.4476 | 0.6087 |
-| desire | 0.0561 | 0.2969 | 0.4886 |
-| optimism | 0.3311 | 0.4694 | 0.6724 |
-| caring | 0.3436 | 0.5229 | 0.6692 |
-| pride | 0.5500 | 0.6107 | 0.7613 |
-| admiration | 0.1552 | 0.3673 | 0.5882 |
-| gratitude | 0.6797 | 0.7273 | 0.8268 |
-| relief | 0.0656 | 0.2069 | 0.5872 |
-| approval | 0.1955 | 0.3871 | 0.6419 |
-| realization | 0.0000 | 0.0370 | 0.3951 |
-| surprise | 0.0449 | 0.1852 | 0.5161 |
-| curiosity | 0.1626 | 0.3974 | 0.5882 |
-| confusion | 0.0645 | 0.2703 | 0.4459 |
-| fear | 0.4106 | 0.6400 | 0.7039 |
-| nervousness | 0.1176 | 0.2927 | 0.5185 |
-| remorse | 0.4032 | 0.5479 | 0.6974 |
-| embarrassment | 0.6311 | 0.6320 | 0.7331 |
-| disappointment | 0.0280 | 0.2958 | 0.4142 |
-| sadness | 0.4068 | 0.6116 | 0.6576 |
-| grief | 0.2609 | 0.4740 | 0.6409 |
-| disgust | 0.1341 | 0.3482 | 0.4716 |
-| anger | 0.2833 | 0.4581 | 0.5337 |
-| annoyance | 0.3056 | 0.5120 | 0.5576 |
-| disapproval | 0.0160 | 0.1637 | 0.3706 |
-| neutral | 0.0208 | 0.0877 | 0.4400 |
-
-Các bảng lấy từ CSV per-label đã kiểm chứng, không train lại. Saved validation NPZ 28 nhãn được đưa vào evidence/models/<model>/val_predictions.npz, chỉ có ID, nhãn và xác suất. Cấu hình từng lượt và lệnh tái lập tại docs/reproducibility_profiles.md.
+| amusement | 0.2089 | 0.5855 | 0.6196 |
+| excitement | 0.0426 | 0.1789 | 0.4192 |
+| joy | 0.2525 | 0.4370 | 0.5378 |
+| love | 0.2983 | 0.5551 | 0.6351 |
+| desire | 0.0561 | 0.2937 | 0.5027 |
+| optimism | 0.3311 | 0.4360 | 0.6692 |
+| caring | 0.3436 | 0.4909 | 0.6486 |
+| pride | 0.5500 | 0.6061 | 0.7135 |
+| admiration | 0.1552 | 0.3506 | 0.6275 |
+| gratitude | 0.6797 | 0.7317 | 0.8261 |
+| relief | 0.0656 | 0.2588 | 0.5781 |
+| approval | 0.1955 | 0.3905 | 0.6491 |
+| realization | 0.0000 | 0.1618 | 0.4615 |
+| surprise | 0.0449 | 0.2419 | 0.4505 |
+| curiosity | 0.1626 | 0.4407 | 0.5975 |
+| confusion | 0.0645 | 0.2540 | 0.4787 |
+| fear | 0.4106 | 0.6244 | 0.7296 |
+| nervousness | 0.1176 | 0.2825 | 0.4712 |
+| remorse | 0.4032 | 0.5405 | 0.7059 |
+| embarrassment | 0.6311 | 0.6009 | 0.7589 |
+| disappointment | 0.0280 | 0.3626 | 0.4918 |
+| sadness | 0.4068 | 0.5744 | 0.6616 |
+| grief | 0.2609 | 0.4472 | 0.5756 |
+| disgust | 0.1341 | 0.4136 | 0.4895 |
+| anger | 0.2833 | 0.4419 | 0.5540 |
+| annoyance | 0.3056 | 0.4791 | 0.5277 |
+| disapproval | 0.0160 | 0.1458 | 0.3760 |
+| neutral | 0.0208 | 0.1151 | 0.4369 |
 
 ## Tài liệu tham khảo
 
-[1] Đề môn học: 02-vigoemotions-vietnamese-emotion.pdf, mục Midterm A–E (tr. 1–2), Reproducibility Rules (tr. 4).
+[1] Đề Project 2 ViGoEmotions và student-guide.pdf trong docs/, Midterm A–E và RQ1 Final.
 
-[2] ATI Course Project 2026 — Scoring & Submission Guide: student-guide.pdf, tr. 1–2.
+[2] Hung et al., ViGoEmotions, EACL 2026, DOI 10.18653/v1/2026.eacl-long.129.
 
-[3] Hung, T. Q., Nam, P. T., Luu, S. T., Nguyen, K. V. (2026). ViGoEmotions: A Benchmark Dataset For Fine-grained Emotion Detection on Vietnamese Texts. EACL. https://aclanthology.org/2026.eacl-long.129/
+[3] Nguyen và Nguyen, PhoBERT, Findings of EMNLP 2020; VinAIResearch/PhoBERT, model vinai/phobert-base-v2.
 
-[4] Nguyen, D. Q., Nguyen, A. T. (2020). PhoBERT: Pre-trained language models for Vietnamese. https://aclanthology.org/2020.findings-emnlp.92/ ; checkpoint/model card: https://huggingface.co/vinai/phobert-base-v2
-
-[5] scikit-learn: OneVsRestClassifier và multilabel metrics. https://scikit-learn.org/stable/modules/multiclass.html ; https://scikit-learn.org/stable/modules/model_evaluation.html
-
-[6] Hugging Face Transformers v4.57.3: model loading/classification. https://huggingface.co/docs/transformers/v4.57.3/en/model_doc/auto ; VnCoreNLP: https://github.com/vncorenlp/VnCoreNLP
-
-Mã và tài liệu có hỗ trợ AI trong phiên hoàn thiện; số liệu TF-IDF/EDA lấy từ chạy thực tế. Nhóm cần tự đọc, xác nhận diễn giải và tuân thủ quy định khai báo hỗ trợ AI của học phần.
+[4] scikit-learn, PyTorch, Hugging Face Transformers và VnCoreNLP; phiên bản, revision và cấu hình theo manifest/run JSON trong evidence của study này.

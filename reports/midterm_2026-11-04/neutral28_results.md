@@ -1,3 +1,5 @@
+> **Lịch sử 04/11:** Không dùng bảng dưới đây cho midterm hiện tại. Kết quả chính là [Kaggle 20 epoch](../kaggle_equal20_2026-11-05/README.md).
+
 ### 5.7. Cập nhật 04/11/2026 — dự đoán thêm Neutral, đủ 28 nhãn
 
 **Nguồn và phạm vi.** Đã nhận `vigoemotions_neutral28_private_results.zip` và notebook `06_kaggle_neutral_28_labels.ipynb` có output. Ba mô hình đã huấn luyện xong; kết quả dưới đây chỉ trên 2.066 mẫu validation tại ngưỡng 0,5, seed 42. Test chưa được chấm (`RUN_FINAL_TEST=False`, ZIP không có test predictions/test lock). Đây là thí nghiệm bổ sung, giữ nguyên các artifact baseline 27 nhãn ở mục 5.1–5.6. Các bảng, NPZ validation không chứa text và metadata được trích nguyên tại `reports/midterm_2026-11-04/evidence/`; `provenance.json` ghi SHA-256 và các bước kiểm chứng.

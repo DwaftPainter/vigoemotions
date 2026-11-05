@@ -1,5 +1,7 @@
 # Audit project ViGoEmotions — 22/10/2026
 
+> **Phạm vi lịch sử:** Các run/điểm trước lượt Kaggle 20 epoch không còn là kết quả chính. Dùng [README hiện tại](../README.md) và report/slide equal20.
+
 Phạm vi: toàn bộ script, năm notebook, hợp đồng dữ liệu/split, các artifact đang có trong `reports/`, quy trình xuất Colab và tài liệu. Không chạy lại huấn luyện neural hoặc inference từ checkpoint trong lượt audit này.
 
 ## Kết quả đối chiếu dữ liệu và số liệu

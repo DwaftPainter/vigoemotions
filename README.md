@@ -1,180 +1,55 @@
 # ViGoEmotions — ATI Midterm 2026
 
-Nội dung giữa kỳ bám `02-vigoemotions-vietnamese-emotion.pdf` và `student-guide.pdf`.
-Báo cáo/slide viết tiếng Việt; kết quả đo trên **validation**, test giữ cho Final.
+**Kết quả chính: hai lượt Kaggle 08/09 đã hoàn tất, BiGRU và PhoBERT đều 20 epoch cho cả 27/28 nhãn.** Báo cáo dùng duy nhất sáu kết quả này; các lượt ít epoch là lịch sử. Tất cả metric mô hình là validation tại ngưỡng 0,5, seed 42; test giữ cho Final.
 
-## Mở nội dung
+| Mô hình | Macro-F1 27 nhãn | Macro-F1 28 nhãn |
+| --- | --- | --- |
+| TF-IDF + OvR LR | 0.2388 | 0.2310 |
+| BiGRU | 0.4220 | 0.4086 |
+| PhoBERT | 0.5974 | 0.5783 |
 
-- **Workflow Kaggle chính mới:** [Notebook 08 — 27 nhãn](notebooks/08_kaggle_equal_20ep_27_labels.ipynb), [Notebook 09 — 28 nhãn](notebooks/09_kaggle_equal_20ep_28_labels.ipynb), [cách chạy và nguồn kết quả](docs/kaggle_equal_epochs.md). Dùng một profile `configs/kaggle_equal_20ep.json`; TF-IDF giữ cùng solver. Chưa có kết quả GPU mới, các điểm midterm bên dưới vẫn là lịch sử.
+Khi chiếu model 28 về cùng 27 cảm xúc, PhoBERT đạt **0,583580**, thấp hơn model 27 (**0,597410**) khoảng **1,383 điểm phần trăm**. Lượt đo này chưa cho thấy thêm Neutral cải thiện 27 cảm xúc. Neutral F1 của PhoBERT là **0,4369** (45 TP, 67 FP, 49 FN). Một seed chưa đủ kết luận nhân quả hoặc ý nghĩa thống kê.
 
-- **Notebook local đã chạy lại:** 01/02/03/07 giữ output tổng hợp an toàn; [kết quả lượt local riêng](reports/local_notebook_run_2026-11-05/README.md). TF-IDF được fit lại trên CPU; các kết quả baseline lịch sử giữ nguyên.
+## Mở nội dung để thuyết trình
 
-- **Chốt nội dung 05/11:** [trạng thái các mục trước nộp](docs/midterm_readiness_2026-11-05.md), [profile và lệnh tái lập](docs/reproducibility_profiles.md), [audit split](notebooks/07_split_distribution_audit.ipynb), [thông tin nhóm chờ cung cấp](docs/team_information.md). Report đã thêm phụ lục per-label và chín ca đọc lỗi PhoBERT có hỗ trợ AI; nhóm cần xác nhận khi bảo vệ.
+- [Báo cáo PDF](reports/midterm_report.pdf) / [Markdown](reports/midterm_report.md).
+- [20 slide PDF](reports/midterm_slides.pdf) / [nội dung và ghi chú](reports/midterm_slides.md).
+- [Lời dẫn và Q&A hiện tại](docs/midterm_presentation_2026-11-05.md).
+- [Bảng sáu model, Q1–Q5 và evidence](reports/kaggle_equal20_2026-11-05/README.md).
+- [Cẩm nang giải thích ba mô hình](docs/VIGOEMOTIONS_3_MODELS_STUDY_GUIDE_VI.pdf) / [Markdown](docs/VIGOEMOTIONS_3_MODELS_STUDY_GUIDE_VI.md).
+- [Trạng thái trước nộp](docs/midterm_readiness_2026-11-05.md), [thông tin nhóm cần bổ sung](docs/team_information.md).
 
-- **Midterm cập nhật 04/11:** [Lời dẫn 20 slide và Q&A](docs/midterm_presentation_2026-11-04.md), [kết quả study 28 nhãn](reports/midterm_2026-11-04/neutral28_results.md), [bảng nguồn đã kiểm chứng](reports/midterm_2026-11-04/evidence/README.md).
-- [Mục lục reports và ý nghĩa từng file](reports/README.md) — thứ tự đọc, quy ước tên, metric và trạng thái thí nghiệm.
-- [Kết quả audit toàn project](docs/project_audit.md) — đã kiểm tra gì, lỗi đã sửa và giới hạn còn lại.
-- [README cho buổi pre-midterm](README_PRE_MIDTERM.md) — kịch bản báo cáo tiến độ và đường dẫn đến từng minh chứng.
-- [Các công việc từ bắt đầu đến midterm](docs/midterm_worklog.md) — thứ tự thực hiện, lý do, bằng chứng và việc còn lại.
-- [Báo cáo PDF](reports/midterm_report.pdf) / [Markdown có thể sửa](reports/midterm_report.md).
-- [20 slide PDF (tối đa 20)](reports/midterm_slides.pdf) / [Nội dung và lời dẫn](reports/midterm_slides.md).
-- [Notebook Colab GPU](notebooks/04_colab_neural_baselines.ipynb).
-- [Bảng ba mô hình](reports/tables/model_comparison.csv).
-- [Điều chỉnh learning rate PhoBERT](docs/phobert_tuning.md) / [Notebook Colab 05](notebooks/05_colab_phobert_tuning.ipynb) — đã chuẩn bị, chưa chạy sweep GPU.
+## Nguồn chạy và kiểm chứng
 
-**Mới nhất (04/11/2026):** Đã kiểm chứng ZIP kết quả và notebook 06 Kaggle: Macro-F1 validation **28 nhãn** của TF-IDF / BiGRU / PhoBERT là **0,2310 / 0,3992 / 0,5747**; Neutral F1 **0,0208 / 0,0877 / 0,4400**. PhoBERT chạy 12 epoch, chọn 11; không quy mức tăng so với baseline 4 epoch cho riêng Neutral. Test chưa chấm. Cell tìm ví dụ validation lỗi JVM sau xuất metric; các metric đã tính lại từ NPZ. Báo cáo mục 5.7 và slide 13–17 có kết quả mới. Xem [hướng dẫn study 28 nhãn](docs/neutral_28_labels.md).
+- [Notebook 08 template](notebooks/08_kaggle_equal_20ep_27_labels.ipynb) / [08 executed, giữ output](notebooks/08_kaggle_equal_20ep_27_labels_executed.ipynb).
+- [Notebook 09 template](notebooks/09_kaggle_equal_20ep_28_labels.ipynb) / [09 executed, giữ output](notebooks/09_kaggle_equal_20ep_28_labels_executed.ipynb).
+- Hai ZIP private ở project root: `vigoemotions_kaggle_equal20_27labels_private_results.zip` và bản `28labels`; không commit checkpoint/vocabulary.
+- [Giao thức Kaggle](docs/kaggle_equal_epochs.md), [profile và lệnh tái lập](docs/reproducibility_profiles.md), [provenance](reports/kaggle_equal20_2026-11-05/provenance.json).
 
-**Baseline lịch sử (14/10/2026):** Đã nhập và kiểm chứng kết quả Colab của đủ ba mô hình.
-BiGRU chạy 10 epoch (37,50 giây); PhoBERT chạy 4 epoch (3.047,11 giây), trên Tesla T4.
-Macro-F1 validation tại 0,5 lần lượt là 0,2388 / 0,4060 / 0,4393 cho TF-IDF / BiGRU / PhoBERT.
-Xem [kiểm tra kết quả Colab](docs/colab_results_check.md). Mapping đã đối chiếu; audit split có ở notebook 07. Còn xác nhận yêu cầu official split, thông tin nhóm và nhận xét đọc lỗi có hỗ trợ AI trước khi nộp.
+Đã tính lại metric từ cả sáu NPZ, xác minh cùng ID/targets/label order, đủ history 20 epoch, checkpoint selection và file trọng số trong ZIP. Hai notebook đều chạy đủ 12 cell code, không có error output. Source/config/CSV của lượt 28 có một số checksum khác do CRLF; từng hash đã được chứng minh khớp biến thể LF/CRLF chính xác của cùng nội dung local. Manifest gốc được giữ nguyên.
 
-**Bổ sung cho pre-midterm:** đã fine-tune PhoBERT với cấu hình baseline; sweep hyperparameter là bước tiếp theo.
-Đã thêm quy trình so sánh learning rate `1e-5 / 2e-5 / 3e-5`, chạy lại `2e-5` trong cùng runtime làm đối chứng.
-Mỗi lượt lưu kết quả/checkpoint riêng; giữ bảng ba baseline ban đầu. Chọn cấu hình bằng validation tại 0,5.
-**Chưa có số liệu sweep mới**; study 28 nhãn 04/11 là một lượt lr=2e-5, không hoàn tất sweep notebook 05.
+## Dữ liệu và preprocessing
 
-Để chạy: tạo ZIP bằng `.venv/bin/python scripts/package_colab.py --include-results`, mở notebook 05 trên Colab T4,
-upload ZIP và ba CSV riêng rồi chạy các cell. Notebook xuất ZIP kết quả và tải riêng checkpoint được chọn.
-Xem [hướng dẫn tuning](docs/phobert_tuning.md) để nhập kết quả, audit lỗi và tạo lại report/slide.
+20.664 bình luận nguồn; split 16.531/2.066/2.067. Loại một mẫu train trùng test → 16.530 mẫu train thực dùng. Xin quyền dữ liệu từ dataset ViGoEmotions và đặt CSV `id,text,labels` tại `data/train.csv`, `val.csv`, `test.csv`. Không công khai CSV/bình luận gốc, vocabulary hoặc checkpoint. Git ignore data và ZIP riêng tư.
 
-## Dữ liệu và quyền sử dụng
+Giữ split được cấp, chỉ fit vocabulary/IDF trên train. Chuẩn hóa NFC/khoảng trắng, giữ dấu và phủ định. 27 output bỏ Neutral; 28 output giữ ID 27 và mixed annotation. [Mapping](docs/label_mapping.md), [EDA](docs/dataset_check.md) và [audit split 07](notebooks/07_split_distribution_audit.ipynb) vẫn dùng cùng dữ liệu. Audit phân bố không chứng minh thuật toán stratification gốc; còn xác nhận yêu cầu split với giảng viên.
 
-Xin quyền tại https://huggingface.co/datasets/uitnlp/vigoemotions và tuân thủ giấy phép nghiên cứu/học thuật
-phi thương mại theo đề. Đặt ba CSV được cấp quyền tại `data/train.csv`, `data/val.csv`, `data/test.csv`;
-cột theo thứ tự `id,text,labels`. `labels` là chuỗi danh sách ID, ví dụ `[2, 11]` (ví dụ nhãn, không phải comment).
-Không commit/upload CSV nguồn, comment gốc, vocabulary hoặc checkpoint có thể chứa dữ liệu nhạy cảm lên repo công khai.
-`data/` đã được ignore. Báo cáo, biểu đồ, case audit chỉ chứa tổng hợp/ID và mô tả trừu tượng.
+## Tái tạo nội dung, không train lại
 
-Tổng 20.664 mẫu; train 16.531, val 2.066, test 2.067. Loại train ID `1698` trùng text với test
-`red000094`; train dùng thực nghiệm còn 16.530. Trong baseline 27 nhãn, Neutral ID 27 → không thêm output;
-mixed-neutral giữ nhãn cảm xúc; gộp ID lặp. Chi tiết: [dataset check](docs/dataset_check.md).
-Study 28 nhãn giữ Neutral thành output riêng và giữ cả mixed-neutral. Mapping đã đối chiếu ảnh dataset card do người dùng cung cấp ngày 22/10, xem [label mapping](docs/label_mapping.md).
-
-Giữ split được cung cấp và lưu `splits/*.csv`. Chưa chứng minh thuật toán split gốc được multilabel
-stratified: audit prevalence không thay thế bằng chứng đó. Nếu giảng viên yêu cầu tự stratify, phải tạo
-split mới trước huấn luyện và chạy lại toàn bộ mô hình; không đổi test sau khi đã xem kết quả.
-
-## Chạy local: EDA, TF-IDF, báo cáo
-
-Môi trường đã chạy: macOS Intel, Python 3.14; các phiên bản chính được khóa ở `requirements.txt`.
-Colab dùng bộ dependency riêng tương thích Python 3.11/3.12, không cài file lock của macOS vào Colab.
+Trong môi trường local có dependencies theo `requirements.txt`:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python -m ipykernel install --user --name vigoemotions --display-name "Python (ViGoEmotions)"
-python -m unittest discover -s tests -v
-python scripts/analyze_data.py
-python scripts/train_tfidf.py
-python scripts/build_report.py
+.venv/bin/python scripts/import_equal20_results.py
+.venv/bin/python scripts/build_report.py
+.venv/bin/python scripts/build_study_guide.py
 ```
 
-Chạy từ project root. Các notebook 01–03 cũng chạy được từ root hoặc `notebooks/`.
-Trong giao diện notebook, chọn kernel **Python (ViGoEmotions)**, rồi **Restart Kernel → Run All**.
-Nếu trình soạn thảo chọn interpreter theo đường dẫn, dùng `ViGoEmotions/.venv/bin/python`.
-Không chọn nhầm `ATI/.venv/bin/python`: môi trường đó đã ghi nhận NumPy 1.26.4 với SciPy 1.18.1
-(SciPy yêu cầu NumPy ≥2.0), gây `AttributeError: module 'numpy' has no attribute 'long'`.
-Cell đầu kiểm tra import của môi trường đang chạy và in interpreter/versions để phát hiện vấn đề sớm.
-Không cần thêm alias `np.long` vào code; phải dùng bộ dependency tương thích.
-Notebook 01 kiểm tra schema; 02 tái tạo EDA; 03 chạy baseline và xem bảng/error analysis.
-Bộ test đầy đủ còn có hai smoke test cần Torch/Transformers; `requirements.txt` local chỉ đủ EDA/report. Dùng môi trường neural theo `requirements-colab.txt` cho các smoke test này. Bản hoàn thiện 05/11 đã kiểm chứng 59 test local và hai smoke test neural bổ sung trong môi trường có sẵn, xem checklist readiness.
-Chạy lại baseline ghi đè artifact của lần trước. Thời gian train có thể thay đổi; giữ `*_run.json` cùng kết quả.
+Import cần hai ZIP, notebook executed và CSV nguồn. Evidence/tổng hợp mới nằm riêng tại `reports/kaggle_equal20_2026-11-05/`; không ghi đè bảng model các lượt cũ. Build report thiếu evidence mới sẽ dừng, không tự quay về số cũ. Cẩm nang kiểm tra nguyên văn các đoạn trích source trước khi render.
 
-TF-IDF hiện tại: Macro-F1 0,2388; Micro-F1 0,2712; Hamming Loss 0,0606; LRAP 0,6407 trên validation tại 0,5.
-Khảo sát ngưỡng validation tốt nhất trong lưới 0,05–0,80 là 0,15 (Macro-F1 0,4844).
-Không diễn giải điểm đã tune này là điểm test hoặc kết quả Final.
+Để train lượt mới: `.venv/bin/python scripts/package_kaggle_equal_epochs.py`, upload ZIP code và ba CSV nguồn thành hai Dataset Private, import notebook 08 hoặc 09, bật GPU + Internet. Chạy theo [hướng dẫn Kaggle](docs/kaggle_equal_epochs.md). Không cần train lại để dùng các kết quả hiện có.
 
-## Chạy Colab GPU: BiGRU và PhoBERT
+## Giới hạn và việc còn lại
 
-1. Tạo gói code bằng `python scripts/package_colab.py` → `vigoemotions_colab.zip` (không có raw data).
-2. Upload `notebooks/04_colab_neural_baselines.ipynb` vào Colab; chọn runtime GPU (T4 trở lên).
-3. Chạy cell đầu và upload gói code ZIP. Chạy cell setup (Python dependencies + Java cho VnCoreNLP).
-4. Cell dữ liệu: upload **riêng** ba CSV có quyền sử dụng; không xuất bản notebook/runtime có dữ liệu nguồn.
-5. Chạy lần lượt EDA, TF-IDF, BiGRU và PhoBERT. PhoBERT tải checkpoint công khai và VnCoreNLP từ mạng.
-6. Chạy cell tạo báo cáo, tải `vigoemotions_results.zip`; giải nén kết quả vào project để cập nhật `reports/`, `splits/`.
-7. Đọc lại phần Q4, error analysis và giới hạn trước khi nộp. Kết quả error analysis thủ công hiện có chỉ dành cho TF-IDF;
-   các file neural error cases là danh sách ứng viên. Đã bổ sung chín ca PhoBERT 28 có đọc định tính hỗ trợ AI; cần nhóm xác nhận, xem báo cáo mục 6.1.
+Điền tên/MSSV/phân công; xác nhận sáu ca đọc lỗi có hỗ trợ AI; làm rõ việc chấp nhận official split. Chưa có metric test hoặc sweep learning rate. Final giữ backbone neural cố định, so sánh fixed/global/per-label thresholds, chọn trên validation rồi khóa trước khi chấm test. Một seed và style heuristic còn hạn chế.
 
-Không dùng `test.csv` để chọn epoch, hyperparameter hay threshold. Mã chỉ suy luận validation trong midterm.
-Colab cần kết nối mạng khi cài dependencies/tải pretrained resources; các bước chạy script kiểm tra exit code để dừng khi lỗi.
-Đã có kết quả chạy end-to-end trên Colab Tesla T4; run JSON ghi Python 3.13.15 và package versions thực tế.
-
-Sau khi chạy notebook 04 mới, output được ghi vào `reports/logs/`; có bảng history đánh dấu checkpoint
-được chọn, `reports/tables/{gru,phobert}_history.csv` và `reports/figures/neural_learning_curves.png`.
-Cuối notebook tải **hai ZIP**: `vigoemotions_results.zip` chứa kết quả/log và
-`vigoemotions_baseline_private.zip` chứa checkpoint, vocabulary và config/run metadata.
-Lưu ZIP riêng tư trước khi đóng runtime; checkpoint chỉ có trọng số, không có optimizer state để resume giữa chừng.
-
-Nếu runtime hết RAM/VRAM, giảm batch trong `configs/midterm.json`, giữ nguyên các lựa chọn khác,
-ghi nhận thay đổi và chạy lại mô hình từ đầu. Không hứa thời gian chạy neural khi chưa có phép đo.
-Checkpoint ở `data/checkpoints/`, vocab GRU ở `data/derived/`; lưu vào Drive **riêng** trước khi runtime hết hạn
-nếu cần tái dùng backbone cho Final. ZIP kết quả không mang checkpoint/vocab/raw text.
-
-## Thiết kế thí nghiệm
-
-- Seed 42; dùng profile tách riêng ở [hướng dẫn tái lập](docs/reproducibility_profiles.md): baseline 27 nhãn 4 epoch; Neutral 12 epoch; Kaggle 25/20. `configs/midterm.json` là file legacy, không dùng để chuyển profile.
-- TF-IDF: unigram/bigram, min_df 2, max_features 40.000, sublinear TF; LR C=1, liblinear, max_iter 1000.
-- GRU: embedding 128, hidden 128/hướng, dropout 0,3, max_length 128, batch 64, 10 epoch, AdamW lr=0,001.
-- PhoBERT: `vinai/phobert-base-v2`, revision `86cd7fd4c148980922ac11a2cf5e257f2ba639e1`,
-  VnCoreNLP word segmentation, 256 BPE tokens, batch 16, 4 epoch, AdamW lr=2e-5, weight_decay=0,01.
-- Neural: 27 logits, BCEWithLogitsLoss, sigmoid; chọn epoch bằng validation Macro-F1 tại 0,5, hòa chọn epoch sớm.
-- Tier: sắp train frequency giảm dần, hòa theo ID; head 9 nhãn đầu, mid 9 nhãn tiếp, tail 9 nhãn còn lại.
-- Tất cả ma trận co-occurrence/correlation chỉ dùng train. Phân tích cặp dự đoán dùng các cặp chọn từ train,
-  so với ground truth validation, không dùng test.
-- Mỗi model xuất Macro/Micro-F1, Hamming, LRAP, per-label F1, số tham số, thời gian, breakdown style/cardinality,
-  threshold sweep và 20 FN/20 FP tự tin nhất. Error selection không là mẫu ngẫu nhiên.
-- LRAP dùng xác suất; mẫu all-zero được thư viện chấm 1. Hamming thấp không đủ chứng minh mô hình tốt.
-
-## Artifact và tái lập
-
-```text
-configs/midterm.json          seed, hyperparameters, checkpoint revision, protocol
-scripts/common.py            parse labels, normalization, leakage handling, metrics
-scripts/analyze_data.py      EDA, train-only dependency matrices, fixed IDs
-scripts/train_tfidf.py       CPU baseline
-scripts/train_neural.py      BiGRU / PhoBERT trên GPU
-scripts/evaluate.py          evaluator dùng chung và lưu xác suất
-scripts/build_report.py      tạo báo cáo/slide từ kết quả hiện có
-notebooks/01..05             validation → EDA → baseline → Colab GPU → tuning
-scripts/audit_reports.py     kiểm tra EDA/split/metric từ dữ liệu và xác suất, không huấn luyện
-reports/README.md            mục lục và hướng dẫn đọc từng nhóm kết quả
-splits/*.csv                fixed IDs + excluded train ID
-reports/tables/*.csv         thống kê và kết quả thật
-reports/figures/*.png        hình sinh bằng mã
-reports/predictions/*.npz    sample_id, true_label_vector, probability_vector, labels, cardinality
-reports/*_run.json           config, hardware, version, runtime, input SHA-256
-tests/                      invariants neutral/labels/leakage và metric biết trước
-```
-
-Probabilities được lưu trước threshold. NPZ chỉ chứa ID, vector nhãn và xác suất, không chứa text.
-Đọc bằng `np.load(path, allow_pickle=False)`. Khi chuyển sang Final, đóng băng neural checkpoint,
-tune global/per-label thresholds trên validation, khóa decoder rồi inference test một lần.
-Chưa có implementation/chạy thí nghiệm Final trong phạm vi gói midterm này.
-
-Sau khi nhập kết quả Colab, kiểm tra tính nhất quán mà không huấn luyện lại:
-
-```bash
-.venv/bin/python scripts/audit_reports.py
-```
-
-Lệnh cần ba CSV nguồn được cấp quyền và đủ các artifact của project hiện tại; tạo bảng/hình đối chiếu trong
-thư mục tạm, không ghi đè `reports/`. Xem [audit](docs/project_audit.md) để biết phạm vi kiểm tra.
-
-`scripts/build_report.py` tự thêm các dòng neural và bảng Q4 khi có file kết quả; nội dung phân tích TF-IDF
-giữ rõ mô hình và ngưỡng. Sau khi chạy neural cần người thực hiện đọc thêm các ca lỗi và viết diễn giải
-cụ thể, không coi tự sinh bảng là đã hoàn thành audit thủ công.
-
-## Nguồn
-
-- [Đề project](docs/02-vigoemotions-vietnamese-emotion.pdf) và [student guide](docs/student-guide.pdf) trong `docs/`.
-- [ViGoEmotions, EACL 2026](https://aclanthology.org/2026.eacl-long.129/).
-- [PhoBERT paper](https://aclanthology.org/2020.findings-emnlp.92/),
-  [model card](https://huggingface.co/vinai/phobert-base-v2).
-- [scikit-learn multilabel](https://scikit-learn.org/stable/modules/multiclass.html),
-  [Transformers 4.57.3](https://huggingface.co/docs/transformers/v4.57.3/en/model_doc/auto),
-  [VnCoreNLP](https://github.com/vncorenlp/VnCoreNLP).
-
-Mã/tài liệu được hỗ trợ bởi AI; nhóm cần tự xác nhận, hiểu và bảo vệ các quyết định, đồng thời tuân thủ
-quy định của học phần về khai báo hỗ trợ AI. Không có thí nghiệm hoặc điểm số được dựng lên.
+Các notebook 01–07, reports/tables, run JSON ở reports root và các báo cáo theo ngày trước đây được giữ làm lịch sử; không dùng số model trong chúng làm kết quả chính hiện tại. [Mục lục reports](reports/README.md).

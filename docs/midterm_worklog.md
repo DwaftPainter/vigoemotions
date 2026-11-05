@@ -1,5 +1,7 @@
 # ViGoEmotions — Các công việc từ bắt đầu đến midterm
 
+> **Phạm vi lịch sử:** Các run/điểm trước lượt Kaggle 20 epoch không còn là kết quả chính. Dùng [README hiện tại](../README.md) và report/slide equal20.
+
 Cập nhật mới nhất: **05/11/2026**, xem mục 12 về study 28 nhãn. Mục 1–11 giữ lịch sử baseline và thiết kế sweep từ 14–23/10. Tài liệu này tổng hợp công việc theo thứ tự thực hiện hợp lý,
 dựa trên mã, notebook và kết quả đang có trong project; không phải nhật ký có thời điểm của từng thao tác.
 Mục đích là giúp thành viên mới hiểu **đã làm gì, vì sao làm, xem bằng chứng ở đâu và còn thiếu gì**.
@@ -243,3 +245,11 @@ Cell tìm ví dụ validation lỗi JVM sau huấn luyện/xuất metric; ZIP kh
 Đã commit notebook 07 và bằng chứng audit split; xác nhận fixed IDs/data giữ nguyên. Tách ba profile baseline 4 epoch, Neutral 12 epoch và Kaggle 25/20; các notebook/CLI dùng profile tường minh. Đã xóa output/execution metadata trên notebook chia sẻ; packager lọc private artifact và kèm fixed IDs. Sửa cell tìm ca validation dùng xác suất lưu sẵn để tránh nạp lại JVM; kiểm chứng offline, không chạy lại GPU.
 
 Đưa ba NPZ validation 28 nhãn không có text vào evidence; thêm bảng per-label đủ các model và đọc định tính chín ca PhoBERT hỗ trợ AI. Report/slide/cẩm nang cập nhật cùng nguồn. Còn cần cung cấp thông tin nhóm và nhóm xác nhận phần đọc lỗi, làm rõ việc chấp nhận official split với giảng viên. Sweep/test không phải điều kiện phải làm thêm cho midterm. Xem [readiness](midterm_readiness_2026-11-05.md).
+
+## Kết quả chính thay thế — Kaggle 20 epoch, 05/11/2026
+
+Đã nhận đủ hai notebook 08/09 executed và hai ZIP private, mỗi study ba model hoàn tất. Neural cùng ngân sách 20 epoch, cùng checkpoint criterion emotion27 Macro-F1. Importer tính lại sáu NPZ và kiểm tra history, ID/targets/mapping, config, checkpoint members và checksum. Khác biệt source/profile/CSV ở bản 28 được xác minh là LF/CRLF của cùng nội dung, không thay manifest gốc.
+
+Đã viết lại report, 20 slide, lời dẫn, README và cẩm nang để dùng duy nhất lượt mới; Q1–Q5 và sáu ca đọc lỗi cũng từ NPZ mới. Kết luận trên cùng 27 cảm xúc: PhoBERT 27 đạt 0,597410, bản 28 chiếu 27 đạt 0,583580; chưa thấy lợi ích thêm Neutral ở lượt một seed. Neutral F1 0,4369. Test chưa chấm. Các lượt cũ giữ như lịch sử, không trộn vào kết luận chính.
+
+21 kiểm thử liên quan qua; report 10 trang, cẩm nang 22 trang với 16 source quote, slide 20 trang. Hai executed notebook giữ nguyên output/SHA-256. Bằng chứng: reports/kaggle_equal20_2026-11-05/verification.json. Còn thông tin nhóm, xác nhận đọc lỗi và yêu cầu split với giảng viên.

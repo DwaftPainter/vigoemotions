@@ -1,5 +1,7 @@
 # PhoBERT — Điều chỉnh learning rate trước Midterm
 
+> **Phạm vi lịch sử:** Các run/điểm trước lượt Kaggle 20 epoch không còn là kết quả chính. Dùng [README hiện tại](../README.md) và report/slide equal20.
+
 ## Trạng thái và mục tiêu
 
 Đã fine-tune PhoBERT với một cấu hình baseline. Chưa có kết quả sweep GPU trong lần cập nhật này. Mục tiêu bổ sung là kiểm tra learning rate ảnh hưởng thế nào đến Macro-F1 validation và lỗi theo nhãn/phong cách.

@@ -5,25 +5,22 @@
 
 Tài liệu tiếng Việt dành cho sinh viên mới học ML/NLP.
 
-**Cập nhật midterm 04/11/2026:** Study mới đã có 28 nhãn, gồm Neutral; PhoBERT Macro-F1 28 = 0,574653, Neutral F1 = 0,4400, chọn epoch 11/12. Các chương bên dưới vẫn giảng pipeline và artifact baseline 27 nhãn gốc (PhoBERT 4 epoch, 0,439320), nên không dùng chúng như kết quả mới. Đọc thêm [kết quả 28 nhãn và giới hạn so sánh](../reports/midterm_2026-11-04/neutral28_results.md), [lời dẫn 20 slide/Q&A](midterm_presentation_2026-11-04.md). Test chưa chấm; sweep learning rate chưa hoàn tất.
+**Kết quả chính 05/11/2026:** Hai notebook 08/09 executed và hai ZIP Kaggle equal20 đã hoàn tất. BiGRU/PhoBERT đều đủ 20 epoch ở cả 27/28 nhãn. PhoBERT Macro-F1 27 = 0,597410; Macro-F1 đủ 28 = 0,578341; bản 28 chiếu về 27 = 0,583580. Neutral F1 = 0,4369. Mọi bảng, đường học và kết luận trong cẩm nang dùng các lượt này. Test chưa chấm.
 
 ```flow
-01  TF-IDF unigram/bigram → 27 Logistic Regression theo OvR
-02  Chuỗi token → embedding học từ đầu → BiGRU → 27 logits
-03  Tách từ → PhoBERT-base-v2 pretrained → full fine-tuning
+01  TF-IDF unigram/bigram → 27 hoặc 28 Logistic Regression theo OvR
+02  Chuỗi token → embedding học từ đầu → BiGRU → 27/28 logits
+03  VnCoreNLP → PhoBERT-base-v2 → full fine-tuning 20 epoch
+04  Validation emotion27 Macro-F1 tại 0,5 → chọn best checkpoint
 ```
 
-**Hoàn thiện 05/11:** Notebook 07 đã có audit split; report có phụ lục F1 mọi nhãn và chín ca PhoBERT đọc định tính hỗ trợ AI. Profile 27/4 epoch và Neutral 12 epoch được tách riêng; xem [lệnh tái lập](reproducibility_profiles.md) và [trạng thái trước nộp](midterm_readiness_2026-11-05.md).
-
-**Workflow huấn luyện mới:** Kaggle notebook 08 (27 nhãn) và 09 (28 nhãn) chạy độc lập, BiGRU/PhoBERT cùng 20 epoch, chọn checkpoint chung trên 27 cảm xúc; chưa có điểm GPU mới. Các chương giải thích kết quả lịch sử vẫn giữ nguyên. Xem [giao thức Kaggle](kaggle_equal_epochs.md).
+Nguồn: [bằng chứng mới](../reports/kaggle_equal20_2026-11-05/README.md), [lời dẫn/Q&A](midterm_presentation_2026-11-05.md), [profile tái lập](reproducibility_profiles.md). Thuật toán và ví dụ mã ở chương 1–6 giải thích nhánh 27; nhánh 28 dùng lại kiến trúc, thêm một output và chọn checkpoint trên 27 cột cảm xúc. Các default profile cũ xuất hiện trong đoạn mã nguyên văn không phải profile của notebook Kaggle: workflow truyền config equal20 rõ ràng.
 
 ### Bạn cần trả lời được điều gì?
 
 Một bình luận được biến thành số như thế nào? Mô hình học điều gì từ nhãn? Trọng số thay đổi ở dòng mã nào? Điểm validation nói được và chưa nói được điều gì?
 
-**Bản đối chiếu: 23/10/2026.** Mã nền ở commit `ed6b7ed313404e2e6b883dc201cc2e319419a5b6`. Các vị trí dòng trong tài liệu được kiểm tra với bản mã hiện tại.
-
-> Ba baseline đã có kết quả validation. Khảo sát learning rate PhoBERT mới có thiết kế và cấu hình, trạng thái `prepared`; chưa có kết quả để tuyên bố learning rate thắng cuộc. Không có điểm test được dùng trong bảng so sánh này.
+**Bản đối chiếu: 05/11/2026.** Các đoạn trích mã được kiểm tra nguyên văn. Tất cả kết quả lấy từ evidence equal20, không lấy số model trong reports root hoặc các lượt ít epoch. Các notebook executed gốc giữ nguyên output.
 
 ### Quy ước đọc bằng chứng
 
@@ -46,7 +43,7 @@ Mọi câu ví dụ trong tài liệu đều được tự tạo. Không trích 
 
 ### Tài liệu này có thể và không thể chứng minh
 
-Các xác suất lưu tại `reports/predictions/*_val.npz` đã được tính lại metric và đối chiếu với CSV, thứ tự 27 nhãn, ID validation và checksum dữ liệu trong run JSON. Đây là xác minh artifact, không phải huấn luyện lại. Không suy ra khả năng tổng quát trên test, ý nghĩa thống kê hoặc quan hệ nhân quả của pretraining chỉ từ một lượt chạy.
+Các xác suất lưu tại `reports/kaggle_equal20_2026-11-05/evidence/{27,28}/{model}/val_predictions.npz` đã được tính lại metric và đối chiếu với CSV, thứ tự 27 nhãn, ID validation và checksum dữ liệu trong run JSON. Đây là xác minh artifact, không phải huấn luyện lại. Không suy ra khả năng tổng quát trên test, ý nghĩa thống kê hoặc quan hệ nhân quả của pretraining chỉ từ một lượt chạy.
 
 Để tái tạo PDF sau khi sửa Markdown: `.venv/bin/python scripts/build_study_guide.py`. Cần `reportlab`, `matplotlib`, `pypdf`, `pygments` (bản dùng dựng: 5.0.1 / 3.11.2 / 6.20.1 / 2.21.0). Script kiểm tra trích mã nguyên văn; nếu mã nguồn đổi, cần cập nhật trích dẫn.
 
@@ -70,7 +67,7 @@ Bình luận tiếng Việt [MINH HỌA]: “Mình vui và biết ơn”
 
 ### 1.2. Vì sao 27 đầu ra? Neutral ở đâu?
 
-[MÃ] `scripts/common.py:16–20` liệt kê đúng 27 nhãn cảm xúc, ID 0–26. Dữ liệu còn có ID 27 cho Neutral. Đây là **không gian nhãn nguồn** 27 cảm xúc + Neutral; mô hình dự án chỉ có **27 đầu ra cảm xúc**.
+[MÃ] `scripts/common.py:16–20` liệt kê đúng 27 nhãn cảm xúc, ID 0–26. Dữ liệu còn có ID 27 cho Neutral. Đây là **không gian nhãn nguồn** 27 cảm xúc + Neutral; nhánh 27 có **27 đầu ra cảm xúc**, nhánh 28 thêm **Neutral làm đầu ra thứ 28**.
 
 Nguồn [MÃ]: `scripts/common.py:32–37`.
 
@@ -86,9 +83,9 @@ def multihot(labels):
 
 Dòng 34 tạo vector 27 số 0. Dòng 35 loại ID 27 và loại ID cảm xúc trùng nhau bằng phép tập hợp. Dòng 36 bật các vị trí cảm xúc. Dòng 37 trả kết quả. Vì thế `[27]` thành vector toàn 0; `[2,9,27]` giữ `joy` và `gratitude`.
 
-**Multi-hot** là vector có thể có nhiều số 1. [MINH HỌA] Chỉ xét ba cột `[joy, sadness, gratitude]`, câu trên có nhãn `[1,0,1]`. Trong dự án thật vector có 27 cột. Không nhầm multi-hot với one-hot chỉ có một số 1.
+**Multi-hot** là vector có thể có nhiều số 1. [MINH HỌA] Chỉ xét ba cột `[joy, sadness, gratitude]`, câu trên có nhãn `[1,0,1]`. Trong nhánh 27 vector có 27 cột; nhánh 28 có 28 cột. Không nhầm multi-hot với one-hot chỉ có một số 1.
 
-> Dự đoán không có nhãn cảm xúc nghĩa là không đầu ra nào vượt ngưỡng. Có thể diễn giải như trạng thái không phát hiện cảm xúc theo quy ước dự án; mã không học một bộ phân loại Neutral riêng và không tự thêm chuỗi “neutral”. Quy ước này không được mặc nhiên coi là giao thức của paper.
+> Dự đoán không có nhãn cảm xúc nghĩa là không đầu ra nào vượt ngưỡng. Có thể diễn giải như trạng thái không phát hiện cảm xúc theo quy ước dự án; nhánh 27 không học bộ phân loại Neutral riêng. Nhánh 28 giữ Neutral dương trong target và học trực tiếp; dự đoán rỗng vẫn không tự động là Neutral. Quy ước này không được mặc nhiên coi là giao thức của paper.
 
 <!-- page -->
 ### 1.3. Sigmoid, softmax và cách chia dữ liệu
@@ -138,7 +135,7 @@ Máy tính cần số để nhân ma trận và tối ưu hàm mất mát. TF-ID
 
 **Unigram** là một token. **Bigram** là hai token đứng cạnh nhau. [MINH HỌA] “không vui” tạo unigram `không`, `vui` và bigram `không vui`. Bigram giúp phân biệt một số cụm phủ định, nhưng không xử lý được mọi quan hệ ngữ nghĩa dài.
 
-[MÃ] `configs/baseline27_4ep.json:22–31` dùng `lowercase=true`, `token_pattern=(?u)\b\w+\b`, `ngram_range=[1,2]`. Tokenizer regex nhận chuỗi ký tự từ Unicode, kể cả token một ký tự. Đây không phải tách từ VnCoreNLP; nhiều từ tiếng Việt gồm nhiều tiếng vẫn bị tách theo ranh giới regex. Emoji và dấu câu không thuộc `\w` nên không thành đặc trưng riêng ở cấu hình này. Không có bước loại stopword được cấu hình.
+[MÃ] `configs/kaggle_equal_20ep.json:22–31` dùng `lowercase=true`, `token_pattern=(?u)\b\w+\b`, `ngram_range=[1,2]`. Tokenizer regex nhận chuỗi ký tự từ Unicode, kể cả token một ký tự. Đây không phải tách từ VnCoreNLP; nhiều từ tiếng Việt gồm nhiều tiếng vẫn bị tách theo ranh giới regex. Emoji và dấu câu không thuộc `\w` nên không thành đặc trưng riêng ở cấu hình này. Không có bước loại stopword được cấu hình.
 
 ### 2.2. TF, IDF và ví dụ tính tay
 
@@ -156,7 +153,7 @@ Máy tính cần số để nhân ma trận và tối ưu hàm mất mát. TF-ID
 | D2 | [1; 1] | [1,2877; 1,2877] | [0,7071; 0,7071] |
 | D3 | [0; 1] | [0; 1,2877] | [0; 1] |
 
-**Sparse vector** chỉ lưu các phần tử khác 0 và vị trí của chúng. Một bình luận ngắn thường chỉ chứa rất ít trong hàng chục nghìn đặc trưng, nên biểu diễn thưa tiết kiệm bộ nhớ. [KẾT QUẢ] Vocabulary đã fit có 34.837 đặc trưng, không phải lúc nào cũng đủ mức trần 40.000 (`reports/tfidf_lr_run.json`, khóa `features`).
+**Sparse vector** chỉ lưu các phần tử khác 0 và vị trí của chúng. Một bình luận ngắn thường chỉ chứa rất ít trong hàng chục nghìn đặc trưng, nên biểu diễn thưa tiết kiệm bộ nhớ. [KẾT QUẢ] Vocabulary đã fit có 34.837 đặc trưng, không phải lúc nào cũng đủ mức trần 40.000 (`reports/kaggle_equal20_2026-11-05/evidence/27/tfidf_lr/run.json`, khóa `features`).
 
 <!-- page -->
 ### 2.3. Đọc hàm huấn luyện thật, từng dòng
@@ -194,7 +191,7 @@ Nguồn [MÃ]: `scripts/train_tfidf.py:17–27`.
 | `solver`, `max_iter` | `liblinear`, 1.000: thuật toán tối ưu và giới hạn số vòng lặp solver. |
 | `random_state` | 42, trùng seed cấu hình chung. |
 
-Nguồn tham số: `configs/baseline27_4ep.json:22–38`. Regularization L2 và `class_weight=None` là mặc định của Logistic Regression phiên bản 1.6.1 ghi trong run; JSON không bật cân bằng lớp tự động.
+Nguồn tham số: `configs/kaggle_equal_20ep.json:22–38`. Regularization L2 và `class_weight=None` là mặc định của Logistic Regression phiên bản 1.6.1 ghi trong run; JSON không bật cân bằng lớp tự động.
 
 ### 2.4. Logistic Regression và OvR là gì?
 
@@ -227,7 +224,7 @@ Nguồn [MÃ]: `scripts/train_tfidf.py:28–35`.
 
 [MÃ] Ngưỡng thực sự được áp dụng trong `scripts/common.py:71–78`: `probabilities >= 0.5`. Ví dụ tự tạo `[0,7; 0,2; 0,5]` thành `[1;0;1]`; dấu bằng được tính là có nhãn. Một hàng không có đầu ra ≥0,5 giữ vector toàn 0, không có fallback “lấy nhãn cao nhất”.
 
-[KẾT QUẢ] 27×(34.837+1)=**940.626** tham số classifier, không gồm IDF. Macro-F1 validation **0,238825**, Micro-F1 **0,271238** tại ngưỡng 0,5 (`reports/tables/tfidf_lr_metrics.csv`).
+[KẾT QUẢ] 27×(34.837+1)=**940.626** tham số classifier, không gồm IDF. Macro-F1 validation **0,238825**, Micro-F1 **0,271238** tại ngưỡng 0,5 (`reports/kaggle_equal20_2026-11-05/analysis/27_emotion27/tfidf_lr/tables/tfidf_lr_metrics.csv`).
 
 ### 2.6. Ưu điểm, giới hạn và vai trò baseline
 
@@ -313,7 +310,7 @@ Nguồn [MÃ]: `scripts/train_neural.py:48–49`.
         vocab = {word:i+2 for i,(word,_) in enumerate(words.most_common(settings['max_vocab']-2))}
 ```
 
-Dòng 48 đếm token chỉ trong train sau lowercase/whitespace. Dòng 49 lấy nhiều nhất `max_vocab−2` token thường gặp, đánh số từ 2 để dành PAD/UNK. Tập huấn luyện thực tế tạo **15.025** mục gồm hai token đặc biệt (`reports/gru_run.json`, `preprocessing.vocab_size`), thấp hơn trần 30.000. `scripts/train_neural.py:50–52` lưu vocabulary riêng trong `data/derived/` và khởi tạo `BiGRU`; tài liệu này không công bố nội dung vocabulary.
+Dòng 48 đếm token chỉ trong train sau lowercase/whitespace. Dòng 49 lấy nhiều nhất `max_vocab−2` token thường gặp, đánh số từ 2 để dành PAD/UNK. Tập huấn luyện thực tế tạo **15.025** mục gồm hai token đặc biệt (`reports/kaggle_equal20_2026-11-05/evidence/27/gru/run.json`, `preprocessing.vocab_size`), thấp hơn trần 30.000. `scripts/train_neural.py:50–52` lưu vocabulary riêng trong `data/derived/` và khởi tạo `BiGRU`; tài liệu này không công bố nội dung vocabulary.
 
 Nguồn [MÃ]: `scripts/train_neural.py:54–59`.
 
@@ -338,11 +335,11 @@ Nguồn [MÃ]: `scripts/train_neural.py:54–59`.
 | Embedding / hidden mỗi hướng | 128 / 128; ghép hai hướng thành 256. |
 | Dropout | 0,3 ở sau khi ghép hidden, trước head. |
 | Max length / batch size | 128 token / 64 mẫu. |
-| Epoch / learning rate | 10 / 0,001. |
+| Epoch / learning rate | 20 / 0,001. |
 | Loss / optimizer | `BCEWithLogitsLoss` / AdamW. |
 | Weight decay / gradient clipping | 0,0 do fallback của code / norm tối đa 1,0. |
 
-Nguồn: `configs/baseline27_4ep.json:39–48`; optimizer/loss/clipping ở `scripts/train_neural.py:135–150`. Đừng nhầm dropout ở đây với dropout bên trong nhiều tầng GRU: mã chỉ tạo `nn.Dropout` bên ngoài, không truyền tham số `dropout` vào `nn.GRU`.
+Nguồn: `configs/kaggle_equal_20ep.json:39–48`; optimizer/loss/clipping ở `scripts/train_neural.py:135–150`. Đừng nhầm dropout ở đây với dropout bên trong nhiều tầng GRU: mã chỉ tạo `nn.Dropout` bên ngoài, không truyền tham số `dropout` vào `nn.GRU`.
 
 [MÃ] `prepare` tạo `TensorDataset(ids,mask,target_float32)` rồi `DataLoader`, train có shuffle và val không shuffle (`scripts/train_neural.py:81–85`). Vòng lặp neural được dùng chung cho BiGRU và PhoBERT; Chương 4–5 trích đầy đủ đoạn cập nhật trọng số. Với BiGRU, `logits` gọi `model(ids,mask)` tại `scripts/train_neural.py:89–92`.
 
@@ -362,13 +359,13 @@ def predict(model, model_name, loader, device):
 
 **96:** chuyển sang chế độ đánh giá, dropout bị tắt. **98:** không ghi graph gradient. **99–100:** đưa batch lên thiết bị, lấy logits. **101:** sigmoid từng logit, đưa xác suất về CPU/NumPy. **102:** nối batch thành ma trận xác suất toàn tập. Hàm không gọi `backward` hoặc `optimizer.step`.
 
-[KẾT QUẢ] `reports/gru_run.json` có 10 epoch, checkpoint tốt nhất ở epoch 10; Macro-F1 validation **0,406002**, Micro-F1 **0,452609**. Không suy ra phải dừng ở 10 vì mạng đã hội tụ; đó là số epoch cố định của thiết kế.
+[KẾT QUẢ] `reports/kaggle_equal20_2026-11-05/evidence/27/gru/run.json` có 20 epoch, checkpoint tốt nhất ở epoch 17; Macro-F1 validation **0,421976**, Micro-F1 **0,459037**. Không suy ra checkpoint 17 có nghĩa dừng ở 17; đó là số epoch cố định của thiết kế.
 
 ### 3.6. Vai trò và luyện nói
 
 [GIẢI THÍCH] BiGRU là baseline neural ở giữa: có thứ tự chuỗi và biểu diễn học được, nhưng chưa có tri thức từ corpus pretraining bên ngoài. Nó giúp đặt câu hỏi học biểu diễn từ 16.530 mẫu train có ích đến đâu. Ưu điểm là kiến trúc gọn hơn PhoBERT; giới hạn là dữ liệu dự án hữu hạn, UNK và việc xử lý chuỗi hồi quy.
 
-> **Bài nói khoảng một phút:** “BiGRU của nhóm được huấn luyện từ đầu. Nhóm xây vocabulary chỉ từ train, đổi token thành ID, đệm PAD và dùng UNK cho token lạ. Embedding 128 chiều được học cùng GRU. Hai hướng đọc xuôi và ngược tạo hai hidden state 128 chiều; ghép thành 256, qua dropout 0,3 và head 27 đầu ra. Mạng trả logits, dùng BCEWithLogitsLoss và AdamW với learning rate 0,001, batch 64 trong 10 epoch. Khi đánh giá, sigmoid chuyển logits thành xác suất. Macro-F1 validation tốt nhất khoảng 0,4060. Đây là phép so sánh với neural học biểu diễn từ dữ liệu dự án, chưa phải fine-tuning pretrained model.”
+> **Bài nói khoảng một phút:** “BiGRU của nhóm được huấn luyện từ đầu. Nhóm xây vocabulary chỉ từ train, đổi token thành ID, đệm PAD và dùng UNK cho token lạ. Embedding 128 chiều được học cùng GRU. Hai hướng đọc xuôi và ngược tạo hai hidden state 128 chiều; ghép thành 256, qua dropout 0,3 và head 27 đầu ra. Mạng trả logits, dùng BCEWithLogitsLoss và AdamW với learning rate 0,001, batch 64 trong 20 epoch. Khi đánh giá, sigmoid chuyển logits thành xác suất. Macro-F1 validation tốt nhất khoảng 0,4220. Đây là phép so sánh với neural học biểu diễn từ dữ liệu dự án, chưa phải fine-tuning pretrained model.”
 
 **Năm câu hỏi:** (1) Đã fine-tune BiGRU chưa? Không nạp pretrained nên là from scratch. (2) Vì sao hidden 256? Ghép hai hướng 128. (3) PAD có được đọc như từ không? Chuỗi được pack theo mask. (4) UNK khác PAD? UNK là token thật chưa biết, PAD là đệm. (5) Vocabulary lấy từ đâu? Chỉ train.
 
@@ -466,11 +463,11 @@ Nguồn [MÃ]: `scripts/train_neural.py:81–85`.
 | Thiết lập PhoBERT | Giá trị từ config |
 | --- | --- |
 | Checkpoint / revision | `vinai/phobert-base-v2` / `86cd7fd4c148980922ac11a2cf5e257f2ba639e1`. |
-| Max length / batch / epoch | 256 / 16 / 4. |
+| Max length / batch / epoch | 256 / 16 / 20. |
 | AdamW learning rate / weight decay | 0,00002 = 2e-5 / 0,01. |
 | Loss / gradient clipping | BCEWithLogitsLoss / max norm 1,0. |
 
-Nguồn: `configs/baseline27_4ep.json:49–57`, `scripts/train_neural.py:135–150`. Mã không tự đặt scheduler, warmup, gradient accumulation hoặc mixed precision; không thêm chúng vào phần mô tả thí nghiệm.
+Nguồn: `configs/kaggle_equal_20ep.json:49–57`, `scripts/train_neural.py:135–150`. Mã không tự đặt scheduler, warmup, gradient accumulation hoặc mixed precision; không thêm chúng vào phần mô tả thí nghiệm.
 
 <!-- page -->
 ### 4.5. Fine-tuning thực sự xảy ra ở đâu?
@@ -525,7 +522,7 @@ Nguồn [MÃ]: `scripts/train_neural.py:156–159`.
 
 Điểm val tăng thì lưu `state_dict`; dấu `>` giữ epoch sớm khi hòa. Dòng 163 nạp best: `model.load_state_dict(torch.load(checkpoint,map_location=device,weights_only=True))`; sau đó đánh giá val (`scripts/train_neural.py:163–166`). Checkpoint mặc định: `data/checkpoints/phobert_best.pt` (`scripts/train_neural.py:139`). Tài liệu kiểm tra xác suất/lịch sử, chưa nạp trọng số riêng tư.
 
-> **Bài nói khoảng một phút:** “Nhóm dùng PhoBERT-base-v2 đã pretrained cho tiếng Việt. Bình luận được chuẩn hóa, tách từ VnCoreNLP rồi BPE tokenize. Model có backbone pretrained và head 27 logits. Nhóm full fine-tuning: AdamW nhận toàn bộ tham số; mỗi batch tính BCEWithLogitsLoss, backward, clip gradient và step. Cấu hình là batch 16, learning rate 2e-5, weight decay 0,01, bốn epoch. Cuối mỗi epoch chỉ đo validation và lưu checkpoint khi Macro-F1 tăng. Baseline đạt Macro-F1 validation khoảng 0,4393; chưa kết luận learning rate 2e-5 tối ưu vì sweep ba mức mới được chuẩn bị.”
+> **Bài nói khoảng một phút:** “Nhóm dùng PhoBERT-base-v2 đã pretrained cho tiếng Việt. Bình luận được chuẩn hóa, tách từ VnCoreNLP rồi BPE tokenize. Model có backbone pretrained và head 27 logits. Nhóm full fine-tuning: AdamW nhận toàn bộ tham số; mỗi batch tính BCEWithLogitsLoss, backward, clip gradient và step. Cấu hình là batch 16, learning rate 2e-5, weight decay 0,01, 20 epoch. Cuối mỗi epoch chỉ đo validation và lưu checkpoint khi Macro-F1 tăng. Baseline đạt Macro-F1 validation khoảng 0,5974; chưa kết luận learning rate 2e-5 tối ưu vì sweep ba mức mới được chuẩn bị.”
 
 **Năm câu hỏi:** (1) VnCoreNLP học cảm xúc? Không, chỉ wseg. (2) Nạp pretrained đã là fine-tune? Chưa; cần học bằng nhãn tác vụ. (3) Freeze backbone? Giữ backbone cố định, chỉ head học. (4) Ai tính loss? Mã này tính BCE bên ngoài. (5) Logits là xác suất? Chưa; cần sigmoid.
 
@@ -542,7 +539,7 @@ Nguồn [MÃ]: `scripts/train_neural.py:156–159`.
 
 Với 16.530 mẫu train: BiGRU batch 64 có `ceil(16.530/64)=259` batch/epoch; 258 batch đủ và batch cuối 18 mẫu. PhoBERT batch 16 có `ceil(16.530/16)=1.034` batch/epoch; 1.033 batch đủ và batch cuối 2 mẫu. Đây là phép tính từ số mẫu/cấu hình, không phải đo thông lượng GPU.
 
-Ở cấu hình hiện tại không có gradient accumulation và mỗi batch gọi `optimizer.step()` một lần: BiGRU 10 epoch có **2.590** lần step; PhoBERT 4 epoch có **4.136** lần step nếu chạy đủ không lỗi.
+Ở cấu hình hiện tại không có gradient accumulation và mỗi batch gọi `optimizer.step()` một lần: BiGRU 20 epoch có **5.180** lần step; PhoBERT 20 epoch có **20.680** lần step nếu chạy đủ không lỗi.
 
 ### 5.2. Dòng thời gian PhoBERT thực tế
 
@@ -558,12 +555,13 @@ EPOCH 2 — tiếp tục từ W1034, không khởi tạo lại model
 1.034 batch tiếp → W2068 → validation → xét checkpoint
 EPOCH 3 — từ W2068 → W3102 → validation → xét checkpoint
 EPOCH 4 — từ W3102 → W4136 → validation → xét checkpoint
+... tiếp tục đến EPOCH 20 → W20680 → validation → xét checkpoint
 Kết thúc: nạp checkpoint có Macro-F1 validation cao nhất
 ```
 
 [MÃ] `prepare(...)` và optimizer được tạo **trước** vòng `for epoch` (`scripts/train_neural.py:132–142`). Vì vậy model và trạng thái AdamW tiếp tục từ batch/epoch trước. `total_loss=0.0` chỉ reset biến thống kê; `zero_grad` chỉ xóa gradient. Không có dòng khởi tạo lại model trong mỗi epoch.
 
-[KẾT QUẢ] Run PhoBERT lưu Macro-F1 qua bốn epoch lần lượt **0,009093; 0,114433; 0,366679; 0,439320**. Checkpoint được chọn ở epoch 4 trong lượt này (`reports/phobert_run.json`, `history`, `best_epoch`). Việc epoch cuối thắng trong run này không phải quy tắc bắt buộc cho run khác.
+[KẾT QUẢ] PhoBERT 27 chạy đủ 20 epoch. Macro-F1 epoch 1 bằng 0; epoch 4 đạt 0,4339, best epoch 14 đạt 0,597410, epoch 20 đạt 0,5911. Bản 28 chọn epoch 15 theo emotion27 Macro-F1 = 0,583580, metric đủ 28 = 0,578341. Cuối lượt nạp best; không mặc định lấy epoch cuối. Nguồn là hai run JSON trong evidence equal20.
 
 <!-- page -->
 ### 5.3. Forward, loss, gradient và AdamW
@@ -588,7 +586,7 @@ Validation gọi `model.eval()` và `torch.no_grad()`; không gọi backward/ste
 
 **Checkpoint** lưu trạng thái trọng số tại một thời điểm. Mã lưu `model.state_dict()`, không lưu optimizer state; đủ để nạp đánh giá tốt nhất, không phải một gói resume huấn luyện đầy đủ (`scripts/train_neural.py:156–163`).
 
-**Fixed epochs:** chạy đủ 10 epoch BiGRU hoặc 4 PhoBERT. **Early stopping:** dừng sớm theo quy tắc như không cải thiện sau k epoch; mã hiện tại không có quy tắc đó. Checkpoint tốt nhất có thể ở giữa vì học tiếp có thể giảm chất lượng val. Trong quá trình train, epoch sau vẫn bắt đầu từ trọng số cuối epoch trước; chỉ nạp best sau toàn bộ vòng lặp.
+**Fixed epochs:** chạy đủ 20 epoch cho cả BiGRU và PhoBERT ở cả hai bộ nhãn. **Early stopping:** dừng sớm theo quy tắc như không cải thiện sau k epoch; mã hiện tại không có quy tắc đó. Checkpoint tốt nhất có thể ở giữa vì học tiếp có thể giảm chất lượng val. Trong quá trình train, epoch sau vẫn bắt đầu từ trọng số cuối epoch trước; chỉ nạp best sau toàn bộ vòng lặp.
 
 > **0,5 là ngưỡng giải mã xác suất, không phải lệnh dừng cập nhật trọng số.** Mạng tối ưu BCE trên logits của mọi batch, dù một xác suất đã vượt 0,5. F1 tại ngưỡng 0,5 dùng đánh giá/chọn checkpoint, không phải loss để đạo hàm trong code.
 
@@ -667,264 +665,161 @@ def scores(y, probabilities, threshold=0.5):
 `save_evaluation` ghi bảng metric tại 0,5 và precision/recall/F1/support từng nhãn (`scripts/evaluate.py:31–41`). Threshold sweep 0,05→0,80, bước 0,05 chỉ phân tích validation (`scripts/evaluate.py:43–53`). Đây là giải mã lại cùng xác suất, không huấn luyện thêm và không đổi điểm baseline ở ngưỡng 0,5.
 
 <!-- page -->
-## 7. Tuning và bằng chứng thí nghiệm
+## 7. Giao thức 20 epoch và bằng chứng thí nghiệm
 
 ### 7.1. Bốn việc cần phân biệt
 
-| Thuật ngữ | Thao tác trong dự án |
-| --- | --- |
-| Training from scratch | Khởi tạo mới BiGRU rồi học trọng số trên train. |
-| Fine-tuning | Khởi đầu từ PhoBERT pretrained và học tiếp backbone/head trên train. |
-| Hyperparameter tuning | Chạy các cấu hình riêng, ví dụ đổi learning rate, chọn bằng validation. |
-| Best checkpoint | Trong một lượt chạy, chọn epoch có Macro-F1 val tốt nhất. |
+Pretraining là học trước trên dữ liệu lớn; fine-tuning là cập nhật backbone/head trên bài toán này; chọn checkpoint là chọn epoch bằng validation; tuning hyperparameter là so sánh các cấu hình khác nhau. Hai lượt hiện tại fine-tune PhoBERT ở lr=2e-5 trong 20 epoch, không phải sweep nhiều learning rate.
 
-Fine-tuning có thể diễn ra mà chưa tuning hyperparameter; baseline PhoBERT hiện có là trường hợp đó. Chọn learning rate khác với chọn epoch, và cả hai khác chọn threshold.
+### 7.2. Cùng ngân sách, cùng cách chọn checkpoint
 
-### 7.2. Thiết kế so sánh ba learning rate
+BiGRU/PhoBERT đều 20 epoch ở 27/28 nhãn; TF-IDF giữ liblinear/C=1/max_iter=1000/seed 42, không có epoch neural tương đương. Profile configs/kaggle_equal_20ep.json được truyền vào workflow. Giữ cùng source, split, normalization, tokenization và settings từng model; đầu ra 28 thêm Neutral. Best chọn theo emotion27 Macro-F1 tại 0,5; hòa lấy epoch sớm nhất. Epoch sau vẫn tiếp tục từ epoch trước; không early stopping.
 
-Nguồn [MÃ]: `scripts/tune_phobert.py:19–19`.
+### 7.3. Kiểm chứng nguồn và LF/CRLF
 
-<!-- source:scripts/tune_phobert.py:19:19 -->
-```python
-RATES = {'lr_1e-5': 1e-5, 'lr_2e-5': 2e-5, 'lr_3e-5': 3e-5}
-```
+Hai notebook executed có 12 code cell mỗi bản, không error. Hai ZIP có đủ ba model; importer tính lại metric từ NPZ, kiểm tra IDs/targets/mapping/range, config, đủ history 20, best và checkpoint member. Hash source/config/CSV của bản 28 khác vì CRLF: đã so khớp biến thể byte LF/CRLF chính xác với local, không sửa manifest gốc. Config sau parse và fixed IDs cùng nhau; hai manifest cùng Tesla T4 và package versions. Một seed và session riêng chưa đo biến thiên.
 
-[MÃ] Các ứng viên cố định là **1e-5, 2e-5, 3e-5**, tương ứng 0,00001; 0,00002; 0,00003. 2e-5 là đối chứng trùng learning rate baseline. `scripts/tune_phobert.py:23–33` sao chép config và chỉ thay `phobert.learning_rate`; `load_plan` kiểm tra lại điều đó ở `scripts/tune_phobert.py:36–45`.
+### 7.4. Đường học mới
 
-[GIẢI THÍCH] Đây là lưới nhỏ quanh mức đối chứng: thấp hơn, bằng và cao hơn. Với pretrained model, bước nhỏ là cách thận trọng để điều chỉnh biểu diễn có sẵn. Mã chỉ định lưới; không cung cấp bằng chứng ba mức này là lý thuyết tối ưu hay bao phủ mọi lựa chọn tốt.
+![History 20 epoch của BiGRU/PhoBERT ở 27/28; F1 dùng cùng 27 cảm xúc, không phải sweep learning rate.](study_guide_assets/baseline_learning_curves.png)
 
-Giữ cố định: seed 42; train/val; target/mapping; tokenizer và pretrained revision; max length 256; 4 epoch; batch 16; AdamW decay 0,01; BCE; clipping 1,0; ngưỡng chọn 0,5. Bộ kiểm tra còn đối chiếu checksum dữ liệu, package, phần cứng và ID/target val giữa các lượt (`scripts/tune_phobert.py:48–142`). Cùng seed không bảo đảm kết quả bit-for-bit trên mọi GPU.
+PhoBERT 27 best epoch 14, 28 best 15; BiGRU best 17 và 20. Train BCE giảm trong khi F1 validation có dao động. Chưa có validation loss; không khẳng định hội tụ hoặc overfitting chỉ từ loss train. Model có thể đạt best trước epoch 20 nhưng vẫn chạy hết ngân sách.
 
-Mỗi lượt bắt đầu lại từ checkpoint pretrained gốc và head tác vụ được khởi tạo, không tiếp tục từ lượt learning rate trước. Điều này được thực hiện bằng subprocess mới gọi `train_neural.py --model phobert` với config/output/checkpoint riêng (`scripts/tune_phobert.py:270–275`). Đối chứng 2e-5 cần chạy trong cùng sweep/runtime; không thay bằng số baseline cũ chỉ vì learning rate trùng.
+### 7.5. Ngưỡng là một phần decoder
 
-### 7.3. Hai cấp chọn “tốt nhất”
-
-Trong mỗi lượt, lấy epoch có validation Macro-F1 cao nhất tại 0,5; hòa giữ epoch sớm (`scripts/train_neural.py:156–159`). Sau đó so các checkpoint thắng của ba lượt:
-
-Nguồn [MÃ]: `scripts/tune_phobert.py:175–179`.
-
-<!-- source:scripts/tune_phobert.py:175:179 -->
-```python
-    comparison = pd.DataFrame(rows)
-    control = comparison.set_index('run').loc['lr_2e-5']
-    comparison['delta_macro_f1_vs_control'] = comparison.macro_f1 - control.macro_f1
-    winner = comparison.sort_values(['macro_f1', 'learning_rate'], ascending=[False, True]).iloc[0]
-    comparison.to_csv(output/'comparison.csv', index=False)
-```
-
-**175:** gom kết quả đã qua kiểm tra. **176:** lấy lượt đối chứng. **177:** tính delta so đối chứng. **178:** F1 giảm dần, learning rate tăng dần; nếu hòa F1 thì chọn learning rate nhỏ hơn. **179:** ghi CSV. Không dùng test hoặc điểm sau threshold sweep để chọn learning rate.
+Bảng chính giữ 0,5. Khảo sát hậu nghiệm từ NPZ mới cho thấy PhoBERT 27 đạt Macro-F1 0,597843 tại ngưỡng 0,35 so với 0,597410 tại 0,5; Hamming Loss tăng từ 0,055000 lên 0,058747. Đây là so sánh trên validation đã dùng lựa chọn, không phải cải thiện test hoặc lý do thay checkpoint. Final sẽ khóa một backbone rồi so fixed/global/per-label decoding trên validation trước khi chấm test.
 
 <!-- page -->
-### 7.4. Trạng thái thật tại lần đối chiếu này
 
-| Artifact khảo sát PhoBERT | Tình trạng |
-| --- | --- |
-| `reports/phobert_tuning/study.json` | `status=prepared`, `test_evaluated=false`. |
-| `configs/lr_1e-5.json`, `lr_2e-5.json`, `lr_3e-5.json` dưới thư mục study | Có đủ; đã kiểm tra chỉ khác learning rate PhoBERT. |
-| Thư mục kết quả từng lượt | Chưa có trong study hiện tại. |
-| `reports/phobert_tuning/comparison.csv` | Chưa tồn tại; chưa thể so sánh ba mức. |
-| `reports/phobert_tuning/learning_curves.png` | Chưa tồn tại; chưa có đường học của sweep. |
-| Learning rate thắng cuộc | Chưa xác định bằng thực nghiệm. |
-
-`reports/ablation_mixed_neutral/comparison.csv` có tồn tại, nhưng thuộc thí nghiệm mixed-neutral khác. Không dùng tên file giống nhau để coi đó là kết quả learning-rate sweep. Notebook 05 chưa có ô được thực thi trong bản lưu; thiết kế notebook không thay thế artifact chạy thành công.
-
-### 7.5. Đường học baseline đã có, không phải đường học sweep
-
-![Hình 7.1. Vẽ lại từ history của hai baseline trong reports/gru_run.json và reports/phobert_run.json; PhoBERT chỉ có mức 2e-5.](study_guide_assets/baseline_learning_curves.png)
-
-[KẾT QUẢ] PhoBERT train BCE giảm **0,2610→0,1343**, Macro-F1 val tăng **0,0091→0,4393** trong 4 epoch. BiGRU BCE giảm **0,2727→0,0927**, Macro-F1 tăng **0,0356→0,4060** trong 10 epoch, có giảm nhẹ từ epoch 8 sang 9 rồi tăng ở 10. Nguồn là `history` của hai run JSON; trục epoch khác số vòng giữa hai mô hình.
-
-Có thể nói hai lượt này cải thiện nhiều so với epoch đầu. Không có validation loss được ghi, và chỉ thấy một seed; chưa đủ kết luận đã hội tụ hoặc chẩn đoán chắc chắn overfitting. Không ngoại suy điểm ở epoch 5 PhoBERT hay 11 BiGRU.
-
-### 7.6. Những cách đọc kết quả còn chờ kiểm chứng
-
-**Giả thuyết minh họa, chưa phải phát hiện của sweep:** learning rate quá nhỏ có thể cải thiện chậm trong bốn epoch; quá lớn có thể làm metric dao động hoặc giảm. Underfitting có thể gợi ra khi mô hình còn học kém ngay trên train; overfitting có thể gợi ra khi train tốt lên nhưng val giảm kéo dài. Ở đây chưa có train F1, val loss hoặc ba đường learning rate để xác nhận các mô tả đó.
-
-[KẾT QUẢ] Bảng per-label PhoBERT đã cho thấy `disapproval` F1=0, `desire`≈0,0192 và `excitement`≈0,0638 tại 0,5 (`reports/tables/phobert_per_label.csv`). Đó là nhãn dự đoán kém trong lượt cụ thể, không tự chứng minh nguyên nhân là mỉa mai, sai nhãn hoặc thiếu dữ liệu. Cần audit nội dung riêng tư trong môi trường phù hợp để tìm nguyên nhân; không công bố bình luận trong tài liệu này.
-
-<!-- page -->
 ## 8. So sánh ba mô hình một cách công bằng
 
-### 8.1. Biểu diễn và kiến trúc
+### 8.1. Biểu diễn và ngân sách
 
-| Khía cạnh | TF-IDF + OvR LR | BiGRU | PhoBERT |
+| Thành phần | TF-IDF + LR | BiGRU | PhoBERT |
 | --- | --- | --- | --- |
-| Đầu vào số | Vector thưa ngram. | Chuỗi ID → embedding. | Chuỗi BPE ID + attention mask. |
-| Tokenization | NFC, lowercase, regex; unigram/bigram. | NFC, lowercase, whitespace. | NFC, VnCoreNLP wseg rồi BPE. |
-| Kiến trúc | 27 classifier tuyến tính + sigmoid. | Embedding → GRU hai hướng → dropout → Linear. | Transformer backbone pretrained + head chuỗi. |
-| Pretrained | Không. | Không. | Có: PhoBERT-base-v2 cố định revision. |
-| Cách học | Fit vocabulary/IDF rồi fit OvR. | Toàn mạng học từ đầu. | Full fine-tuning backbone và head. |
-| Loss / optimizer | Log-loss nhị phân + regularization; liblinear. | BCEWithLogitsLoss / AdamW. | BCEWithLogitsLoss / AdamW. |
-| Độ dài / đặc trưng | Trần 40.000; thực 34.837. | Max length 128; embedding/hidden 128. | Max length 256 BPE gồm special token. |
-| Epoch / batch / lr | Solver max_iter=1.000; không dùng neural batch/lr. | 10 / 64 / 0,001. | 4 / 16 / 2e-5. |
-| Regularization | L2; C=1. | Dropout 0,3; decay=0,0. | Decay=0,01; dropout bên trong model thư viện. |
-| Quyết định nhãn | Xác suất ≥0,5. | Sigmoid(logits) ≥0,5. | Sigmoid(logits) ≥0,5. |
+| Biểu diễn | Unigram/bigram thưa; fit train | Embedding từ đầu | Backbone pretrained + VnCoreNLP/BPE |
+| Phân loại | OvR Logistic Regression | Hai hướng GRU, ghép hidden, linear | Transformer + head logits |
+| Ngân sách | max_iter=1000, không epoch neural | 20 epoch, batch 64, lr=0,001 | 20 epoch, batch 16, lr=2e-5 |
+| Output | 27/28 classifier | 27/28 logits + sigmoid | 27/28 logits + sigmoid |
 
-Nguồn thực thi: `scripts/train_tfidf.py:17–32`, `scripts/train_neural.py:19–85`, `scripts/train_neural.py:89–163`; cấu hình: `configs/baseline27_4ep.json:22–58`. Các mặc định thư viện như L2 được phân biệt với tham số viết tường minh trong config. Không tự gán dropout=0,3 của BiGRU cho PhoBERT.
+Neural dùng BCEWithLogitsLoss và AdamW, clip norm 1. Tất cả cùng threshold 0,5, seed 42, cùng dữ liệu; checkpoint neural chọn trên 27 cảm xúc. Cùng epoch không đồng nghĩa cùng số update hoặc compute.
 
-### 8.2. Độ phức tạp và chi phí nên hiểu thế nào?
+### 8.2. Kết quả 27 cảm xúc
 
-[GIẢI THÍCH] TF-IDF tính trên phần tử khác 0; classifier tuyến tính có thể tận dụng tính thưa. BiGRU xử lý chuỗi theo bước ở hai hướng, có trạng thái hồi quy. Transformer dùng self-attention giữa token; chi phí attention tăng xấp xỉ theo bình phương độ dài chuỗi trong kiến trúc attention đầy đủ, bên cạnh các phép biến đổi khác. Đây là khác biệt cấu trúc, không phải benchmark tốc độ mới.
+| model | macro_f1 | micro_f1 | hamming_loss | lrap |
+| --- | --- | --- | --- | --- |
+| TF-IDF + OvR LR | 0.2388 | 0.2712 | 0.0606 | 0.6407 |
+| BiGRU | 0.4220 | 0.4590 | 0.0626 | 0.6191 |
+| PhoBERT | 0.5974 | 0.5996 | 0.0550 | 0.7419 |
 
-[KẾT QUẢ] Số tham số: **940.626 / 2.128.283 / 135.019.035** theo thứ tự ba mô hình. Với TF-IDF, chỉ đếm hệ số+bias, không tính IDF; neural đếm `sum(v.numel() for v in model.parameters())` (`scripts/train_neural.py:165`). Vì định nghĩa khác nhau, số đếm giúp hiểu quy mô chứ không đo toàn bộ bộ nhớ hoặc FLOPs.
+### 8.3. Kết quả 28 nhãn có Neutral
 
-[GIẢI THÍCH] TF-IDF hợp làm mốc dễ diễn giải; BiGRU kiểm tra học chuỗi từ train; PhoBERT kiểm tra biểu diễn pretrained tiếng Việt cùng full fine-tuning. Đây là ba lựa chọn thiết kế thí nghiệm của nhóm, không phải ba kết quả được trích từ paper gốc.
+| model | macro_f1 | micro_f1 | hamming_loss | lrap |
+| --- | --- | --- | --- | --- |
+| TF-IDF + OvR LR | 0.2310 | 0.2662 | 0.0601 | 0.6096 |
+| BiGRU | 0.4086 | 0.4483 | 0.0628 | 0.5851 |
+| PhoBERT | 0.5783 | 0.5829 | 0.0575 | 0.7077 |
+
+PhoBERT tốt nhất trong từng study theo bốn metric tổng hợp; xem phụ lục report để đọc từng nhãn. Macro-F1 27 và đủ 28 có mẫu số khác nhau, không dùng chênh trực tiếp để kết luận hiệu ứng Neutral.
+
+### 8.4. So sánh cùng 27 cảm xúc và Neutral riêng
+
+| model | macro27 | macro28_projected27 | delta_pp | hamming27 | hamming28_projected27 |
+| --- | --- | --- | --- | --- | --- |
+| TF-IDF + OvR LR | 0.2388 | 0.2388 | 0.0000 | 0.0606 | 0.0606 |
+| BiGRU | 0.4220 | 0.4195 | -0.2490 | 0.0626 | 0.0629 |
+| PhoBERT | 0.5974 | 0.5836 | -1.3830 | 0.0550 | 0.0575 |
+
+Kết luận hiện tại: TF-IDF không đổi, BiGRU giảm khoảng 0,249 điểm phần trăm và PhoBERT giảm khoảng 1,383 điểm khi thêm Neutral rồi chấm trên cùng 27 cảm xúc. Thí nghiệm một seed này chưa cho thấy lợi ích trên 27 cảm xúc; không kết luận nhân quả hoặc ý nghĩa thống kê.
+
+| model | precision | recall | f1 | support | TP | FP | FN |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| TF-IDF + OvR LR | 0.5000 | 0.0106 | 0.0208 | 94 | 1 | 1 | 93 |
+| BiGRU | 0.1778 | 0.0851 | 0.1151 | 94 | 8 | 37 | 86 |
+| PhoBERT | 0.4018 | 0.4787 | 0.4369 | 94 | 45 | 67 | 49 |
+
+Neutral được học trực tiếp trong bản 28 nhưng còn khó. Model 27 không có Neutral output, nên metric Neutral của nó không xác định.
+
+### 8.5. Best epoch và chi phí
+
+| model | label_count | epochs_trained | best_epoch | train_seconds |
+| --- | --- | --- | --- | --- |
+| TF-IDF + OvR LR | 27 | — | — | 2.7524 |
+| BiGRU | 27 | 20.0000 | 17.0000 | 80.3307 |
+| PhoBERT | 27 | 20.0000 | 14.0000 | 14589.6182 |
+| TF-IDF + OvR LR | 28 | — | — | 2.5247 |
+| BiGRU | 28 | 20.0000 | 20.0000 | 83.6053 |
+| PhoBERT | 28 | 20.0000 | 15.0000 | 14057.7186 |
+
+PhoBERT 27 có 135.019.035 tham số, 28 có 135.019.804; BiGRU lần lượt 2.128.283 và 2.128.540. TF-IDF đếm hệ số và bias, không gồm IDF. CPU fit và GPU train có phạm vi đo khác nhau; thời gian không gồm preprocessing/download. Chi phí thực tế phụ thuộc batch, architecture và phần cứng.
 
 <!-- page -->
-### 8.3. Kết quả validation đã được kiểm tra lại
 
-Tất cả điểm dưới đây dùng **cùng validation 2.066 mẫu, 27 nhãn, threshold 0,5**. Không phải test. Đã tính lại từ NPZ và đối chiếu các CSV metric; làm tròn sáu chữ số ở bảng.
-
-| Metric | TF-IDF + OvR LR | BiGRU | PhoBERT 2e-5 |
-| --- | --- | --- | --- |
-| Macro-F1 ↑ | 0,238825 | 0,406002 | 0,439320 |
-| Micro-F1 ↑ | 0,271238 | 0,452609 | 0,516045 |
-| Hamming Loss ↓ | 0,060593 | 0,060360 | 0,053261 |
-| LRAP ↑ | 0,640745 | 0,632236 | 0,715767 |
-| Best epoch | Không áp dụng. | 10/10. | 4/4. |
-| Thời gian ghi nhận (giây) | 2,5210 | 37,4955 | 3.047,1092 |
-
-Nguồn: `reports/tables/{tfidf_lr,gru,phobert}_metrics.csv`; `reports/{tfidf_lr,gru,phobert}_run.json`. Thư mục/đường dẫn gộp bằng dấu ngoặc nhọn trong câu này là cách viết rút gọn cho ba file thật, không phải tên file có ngoặc nhọn.
-
-[KẾT QUẢ] PhoBERT hơn BiGRU khoảng **0,033317 Macro-F1**, tức **3,33 điểm phần trăm** khi biểu diễn F1 theo phần trăm. Không phải tăng tương đối 3,33%. TF-IDF có LRAP nhỉnh hơn BiGRU dù F1 thấp hơn: thứ hạng nhãn và quyết định tại 0,5 không trùng một tiêu chí.
-
-### 8.4. Thận trọng với nguyên nhân và tốc độ
-
-Thời gian TF-IDF gồm fit vectorizer+OvR, loại tải dữ liệu/đánh giá (`scripts/train_tfidf.py:25–42`). Neural gồm vòng train, validation mỗi epoch và ghi checkpoint, loại preprocessing/download (`scripts/train_neural.py:141–172`). Hai run neural ghi GPU **Tesla T4**; thời gian trên không gồm 0,9664 giây chuẩn bị BiGRU hay 46,4202 giây chuẩn bị PhoBERT ghi trong JSON.
-
-Có thể báo lại thời gian đo với phạm vi như trên; không gọi đây là tỷ lệ tăng tốc công bằng giữa các thuật toán, hay suy ra thời gian trên máy khác. Thời gian tổng còn phụ thuộc tokenizer, phần cứng, số epoch và batch; package trong run JSON phản ánh môi trường đo, có thể khác `requirements.txt` hiện tại.
-
-PhoBERT tốt hơn trên phần lớn metric tổng hợp trong lượt này, nhưng không tốt nhất cho mọi nhãn. Ví dụ `disapproval` F1=0 trong PhoBERT, còn TF-IDF F1=0,016 (`reports/tables/phobert_per_label.csv`, `reports/tables/tfidf_lr_per_label.csv`). Không dùng một metric trung bình để tuyên bố thắng tuyệt đối.
-
-### 8.5. Phân biệt dự án với paper
-
-[NGUỒN GỐC] [Hung và cộng sự, EACL 2026](https://aclanthology.org/2026.eacl-long.129/) giới thiệu corpus ViGoEmotions và khảo sát các Transformer cùng chiến lược tiền xử lý. Paper §5.1 nêu split 8:1:1; không dùng điều đó để khẳng định thuật toán stratification của split cấp cho nhóm. Tài liệu lớp `docs/02-vigoemotions-vietnamese-emotion.pdf` là **đề bài 5 trang**, không phải PDF paper gốc 27 trang trên ACL.
-
-[ĐÓNG GÓP NHÓM] Pipeline 27 đầu ra có quy ước Neutral, kiểm tra trùng, triển khai ba baseline, lưu xác suất/metadata, phân tích metric/nhãn/phong cách/ngưỡng; thiết kế sweep PhoBERT đã có nhưng chưa chạy hoàn tất. Đây là thực nghiệm sinh viên trên dataset có sẵn; không tuyên bố nhóm tạo dataset hay phát minh PhoBERT/BiGRU.
-
-<!-- page -->
 ## 9. Chuẩn bị bảo vệ giữa kỳ
 
-### 9.1. Kịch bản một phút cho từng mô hình
+### 9.1. Bài nói ngắn cho ba mô hình
 
-Ba bài nói một phút đã được đặt cuối Chương 2, 3 và 4 để học ngay sau mã nguồn. Khi luyện, giữ khung bốn ý: **đầu vào → cách học → giải mã → kết quả và giới hạn**. Đọc thử bằng đồng hồ và rút câu phụ nếu vượt một phút; thời lượng phụ thuộc tốc độ nói.
+TF-IDF fit vocabulary/IDF chỉ trên train rồi fit OvR LR cho từng nhãn; ngưỡng 0,5. Kết quả 27 Macro-F1 0,238825, 28 là 0,231040. Đây là baseline từ vựng, không dùng pretrained embedding.
 
-| Mô hình | Những từ khóa phải xuất hiện trong 60 giây |
+BiGRU học embedding và trọng số từ đầu; hai hướng hidden 128 ghép thành 256, dropout rồi linear head. BCE/AdamW, batch 64, lr=0,001, đủ 20 epoch. Best 27 ở 17, 28 ở 20; Macro-F1 27=0,421976, 28=0,408615.
+
+PhoBERT-base-v2 tải backbone pretrained, VnCoreNLP tách từ trước BPE, fine-tune toàn bộ backbone/head. BCE, AdamW lr=2e-5, batch 16, đủ 20 epoch. Best 27 ở 14 đạt 0,597410; best 28 ở 15 đạt 0,578341. Bản 28 chiếu 27 đạt 0,583580, chưa cao hơn bản 27.
+
+### 9.2. Năm câu hỏi đề bài
+
+Dùng các bảng mới trong reports/kaggle_equal20_2026-11-05/: label_extremes, frequency_f1, pair_preservation, neural_style_comparison, threshold_sensitivity. PhoBERT 27 cao nhất gratitude (0,8370), thấp nhất disapproval (0,3623); Spearman tần suất–F1 khoảng 0,018, p≈0,928. Trong các nhóm khảo sát, teencode có delta PhoBERT−GRU lớn nhất khoảng 22,13 điểm phần trăm. Tất cả là mô tả validation của study 27 mới, không chuyển số từ run cũ.
+
+### 9.3. Câu hỏi bảo vệ thường gặp
+
+| Câu hỏi | Câu trả lời |
 | --- | --- |
-| TF-IDF + OvR LR | Unigram/bigram; fit chỉ train; 27 nhị phân; liblinear; threshold 0,5; Macro-F1 0,2388. |
-| BiGRU | From scratch; vocab train; PAD/UNK; embedding 128; hai hidden 128; BCE/AdamW; Macro-F1 0,4060. |
-| PhoBERT | Pretrained; VnCoreNLP+BPE; full fine-tuning; batch 16, 4 epoch, lr 2e-5; best val; Macro-F1 0,4393. |
+| Vì sao sigmoid thay softmax? | Multi-label không loại trừ; sigmoid từng logit không ép tổng xác suất bằng 1. |
+| Fine-tuning xảy ra ở đâu? | model.parameters đi vào AdamW; mỗi batch backward, clip rồi optimizer.step cập nhật backbone và head. |
+| Validation có học trọng số không? | eval + no_grad; không backward/step. Nó dùng để chọn checkpoint và sau này chọn decoder. |
+| 20 epoch nhưng best 14/15 là sao? | Train đủ 20; cuối cùng nạp checkpoint có emotion27 F1 cao nhất, không mặc định epoch cuối. |
+| Epoch 1 F1=0 có hỏng model? | Chưa có true positive tại cutoff 0,5 ở epoch đầu; run 27 sau đó đạt 0,597410. |
+| Neutral giúp cải thiện không? | Chưa thấy trên emotion27 trong lượt này: model 28 chiếu 27 thấp hơn model 27; một seed chưa đo ý nghĩa thống kê. |
+| Có chạy cả hai T4 không? | Không; code dùng một GPU mỗi process, không cấu hình parallel training. |
+| Hash khác có phải dữ liệu khác? | Đã chứng minh đúng biến thể byte LF/CRLF; parsed config, fixed IDs và nội dung local khớp. |
+| Đã dùng test chưa? | Audit dữ liệu/trùng lặp có dùng thông tin split; không chấm model hoặc tune bằng test. |
+| Split đã stratified chưa? | Audit không chứng minh thuật toán tạo split; còn xác nhận official split với giảng viên. |
 
-### 9.2. Bài nói so sánh khoảng ba phút
+### 9.4. Phân tích lỗi và giới hạn
 
-**0:00–0:35 — Bài toán.** “Nhóm phân loại cảm xúc đa nhãn trên bình luận tiếng Việt. Một câu có thể vừa vui vừa biết ơn nên không ép chọn một lớp. Mô hình dự đoán 27 cảm xúc; Neutral-only được mã hóa thành vector toàn 0, còn mixed-neutral giữ nhãn cảm xúc. Nhóm giữ validation và test được cấp, loại một mẫu train trùng văn bản held-out.”
+Sáu ca PhoBERT 28 mới: ba Neutral FP tự tin nhất, ba Neutral FN xác suất thấp nhất. Giữ ID/nhãn/xác suất và mô tả trừu tượng; không copy raw text. Nhận xét về ngữ cảnh, HTML, câu ngắn và từ tục là giả thuyết có hỗ trợ AI, cần nhóm xác nhận. 20 FN/20 FP tự sinh mỗi model là ứng viên để đọc, không phải audit hoàn tất.
 
-**0:35–1:10 — Baseline truyền thống.** “TF-IDF dùng unigram và bigram để chuyển văn bản thành vector thưa, vocabulary và IDF chỉ học từ train. 27 Logistic Regression theo OvR tạo các xác suất riêng, giải mã tại 0,5. Cách này cho mốc đơn giản để kiểm tra lợi ích của mô hình phức tạp; Macro-F1 validation khoảng 0,2388.”
-
-**1:10–1:45 — Baseline neural.** “BiGRU học embedding và trọng số từ đầu. Sau token ID và padding, hai hướng GRU đọc xuôi/ngược; ghép hidden thành 256 chiều rồi head ra 27 logits. Nhóm dùng BCEWithLogitsLoss, AdamW, batch 64 và mười epoch. Macro-F1 validation khoảng 0,4060. Đây là học chuỗi từ dữ liệu dự án, không phải fine-tuning một BiGRU pretrained.”
-
-**1:45–2:25 — PhoBERT.** “PhoBERT-base-v2 mang biểu diễn tiếng Việt pretrained. Nhóm tách từ bằng VnCoreNLP, BPE tokenize và full fine-tuning backbone lẫn head. Mỗi batch forward, BCE, backward, clip gradient rồi AdamW step. Cấu hình batch 16, learning rate 2e-5, decay 0,01 và bốn epoch. Validation chọn checkpoint tốt nhất, không cập nhật trọng số. Macro-F1 khoảng 0,4393.”
-
-**2:25–3:00 — Kết luận đúng phạm vi.** “Trên cùng validation và ngưỡng 0,5, PhoBERT cao hơn BiGRU khoảng 3,33 điểm Macro-F1 phần trăm. Chưa thể quy toàn bộ chênh lệch cho pretraining vì tokenizer và kiến trúc cũng khác. Nhóm đã thiết kế sweep 1e-5, 2e-5, 3e-5 nhưng chưa có kết quả, nên chưa chọn learning rate tối ưu. Test được giữ cho Final. Đóng góp là pipeline, kiểm tra dữ liệu, thực nghiệm và phân tích có thể truy vết.”
-
-### 9.3. Vì sao phân tích PhoBERT kỹ hơn?
-
-PhoBERT có nhiều tầng dễ nhầm: pretrained khác fine-tuning, segmentation khác BPE, backbone khác head, chọn epoch khác chọn learning rate. Dự án còn dành một study riêng cho learning rate PhoBERT. Phân tích sâu giúp chứng minh nhóm thực sự hiểu dòng cập nhật tham số; không hàm ý hai baseline còn lại ít quan trọng hoặc đã tuning chúng đầy đủ.
+Giới hạn chung: một seed, validation dùng chọn checkpoint/khảo sát ngưỡng, style rules có nhiễu, test chưa chấm. Bài nói theo [lời dẫn20 slide](midterm_presentation_2026-11-05.md). Bổ sung tên/MSSV/phân công trước buổi bảo vệ.
 
 <!-- page -->
-### 9.4. Câu hỏi giảng viên có thể hỏi — phần 1
 
-**1. Multi-label khác multi-class thế nào?** Multi-label cho phép nhiều cảm xúc cùng dương; multi-class một nhãn buộc chọn một lớp. Target dự án là 27 cột multi-hot (`scripts/common.py:32–37`).
-
-**2. Vì sao không dùng softmax?** Các nhãn không loại trừ nhau. Sigmoid từng logit không buộc tổng xác suất bằng 1 (`scripts/train_neural.py:100–101`).
-
-**3. Dataset có Neutral sao model chỉ có 27 đầu ra?** Đây là quy ước dự án: loại ID 27 khỏi target; Neutral-only thành toàn 0, mixed-neutral giữ cảm xúc (`scripts/common.py:32–37`).
-
-**4. Không nhãn nào vượt 0,5 thì sao?** Giữ vector dự đoán toàn 0; mã không ép một nhãn top-1 (`scripts/common.py:71–72`). Không được gọi đó là xác suất Neutral đã học riêng.
-
-**5. Tại sao cần OvR?** Mỗi cột cảm xúc là một bài toán có/không; OvR huấn luyện một Logistic Regression cho mỗi cột (`scripts/train_tfidf.py:27–30`).
-
-**6. TF-IDF có dùng tách từ VnCoreNLP không?** Không. Vectorizer dùng regex từ config; nhánh VnCoreNLP chỉ phục vụ PhoBERT (`configs/baseline27_4ep.json:22–31`, `scripts/train_neural.py:63–67`).
-
-**7. Vì sao chỉ fit vocabulary trên train?** Để vocabulary/IDF không học thông tin phân bố từ val/test. Validation chỉ transform; BiGRU xây Counter trên train (`scripts/train_tfidf.py:26–32`, `scripts/train_neural.py:48–49`).
-
-**8. BiGRU có được fine-tune không?** Trong dự án, nó được khởi tạo mới, không nạp pretrained weights: training from scratch (`scripts/train_neural.py:19–25`, `scripts/train_neural.py:52`).
-
-**9. Hidden của BiGRU có kích thước nào?** GRU một tầng hai hướng có hidden `(2,B,128)`; ghép hai hidden thành `(B,256)` rồi head `(B,27)` (`scripts/train_neural.py:23–31`, config GRU).
-
-**10. PAD và UNK khác nhau thế nào?** PAD=0 là đệm bị bỏ qua khi pack; UNK=1 là token lạ vẫn có mask=1 (`scripts/train_neural.py:54–59`, `scripts/train_neural.py:28–29`).
-
-**11. Fine-tuning chính xác là gì?** Tiếp tục điều chỉnh tham số pretrained bằng loss của tác vụ. Ở đây AdamW nhận toàn model; backward tính gradient, step cập nhật (`scripts/train_neural.py:135–150`).
-
-**12. Full fine-tuning khác freeze backbone thế nào?** Full cho backbone và head học; freeze giữ backbone cố định. Nhánh hiện tại không khóa `requires_grad` và không giới hạn optimizer vào head (`scripts/train_neural.py:64–70`, `scripts/train_neural.py:135–136`).
-
-**13. VnCoreNLP có pretrain PhoBERT cho nhóm không?** Không. Code chỉ nạp `wseg` để tách từ; PhoBERT được nạp riêng bằng from_pretrained (`scripts/train_neural.py:34–40`, `scripts/train_neural.py:67–70`).
-
-**14. Segmentation khác BPE ra sao?** Segmentation xác định từ tiếng Việt; BPE dùng vocabulary/quy tắc pretrained để chia thành đơn vị con, rồi đổi ID. Pipeline có hai bước nối tiếp (`scripts/train_neural.py:65–77`).
-
-<!-- page -->
-### 9.5. Câu hỏi giảng viên có thể hỏi — phần 2
-
-**15. Trọng số cập nhật ở đâu và lúc nào?** Mỗi batch train tại `optimizer.step()` sau BCE, backward và clip (`scripts/train_neural.py:146–150`). Forward chỉ tính đầu ra, backward chỉ tính gradient.
-
-**16. Mỗi epoch có reset trọng số không?** Không. Model và optimizer được tạo trước vòng epoch; chỉ gradient/tổng loss được reset theo phạm vi phù hợp (`scripts/train_neural.py:132–146`).
-
-**17. Validation có cập nhật trọng số không?** Không. Hàm predict dùng eval+no_grad, chỉ xuất xác suất; sau đó tính metric để chọn checkpoint (`scripts/train_neural.py:95–102`, `scripts/train_neural.py:152–159`).
-
-**18. Xác suất vượt 0,5 có dừng học không?** Không. 0,5 là ngưỡng giải mã metric; loop vẫn học đủ epoch với BCE trên logits (`scripts/common.py:71–78`, `scripts/train_neural.py:142–150`).
-
-**19. Tại sao chọn Macro-F1 thay vì accuracy?** Mỗi nhãn có trọng số ngang nhau trong Macro, hữu ích khi mất cân bằng. Accuracy có thể cao do nhiều nhãn âm. Code dùng macro để chọn checkpoint (`scripts/common.py:73`, `scripts/train_neural.py:156`).
-
-**20. Tại sao nạp best checkpoint thay vì dùng epoch cuối?** Validation có thể giảm sau khi train thêm. Best giữ epoch có Macro-F1 tốt nhất; run này PhoBERT tình cờ tốt nhất ở epoch 4 (`scripts/train_neural.py:156–164`, `reports/phobert_run.json`).
-
-**21. Có early stopping không?** Không, code chạy fixed epochs rồi nạp best. Không có patience hay break khi val xấu (`scripts/train_neural.py:142–163`).
-
-**22. Tại sao so ba learning rate? Đã có mức tốt nhất chưa?** Để kiểm tra độ nhạy quanh đối chứng 2e-5 khi giữ phần khác cố định. Chưa có winner vì study còn `prepared` (`scripts/tune_phobert.py:19–33`, `reports/phobert_tuning/study.json`).
-
-**23. Chọn best epoch và learning rate có giống nhau không?** Không. Một cấp chọn trong lịch sử một run; cấp kia so checkpoint tốt nhất của ba run. Hòa epoch giữ sớm, hòa learning rate chọn nhỏ (`scripts/train_neural.py:156–159`, `scripts/tune_phobert.py:175–178`).
-
-**24. Nhóm đóng góp gì nếu không tạo mô hình mới?** Triển khai và đối chiếu ba baseline trên một hợp đồng 27 nhãn; kiểm tra dữ liệu/trùng; lưu xác suất và metadata; đánh giá nhãn/ngưỡng/phong cách; thiết kế tuning. Chưa nhận phần tuning hoàn tất (`scripts/common.py`, `scripts/evaluate.py`, các run JSON và study).
-
-**25. Có thể nói pretraining gây tăng 3,33 điểm F1 không?** Chưa thể kết luận nhân quả: PhoBERT và BiGRU còn khác tokenizer, kiến trúc và cấu hình. Đây là chênh lệch baseline quan sát trên validation, chưa phải ablation riêng pretraining (Chương 8).
-
-**26. Code clipping làm gì?** Giới hạn norm gradient 1,0 trước bước optimizer, không giới hạn trực tiếp trọng số và không dừng sớm (`scripts/train_neural.py:148–150`).
-
-**27. Điểm test của nhóm bao nhiêu?** Chưa có trong các artifact baseline đang dùng. Train scripts chỉ truyền xác suất `val` vào đánh giá; không tự lấy điểm validation gọi là test (`scripts/train_tfidf.py:35`, `scripts/train_neural.py:166`).
-
-**28. F1 thấp một nhãn có nghĩa nhãn đó sai không?** Không. Có thể do ngưỡng, tín hiệu yếu, dữ liệu, biểu diễn hay tối ưu; bảng per-label không tự xác định nguyên nhân. Cần kiểm tra thêm trước khi kết luận.
-
-<!-- page -->
 ## 10. Tờ tra cứu và nguồn đối chiếu
 
-### 10.1. Thuật ngữ, công thức và cấu hình bỏ túi
+### 10.1. Thuật ngữ và cấu hình
 
-| Mục cần nhớ | Nhắc nhanh |
+| Khái niệm | Ý nghĩa trong lượt hiện tại |
 | --- | --- |
-| Token / embedding / logit | Đơn vị đầu vào / vector biểu diễn / điểm trước sigmoid. |
-| Batch / epoch / checkpoint | Nhóm mẫu cho một step / một lượt train / trạng thái trọng số đã lưu. |
-| Sigmoid / nhị phân | p=1/(1+exp(−z)); dự đoán dương khi p≥0,5. |
-| BCE / F1 | BCE=−[y ln p+(1−y)ln(1−p)]; F1=2TP/(2TP+FP+FN). |
-| Macro / Micro / Hamming | Trung bình F1 nhãn / gộp TP,FP,FN / (FP+FN)/(N×27). |
-| TF-IDF | TF=1+ln f khi f>0; IDF=ln((1+N)/(1+df))+1; L2 normalize. |
-| Chung | Seed 42; 27 cảm xúc; Neutral ID 27 loại khỏi target; chọn val tại 0,5. |
-| TF-IDF/LR | Trần 40k, thực 34.837; ngram (1,2); min_df 2; C=1; liblinear. |
-| BiGRU | Embed/hidden 128; head 256→27; dropout 0,3; L128; B64; 10 epoch; lr=0,001. |
-| PhoBERT | base-v2; L256; B16; 4 epoch; lr=2e-5; decay=0,01; full fine-tuning. |
-| Chọn và dừng | Fixed epochs; best Macro-F1 val; không early stopping; 0,5 không dừng học. |
-| Kết quả / sweep | Macro-F1 val 0,2388 / 0,4060 / 0,4393; sweep 3 LR chưa hoàn tất. |
+| Logits / sigmoid | Điểm chưa giới hạn → xác suất độc lập từng nhãn |
+| BCEWithLogitsLoss | Kết hợp sigmoid/BCE ổn định số trong training |
+| Macro / Micro | Trung bình F1 theo nhãn / gộp TP,FP,FN mọi nhãn |
+| LRAP | Xếp hạng nhãn thật từ xác suất, không phụ thuộc cutoff |
+| Epoch / best | Neural đủ 20 ở 27/28; GRU best 17/20, PhoBERTbest 14/15 |
+| Head / backbone | Linear output mới / biểu diễn pretrained được fine-tune |
+| Config / nguồn | configs/kaggle_equal_20ep.json; notebook 08/09 executed; hai ZIP equal20 |
 
 ### 10.2. Địa chỉ mã để mở khi được hỏi
 
-`common.py::multihot` ở `scripts/common.py:32–37`; `normalize/load_data` ở `scripts/common.py:40–64`; `scores` ở `scripts/common.py:71–78`.
+scripts/train_neural.py:19–31 định nghĩa BiGRU; 34–86 preprocessing/tokenizer/loaders; 95–102 inference; 134–166 training/checkpoint. scripts/neutral_28_labels.py thêm output 28 và dùng selection_macro_f1 trên 27 cảm xúc. scripts/kaggle_equal_epochs.py điều phối profile, manifest, report và archive.
 
-`train_tfidf.py::main` ở `scripts/train_tfidf.py:16–43`; `train_neural.py::BiGRU` ở `scripts/train_neural.py:19–31`; `segmented_texts/prepare` ở `scripts/train_neural.py:34–86`; `predict` ở `scripts/train_neural.py:95–102`; full fine-tuning và checkpoint ở `scripts/train_neural.py:134–166`.
-
-`evaluate.py::save_evaluation` ở `scripts/evaluate.py:15–53`; `tune_phobert.py::prepare/load_plan` ở `scripts/tune_phobert.py:23–45`; kiểm tra/chọn study ở `scripts/tune_phobert.py:48–142` và `scripts/tune_phobert.py:172–179`. `scripts/build_report.py:236–538` (`main`) tổng hợp báo cáo, không huấn luyện mô hình; notebook 03/04/05 gọi các script tương ứng.
+scripts/import_equal20_results.py kiểm chứng archive/notebook, metric NPZ, history và file variants. scripts/build_equal20_report.py tạo report/slide/Q1–Q5 từ evidence mới; build_report.py mặc định gọi builder này. scripts/build_study_guide.py kiểm tra source quotes và render PDF cẩm nang.
 
 ### 10.3. Tài liệu tham khảo
 
-**[1]** Hung, Nam, Luu và Nguyen (2026), [bài báo ViGoEmotions, EACL](https://aclanthology.org/2026.eacl-long.129/), DOI 10.18653/v1/2026.eacl-long.129; §5.1 ở trang PDF 6. **[2]** Nguyen và Nguyen (2020), [PhoBERT, EMNLP Findings](https://aclanthology.org/2020.findings-emnlp.92/); thông tin v2 và yêu cầu segmentation: [VinAIResearch/PhoBERT](https://github.com/VinAIResearch/PhoBERT) và [model card v2](https://huggingface.co/vinai/phobert-base-v2).
+[1] Đề ViGoEmotions và student-guide.pdf trong docs/, yêu cầu Midterm A–E và Final RQ1.
 
-**[3]** scikit-learn: [TF-IDF](https://scikit-learn.org/stable/modules/feature_extraction.html), [OvR 1.6.1](https://scikit-learn.org/1.6/modules/generated/sklearn.multiclass.OneVsRestClassifier.html), [Logistic Regression 1.6.1](https://scikit-learn.org/1.6/modules/generated/sklearn.linear_model.LogisticRegression.html), [LRAP](https://scikit-learn.org/1.6/modules/generated/sklearn.metrics.label_ranking_average_precision_score.html). **[4]** PyTorch: [BCEWithLogitsLoss](https://docs.pytorch.org/docs/stable/generated/torch.nn.BCEWithLogitsLoss.html), [AdamW](https://docs.pytorch.org/docs/stable/generated/torch.optim.AdamW.html), [GRU](https://docs.pytorch.org/docs/stable/generated/torch.nn.GRU.html).
+[2] Hung et al., ViGoEmotions, EACL 2026, DOI 10.18653/v1/2026.eacl-long.129; điểm paper không phải điểm của nhóm.
 
-**[5]** Nguồn nội bộ: `configs/baseline27_4ep.json`, ba run JSON, ba NPZ validation, các bảng metric/per-label trong `reports/tables/`, `reports/phobert_tuning/study.json`, `docs/label_mapping.md`, đề bài `docs/02-vigoemotions-vietnamese-emotion.pdf`. Tài liệu thư viện được tra qua Context7 và nguồn chính thức; hành vi triển khai và số đo lấy từ repository, không thay bằng ví dụ trên mạng.
+[3] Nguyen và Nguyen, PhoBERT, EMNLP Findings 2020; model vinai/phobert-base-v2 và revision trong config.
+
+[4] scikit-learn, PyTorch, Hugging Face Transformers và VnCoreNLP: phiên bản theo manifest của study. Nội dung thuật toán/metric giải thích theo source, số đo lấy từ NPZ/run JSON thực.
+
+[5] Evidence chính: reports/kaggle_equal20_2026-11-05/, provenance.json và các checksum notebook/ZIP. Các artifact trước đây không được dùng làm nguồn điểm hiện tại.

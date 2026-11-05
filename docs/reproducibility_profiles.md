@@ -1,56 +1,35 @@
-# Cấu hình và lệnh tái lập từng lượt
+# Profile kết quả chính và lệnh tái lập
 
-Cập nhật 05/11/2026. Mỗi bảng kết quả đi cùng một profile rõ ràng; không sửa `configs/midterm.json` để chuyển qua lại giữa các lượt. File đó giữ giá trị legacy PhoBERT 12 epoch để tương thích gói cũ, không còn là mặc định train neural 27 nhãn.
+Kaggle 08/09 executed và hai ZIP equal20 là source of truth của report/slide/cẩm nang hiện tại.
 
-| Lượt | Profile | GRU / PhoBERT epoch | Bảng nguồn |
-| --- | --- | --- | --- |
-| Baseline gốc 27 nhãn | `configs/baseline27_4ep.json` | 10 / 4 | `reports/tables/*_metrics.csv`, `reports/*_run.json` |
-| Study 28 nhãn (config base trước thêm Neutral) | `configs/neutral28_12ep_base.json` | 10 / 12 | `reports/midterm_2026-11-04/evidence/` |
-| Cấu hình Kaggle 27 nhãn 25/20 trước đây | `configs/kaggle27_25_20.json` | 25 / 20 | Profile giữ riêng; không phải nguồn của bảng baseline gốc |
+| Thành phần | 27 nhãn | 28 nhãn |
+| --- | --- | --- |
+| Profile base | configs/kaggle_equal_20ep.json | Cùng profile; init thêm output Neutral |
+| BiGRU chạy / best | 20 / 17 | 20 / 20 |
+| PhoBERT chạy / best | 20 / 14 | 20 / 15 |
+| Checkpoint selection | emotion27 Macro-F1 val tại 0,5; hòa lấy sớm | Cùng tiêu chí; history dùng selection_macro_f1 |
+| TF-IDF/LR | liblinear, C=1, max_iter=1000, seed 42 | Cùng cấu hình, thêm classifier Neutral |
 
-Hai profile đầu được sao chép trực tiếp từ run/study metadata đã kiểm chứng. Profile Neutral base có `label_count=27`; lệnh `init` thêm Neutral, đặt 28 đầu ra và quy tắc chọn checkpoint bằng validation Macro-F1 28 nhãn tại 0,5. Không suy ra rằng baseline gốc chạy 12 epoch từ config base của study mới.
+TF-IDF không có epoch neural tương đương. Cùng epoch không có nghĩa cùng compute; batch GRU/PhoBERT là 64/16. Cả bốn lượt neural đã chạy đủ 20 epoch; best checkpoint ở giữa không làm giảm số epoch thực chạy.
 
-## Workflow Kaggle chính mới — 20/20
+Hai manifest cùng Tesla T4, Python 3.13.16, Torch 2.11.0+cu130, Transformers 4.57.3, sklearn 1.6.1. Code chỉ dùng GPU thứ nhất. CSV/source/profile raw hash ở bản 28 có biến thể CRLF; importer xác minh checksum từng file là LF/CRLF của cùng nội dung local, config sau parse và fixed IDs khớp. Giữ nguyên manifest, không sửa hash để vượt kiểm tra. Một seed chưa đo độ biến thiên.
 
-Theo lựa chọn ngày 05/11, notebook 08 (27 nhãn) và 09 (28 nhãn) dùng chung `configs/kaggle_equal_20ep.json`: BiGRU và PhoBERT cùng 20 epoch, cùng chọn checkpoint bằng emotion27 Macro-F1. TF-IDF giữ cùng solver, không có epoch neural. Các profile/bảng lịch sử ở trên được giữ nguyên; không dùng chúng thay điểm của lượt Kaggle mới. Xem [hướng dẫn đầy đủ](kaggle_equal_epochs.md). Chưa có kết quả GPU 20/20 mới.
-
-## Kiểm chứng số liệu đã lưu, không train lại
-
-```bash
-.venv/bin/python scripts/audit_reports.py
-```
-
-Lệnh kiểm tra baseline/EDA/ablation bằng xác suất đã lưu và chỉ sinh file tạm. Xác suất study 28 nhãn được cung cấp riêng tại `reports/midterm_2026-11-04/evidence/models/{tfidf_lr,gru,phobert}/val_predictions.npz`; file chỉ có ID, nhãn và xác suất. `provenance.json` ghi hash các thành phần lấy nguyên từ ZIP nguồn. Notebook 07 tái chạy audit split và ghi vào `reports/split_audit/`.
-
-## Huấn luyện lại baseline 27 nhãn khi cần
-
-Thực hiện trong môi trường GPU có dependencies tại `requirements-colab.txt` và CSV được cấp quyền. Đây là lệnh tái lập điều kiện thí nghiệm, không cam kết bitwise-identical giữa runtime/GPU/package khác nhau. Không cần huấn luyện lại để dùng bộ midterm hiện có.
+## Kiểm chứng và build báo cáo
 
 ```bash
-python scripts/train_neural.py --model gru --config configs/baseline27_4ep.json --output-dir reports/baseline27_rerun/gru --checkpoint data/checkpoints/baseline27_rerun/gru.pt
-python scripts/train_neural.py --model phobert --config configs/baseline27_4ep.json --output-dir reports/baseline27_rerun/phobert --checkpoint data/checkpoints/baseline27_rerun/phobert.pt
+.venv/bin/python scripts/import_equal20_results.py
+.venv/bin/python scripts/build_report.py
+.venv/bin/python scripts/build_study_guide.py
 ```
 
-Mỗi output/checkpoint phải chưa tồn tại. `train_tfidf.py` dùng profile baseline gốc; fit lại ghi vào artifact chính nên lưu bản sao trước nếu chỉ cần thí nghiệm mới. Notebook 04 Colab/Kaggle giờ truyền profile baseline 10/4 tường minh. Muốn chạy profile 25/20, đổi đối số `--config` cho cả hai model, lưu và trình bày thành lượt khác; không sửa đè config chung hoặc trộn bảng kết quả.
+Import đọc hai ZIP private tại root, hai executed notebook ở notebooks/ và CSV được cấp quyền. Không nạp model, train, inference lại hoặc chấm test. Tính lại sáu metric từ NPZ, kiểm tra IDs/targets/mapping/probabilities, config/history/best epoch và checkpoint member. Evidence an toàn nằm tại reports/kaggle_equal20_2026-11-05/; provenance lưu SHA-256 nguồn và file đã trích.
 
-## Huấn luyện study Neutral 28 nhãn mới khi cần
+Build report mặc định chỉ dùng evidence equal20; thiếu evidence sẽ dừng. Không tự fallback về model scores trong reports/tables hoặc run JSON cũ. Dữ liệu EDA và audit split vẫn dùng cùng CSV/fixed IDs.
 
-```bash
-python scripts/neutral_28_labels.py init --output reports/neutral_28_labels/rerun_01 --base-config configs/neutral28_12ep_base.json
-python scripts/neutral_28_labels.py train --model tfidf_lr --output reports/neutral_28_labels/rerun_01
-python scripts/neutral_28_labels.py train --model gru --output reports/neutral_28_labels/rerun_01
-python scripts/neutral_28_labels.py train --model phobert --output reports/neutral_28_labels/rerun_01
-python scripts/neutral_28_labels.py report --output reports/neutral_28_labels/rerun_01
-```
+## Chạy mới trên Kaggle
 
-Notebook 06 dùng cùng profile 12 epoch. Study đóng băng config/data khi init; không thay config giữa lượt. Test vẫn mặc định chưa chấm. Sweep learning rate notebook 05 dùng profile baseline 4 epoch và chưa có kết quả GPU; không phải điều kiện bắt buộc trước khi nộp midterm.
+Xem [giao thức Kaggle](kaggle_equal_epochs.md). Tạo ZIP code bằng scripts/package_kaggle_equal_epochs.py; notebook 08 chạy 27 nhãn, 09 chạy 28 nhãn. Cùng profile/source/dataset, workspace và ZIP kết quả riêng. Không đổi config/runtime trong study đã init. Các file training cũ có default profile lịch sử khi chạy trực tiếp không tham số; workflow chính truyền profile equal20 rõ ràng, không dựa vào các default đó.
 
-## Gói chia sẻ
+## Các profile trước đây
 
-```bash
-python scripts/package_colab.py --include-results
-```
-
-Gói `vigoemotions_colab.zip` gồm source, docs/PDF, config, fixed split IDs, bảng/hình và saved probabilities được phép chia sẻ; notebook trong ZIP được xóa output/execution metadata. Script lọc private study, checkpoint, vocabulary/tokenizer/resources và CSV có cột văn bản nguồn. Gói riêng `package_neutral28.py` cũng làm sạch notebook.
-
-Không kèm `data/`, `.git/`, backup thực thi riêng tư hoặc ZIP checkpoint. Các commit cũ từng có output dữ liệu nguồn: làm sạch bản hiện tại không xóa lịch sử; dùng ZIP chia sẻ đã kiểm tra, không phân phối lịch sử Git cũ. Không rewrite lịch sử trong lần hoàn thiện này.
+configs/baseline27_4ep.json, configs/neutral28_12ep_base.json và configs/kaggle_baseline_25_20ep.json cùng artifact cũ chỉ là lịch sử. Không dùng chúng làm epoch/điểm/best checkpoint cho báo cáo chính hiện tại. Không chỉnh metadata cũ để biến thành lượt 20 epoch.

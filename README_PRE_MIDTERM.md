@@ -1,5 +1,7 @@
 # Chuẩn bị thuyết trình midterm — chốt nội dung 05/11/2026
 
+> **Phạm vi lịch sử:** Các run/điểm trước lượt Kaggle 20 epoch không còn là kết quả chính. Dùng [README hiện tại](README.md) và report/slide equal20.
+
 Bộ hiện tại đã cập nhật kết quả dự đoán thêm Neutral từ notebook 06 và ZIP riêng tư. Dùng tài liệu sau cho buổi midterm; các bộ có ngày 23/10 trong `reports/` là snapshot lịch sử.
 
 Đã hoàn tất audit split, tách config/lệnh tái lập, làm sạch notebook/gói chia sẻ, phụ lục per-label và đọc định tính chín ca PhoBERT. Xem [readiness](docs/midterm_readiness_2026-11-05.md). Còn thiếu thông tin nhóm; cần xác nhận yêu cầu official split và các nhận xét hỗ trợ AI.

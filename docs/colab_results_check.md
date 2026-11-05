@@ -1,5 +1,7 @@
 # Kiểm tra kết quả Colab — 14/10/2026
 
+> **Phạm vi lịch sử:** Các run/điểm trước lượt Kaggle 20 epoch không còn là kết quả chính. Dùng [README hiện tại](../README.md) và report/slide equal20.
+
 Đây là kiểm chứng **baseline 27 nhãn gốc**. Kết quả mới 28 nhãn ngày 04/11 được lưu riêng tại [evidence Neutral](../reports/midterm_2026-11-04/evidence/README.md); không thay số trong bản lịch sử này.
 
 Nguồn: `vigoemotions_results.zip` do người dùng cung cấp, gồm 56 file trong `reports/` và `splits/`.
