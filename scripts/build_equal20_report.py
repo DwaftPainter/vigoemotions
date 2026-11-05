@@ -84,7 +84,7 @@ def error_review(frames):
 
 
 def main():
-    from build_report import register_fonts, render_report, render_slides, table
+    from build_report import register_fonts, render_report, table
     provenance = json.loads((OUT/'provenance.json').read_text())
     if provenance['historical_results_used'] or provenance['trained_locally']:
         raise ValueError('The midterm must use the verified Kaggle runs')
@@ -307,57 +307,9 @@ Lệnh tái tạo: python scripts/import_equal20_results.py; python scripts/buil
 '''
     (ROOT/'reports/midterm_report.md').write_text(text)
     (OUT/'results.md').write_text(text)
-    notes = 'Nguồn duy nhất: notebook 08/09 executed, hai ZIP equal20 và NPZ đã kiểm chứng; test chưa chấm.'
-    slides = []
-    def slide(title, bullets, figure=None, note=notes):
-        slides.append((title, bullets, figure, note))
-    slide('ViGoEmotions | Midterm 20 epoch', ['Nhận diện cảm xúc tiếng Việt đa nhãn.', 'Ba model × hai bộ nhãn: 27 và 28 gồm Neutral.', 'Kaggle 08/09 đã hoàn tất; neural đều 20 epoch.', f'PhoBERT 27 Macro-F1 {ph27.macro_f1:.4f}; 28: {ph28.macro_f1:.4f}.'])
-    slide('Dữ liệu & chất lượng', ['20.664 bình luận; split gốc 80/10/10.', 'Train 16.531 → 16.530 sau loại một overlap.', 'Validation 2.066; test 2.067, chưa chấm model.', '725 Neutral-only và 306 mixed trong nguồn.'])
-    slide('Phân bố cảm xúc', ['27 cảm xúc, chín nhãn mỗi tier theo train.', 'Amusement nhiều nhất; relief ít nhất.', f'Chênh lệch max/min {freq.train_count.max()/freq.train_count.min():.2f} lần.', 'Nhãn dương thưa; không dùng accuracy chính.'], 'figures/label_frequency.png')
-    slide('Cardinality & độ dài', ['Train trung bình 1,859 cảm xúc, tối đa 5.', 'Median: 11 token khoảng trắng; 47 ký tự.', 'Whitespace token khác từ và BPE token.', 'Khẩu ngữ, teencode, emoji, HTML.'], 'figures/distributions.png')
-    slide('Các nhãn đi cùng nhau', ['Train: disappointment–sadness 904 mẫu.', 'Anger–annoyance 699; sadness–grief 620.', 'Co-occurrence và phi chỉ tính từ train.', 'Tương quan không chứng minh nhân quả.'], 'figures/train_correlation.png')
-    slide('Split & tránh leakage', ['Giữ split được cấp; audit 07 toàn vẹn PASS.', 'Fixed IDs khớp, không overlap sau xử lý.', 'Fit vocabulary/IDF chỉ trên train.', 'Prevalence audit chưa chứng minh stratification.', 'Test giữ cho Final.'])
-    slide('27 hay 28 đầu ra?', ['27: Neutral-only là vector cảm xúc toàn 0.', '28: Neutral là output ID 27 học được.', 'Giữ mixed annotation; không ép loại trừ.', 'Validation có 94 Neutral dương.', 'Sigmoid độc lập + BCE; không softmax.'])
-    slide('Ba mô hình cùng profile', ['TF-IDF + OvR LR: liblinear, max_iter=1000.', 'BiGRU từ đầu: embed/hidden 128; batch 64.', 'PhoBERT full fine-tune: lr 2e-5; batch 16.', 'BiGRU/PhoBERT đều đủ 20 epoch ở cả hai bản.', 'TF-IDF không có epoch neural tương đương.'])
-    slide('Checkpoint & tính tái lập', ['Seed 42; ngưỡng 0,5; cùng split và profile.', 'Chọn bằng emotion27 Macro-F1; hòa lấy sớm.', 'Best GRU 27/28: 17/20; PhoBERT: 14/15.', 'Cùng Tesla T4 và phiên bản package manifest.', 'Hash khác do LF/CRLF đã được đối chiếu.'])
-    slide('Kết quả 27 cảm xúc', [f'TF-IDF Macro-F1 {selected.loc[(27,"tfidf_lr")].macro_f1:.4f}.', f'BiGRU Macro-F1 {selected.loc[(27,"gru")].macro_f1:.4f}.', f'PhoBERT Macro-F1 {ph27.macro_f1:.4f}; Micro {ph27.micro_f1:.4f}.', f'PhoBERT Hamming {ph27.hamming_loss:.4f}; LRAP {ph27.lrap:.4f}.', 'Per-label, tham số và thời gian trong report.'])
-    slide('Kết quả 28 nhãn', [f'TF-IDF Macro-F1 {selected.loc[(28,"tfidf_lr")].macro_f1:.4f}.', f'BiGRU Macro-F1 {selected.loc[(28,"gru")].macro_f1:.4f}.', f'PhoBERT Macro-F1 {ph28.macro_f1:.4f}; Micro {ph28.micro_f1:.4f}.', f'PhoBERT Hamming {ph28.hamming_loss:.4f}; LRAP {ph28.lrap:.4f}.', 'Metric này tính đủ 28 nhãn, gồm Neutral.'])
-    slide('Cùng 27 cảm xúc: Neutral có giúp?', [f'PhoBERT 27: {ph27.macro_f1:.4f}; bản 28 chiếu 27: {ph28.emotion27_macro_f1:.4f}.', f'Delta PhoBERT {paired.iloc[2].delta_pp:+.2f} điểm phần trăm.', f'Delta BiGRU {paired.iloc[1].delta_pp:+.2f} điểm; TF-IDF không đổi.', 'Lượt này chưa cho thấy lợi ích trên 27 cảm xúc.', 'Một seed; không kết luận nhân quả/thống kê.'])
-    slide('Neutral riêng còn khó', [f'PhoBERT Neutral F1 {ng.f1:.4f}.', f'Precision {ng.precision:.4f}; recall {ng.recall:.4f}.', f'{int(ng.TP)} TP, {int(ng.FP)} FP, {int(ng.FN)} FN; support 94.', 'Model 27 không có output Neutral.', 'Dự đoán rỗng không tự động là Neutral.'])
-    slide('Đường học đủ 20 epoch', ['Bốn history neural đều đủ epoch 1–20.', 'Best checkpoint có thể ở giữa lịch sử.', 'Epoch 1 PhoBERT 27 F1=0; sau đó cải thiện.', 'Thiếu val loss: chưa chẩn đoán overfitting.'], relative_fig+'learning_curves.png')
-    pho_q1 = q1[2]; pho_q2 = q2[2]
-    slide('Q1–Q2 | Nhãn và tần suất', [f'PhoBERT cao nhất: {pho_q1["highest"]}, F1 {pho_q1["highest_f1"]:.4f}.', f'Thấp nhất: {pho_q1["lowest"]}, F1 {pho_q1["lowest_f1"]:.4f}.', f'PhoBERT rho {pho_q2["spearman_rho"]:.3f}; p {pho_q2["p_value"]:.3f}.', 'Phụ lục có F1 mọi nhãn cho cả ba model.', 'Tương quan mô tả, không suy ra nguyên nhân.'])
-    slide('Q3–Q4 | Cặp nhãn và phong cách', [f'Disappointment–sadness: PhoBERT đúng đủ {pair_rows[2]["joint_TP"]}/122 ca.', f'Joint recall {pair_rows[2]["joint_recall"]*100:.2f}% tại 0,5.', f'PhoBERT hơn GRU nhiều nhất: {top_style["style"]}.', f'Delta {top_style.delta_pp:+.2f} điểm Macro-F1 trong nhóm.', 'Style heuristic chồng lấn; chỉ dùng lượt 27 mới.'])
-    pho_s = sensitivity[2]
-    slide('Q5 | Ngưỡng quyết định', [f'PhoBERT tại 0,5: Macro-F1 {pho_s["default_macro"]:.4f}.', f'Lưới val tốt nhất {pho_s["best_exploratory_threshold"]:.2f}: {pho_s["exploratory_macro"]:.4f}.', 'Khảo sát lại từ NPZ mới; giữ checkpoint.', 'Không thay điểm chính hoặc xem là điểm test.', 'Động lực cho RQ Final về decoder.'])
-    slide('Đọc lỗi từ kết quả mới', ['Sáu ca PhoBERT 28: ba Neutral FP, ba FN.', 'Khó: cảm xúc hàm ý, câu ngắn, HTML, từ tục.', 'Bảng giữ ID/nhãn/xác suất, không có raw text.', 'Nhận xét có hỗ trợ AI; nhóm cần xác nhận.', 'Ứng viên lỗi tự sinh chưa là audit thủ công.'])
-    slide('RQ Final & việc cần chốt', ['Khóa checkpoint neural; không retrain decoder.', 'So fixed 0,5 / global tuned / per-label tuned.', 'Tune validation → khóa → chấm test một lần.', 'Đọc ít nhất 20 FN/20 FP; phân tích tier/cardinality.', 'Bổ sung tên/MSSV/phân công, xác nhận split.'])
-    slide('Nguồn và kết luận', ['PhoBERT tốt nhất trong từng study mới.', 'Thêm Neutral chưa giúp F1 trên 27 cảm xúc.', 'Nguồn: hai ZIP và notebook 08/09 executed.', 'Đã kiểm chứng sáu NPZ, history và checkpoint.', 'Đề môn, paper ViGoEmotions, PhoBERT, thư viện.'])
-    spoken = [
-        'Nhóm nghiên cứu nhận diện đa nhãn cảm xúc trên bình luận tiếng Việt. Bài trình bày dùng sáu kết quả Kaggle mới, trong đó BiGRU và PhoBERT đều chạy đủ 20 epoch ở cả hai bộ nhãn. Mọi điểm là validation; test được giữ cho Final.',
-        'Dữ liệu có 20.664 mẫu chia sẵn. Nhóm loại một mẫu train trùng văn bản test và còn 16.530 mẫu train. Nguồn có cả Neutral-only và Neutral đi cùng cảm xúc, nên nhóm công bố quy tắc mã hóa trước khi so sánh.',
-        'Nhóm chia head, mid và tail theo thứ hạng tần suất trên train, chín nhãn mỗi tier. Nhãn dương còn thưa so với số đầu ra, vì vậy một mô hình dự đoán toàn 0 có thể có Hamming Loss thấp nhưng F1 bằng 0.',
-        'Một mẫu train trung bình có khoảng 1,859 cảm xúc. Median độ dài là 11 token khoảng trắng, khác số từ tiếng Việt và BPE token. Vì thế mỗi pipeline dùng cách tokenize phù hợp và ghi tỷ lệ truncation riêng.',
-        'Disappointment và sadness là cặp đồng xuất hiện nhiều nhất trong các cặp train được khảo sát. Nhóm xem cả số lần đồng xuất hiện và tương quan phi, vì đếm lớn có thể đến từ tần suất riêng của hai nhãn.',
-        'Nhóm giữ split được cấp và kiểm tra fixed IDs, overlap và prevalence bằng notebook 07. Chỉ train được dùng để học vocabulary và IDF. Audit cho bằng chứng phân bố, chưa xác nhận được thuật toán stratification gốc; nhóm cần làm rõ với giảng viên.',
-        'Bản 27 coi Neutral-only là vector cảm xúc toàn 0. Bản 28 học Neutral qua một output riêng và giữ mixed annotation. Do các nhãn không loại trừ nhau, nhóm dùng sigmoid và BCE, không dùng softmax hay ép Neutral loại trừ cảm xúc.',
-        'TF-IDF là baseline từ vựng với OvR Logistic Regression. BiGRU học embedding và trọng số từ đầu, còn PhoBERT full fine-tuning backbone pretrained. Cả hai neural có cùng ngân sách 20 epoch; TF-IDF dùng cùng solver và max_iter, không có epoch neural tương đương.',
-        'Hai study cùng seed, split, profile và tiêu chí chọn checkpoint trên 27 cảm xúc tại ngưỡng 0,5. Nhóm chạy hết 20 epoch rồi nạp best, nên best ở epoch 14 hoặc 15 không có nghĩa chỉ train từng đó. Các chênh lệch checksum đã được đối chiếu là LF/CRLF.',
-        f'Với 27 cảm xúc, PhoBERT đạt Macro-F1 {ph27.macro_f1:.4f}, cao nhất trong ba model của study. Report có thêm Micro-F1, Hamming Loss, LRAP, F1 từng nhãn và chi phí; không dùng một metric trung bình để nói model tốt nhất cho mọi nhãn.',
-        f'Với đủ 28 nhãn, PhoBERT đạt Macro-F1 {ph28.macro_f1:.4f} và tiếp tục đứng đầu trong study này. Đây là metric có thêm Neutral, nên không lấy trực tiếp số này trừ Macro-F1 27 để kết luận tác động của thêm nhãn.',
-        f'Để so cùng tập nhãn, nhóm chấm lại 27 cột cảm xúc của bản 28. PhoBERT đạt {ph28.emotion27_macro_f1:.4f}, thấp hơn bản 27 khoảng {abs(paired.iloc[2].delta_pp):.2f} điểm phần trăm. Lượt một seed này chưa cho thấy lợi ích trên 27 cảm xúc; chưa có kết luận nhân quả hoặc kiểm định thống kê.',
-        f'Neutral F1 của PhoBERT là {ng.f1:.4f}. Mô hình tìm được 45 trong 94 mẫu Neutral thật, còn 49 bỏ sót và 67 dự đoán sai. Vì model 27 không có output Neutral nên metric Neutral của nó không xác định, không tự gán bằng 0.',
-        'Bốn đường học có đủ 20 epoch. PhoBERT 27 bắt đầu với F1 bằng 0 nhưng sau đó cải thiện, minh họa vì sao không kết luận thất bại từ epoch đầu. F1 sau best dao động dù train loss giảm; thiếu validation loss nên nhóm không chẩn đoán overfitting chỉ từ biểu đồ này.',
-        f'Ở PhoBERT 27, gratitude có F1 cao nhất và disapproval thấp nhất. Spearman giữa tần suất train và F1 chỉ khoảng {pho_q2["spearman_rho"]:.3f}, nên dữ liệu hiện tại không hỗ trợ nhận xét đơn giản rằng nhãn càng phổ biến càng dễ. Phụ lục có kết quả của mọi nhãn và mọi model.',
-        f'PhoBERT dự đoán đủ disappointment–sadness ở {pair_rows[2]["joint_TP"]} trên 122 ca validation có cả hai nhãn. Với phong cách, teencode có mức hơn BiGRU lớn nhất trong các nhóm khảo sát, khoảng {top_style.delta_pp:.2f} điểm Macro-F1. Các style là heuristic, có chồng lấn và nhiễu.',
-        f'Trên checkpoint PhoBERT 27 cố định, lưới ngưỡng validation cho điểm cao nhất ở {pho_s["best_exploratory_threshold"]:.2f}, Macro-F1 {pho_s["exploratory_macro"]:.4f}. Mức tăng so với 0,5 rất nhỏ và Hamming Loss xấu hơn. Đây là khảo sát hậu nghiệm, bảng chính vẫn giữ 0,5 và chưa có kết quả test.',
-        'Nhóm đọc sáu ca Neutral FP/FN của model mới. Câu ngắn, cảm xúc hàm ý, HTML và từ tục gợi ra hướng điều tra, nhưng đây là giả thuyết từ các ca có chủ đích. Phần đọc có hỗ trợ AI, nhóm cần xác nhận; danh sách lỗi tự sinh không phải audit thủ công đã hoàn tất.',
-        'Final sẽ kiểm tra một ngưỡng chung có phù hợp cho mọi nhãn không. Nhóm khóa checkpoint neural, giữ nguyên backbone, chọn global hoặc per-label thresholds trên validation rồi mới chấm test sau khi khóa lựa chọn. Trước khi nộp cần bổ sung thông tin nhóm và xác nhận giới hạn split.',
-        'Kết quả chính cho thấy PhoBERT đứng đầu trong từng study, còn thêm Neutral chưa cải thiện emotion27 ở lượt này. Mỗi kết luận có NPZ, history và provenance từ hai ZIP Kaggle. Nhóm công bố rõ một seed, validation dùng chọn checkpoint và test chưa chấm.',
-    ]
-    slides = [(title, bullets, figure, spoken[i]) for i, (title, bullets, figure, _) in enumerate(slides)]
-    write_json(OUT/'slides.json', slides)
-    register_fonts(); render_report(text); render_slides(slides)
+    register_fonts(); render_report(text)
+    from build_equal20_presentation import build_presentation
+    build_presentation()
     evidence_readme = '''# Evidence Kaggle 20 epoch — kết quả chính midterm
 
 Hai ZIP kết quả và notebook 08/09 executed là nguồn. `provenance.json` ở thư mục cha lưu SHA-256, đối chiếu LF/CRLF, môi trường và hash các thành viên được trích. Thư mục này chỉ chứa JSON và NPZ với ID/nhãn/xác suất, không có raw text, vocabulary hoặc checkpoint.

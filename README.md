@@ -13,8 +13,8 @@ Khi chiếu model 28 về cùng 27 cảm xúc, PhoBERT đạt **0,583580**, th�
 ## Mở nội dung để thuyết trình
 
 - [Báo cáo PDF](reports/midterm_report.pdf) / [Markdown](reports/midterm_report.md).
-- [20 slide PDF](reports/midterm_slides.pdf) / [nội dung và ghi chú](reports/midterm_slides.md).
-- [Lời dẫn và Q&A hiện tại](docs/midterm_presentation_2026-11-05.md).
+- [20 slide tiếng Anh PDF](reports/midterm_slides.pdf) / [nội dung và speaker notes](reports/midterm_slides.md).
+- [Script tiếng Anh + Q&A](docs/midterm_presentation_en.md) / [PDF để luyện nói](docs/midterm_presentation_en.pdf). Bản giải thích tiếng Việt vẫn ở [lời dẫn ôn tập](docs/midterm_presentation_2026-11-05.md).
 - [Bảng sáu model, Q1–Q5 và evidence](reports/kaggle_equal20_2026-11-05/README.md).
 - [Cẩm nang giải thích ba mô hình](docs/VIGOEMOTIONS_3_MODELS_STUDY_GUIDE_VI.pdf) / [Markdown](docs/VIGOEMOTIONS_3_MODELS_STUDY_GUIDE_VI.md).
 - [Trạng thái trước nộp](docs/midterm_readiness_2026-11-05.md), [thông tin nhóm cần bổ sung](docs/team_information.md).
@@ -43,6 +43,8 @@ Trong môi trường local có dependencies theo `requirements.txt`:
 .venv/bin/python scripts/build_report.py
 .venv/bin/python scripts/build_study_guide.py
 ```
+
+Tạo riêng slide/script tiếng Anh từ evidence đã kiểm chứng: `.venv/bin/python scripts/build_equal20_presentation.py`. Lệnh build report đầy đủ cũng giữ slide bằng tiếng Anh.
 
 Import cần hai ZIP, notebook executed và CSV nguồn. Evidence/tổng hợp mới nằm riêng tại `reports/kaggle_equal20_2026-11-05/`; không ghi đè bảng model các lượt cũ. Build report thiếu evidence mới sẽ dừng, không tự quay về số cũ. Cẩm nang kiểm tra nguyên văn các đoạn trích source trước khi render.
 

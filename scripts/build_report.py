@@ -101,12 +101,12 @@ def render_report(markdown):
     doc.build(story,onFirstPage=footer,onLaterPages=footer)
 
 
-def render_slides(slides):
+def render_slides(slides, language='vi'):
     if len(slides) > 20:
         raise ValueError('Midterm presentation must contain at most 20 slides')
     c=canvas.Canvas(str(REPORTS/'midterm_slides.pdf'),pagesize=(960,540))
     c.setTitle('ViGoEmotions — Midterm presentation')
-    md=['# ViGoEmotions — Nội dung thuyết trình giữa kỳ','']
+    md=['# ViGoEmotions — '+('Midterm presentation' if language == 'en' else 'Nội dung thuyết trình giữa kỳ'),'']
     for idx,(title,bullets,figure,note) in enumerate(slides,1):
         c.setFillColor(colors.HexColor('#f6f8fa'));c.rect(0,0,960,540,fill=1,stroke=0)
         c.setFillColor(colors.HexColor('#153b50'));c.rect(0,440,960,100,fill=1,stroke=0)
@@ -128,7 +128,8 @@ def render_slides(slides):
         c.drawString(45,25,'ATI 2026  /  ViGoEmotions  /  Validation only')
         c.drawRightString(915,25,f'{idx:02d} / {len(slides):02d}')
         c.showPage()
-        md += [f'## {idx}. {title}','',*['- '+b for b in bullets],'',f'Ghi chú thuyết trình: {note}','']
+        note_label = 'Speaker notes' if language == 'en' else 'Ghi chú thuyết trình'
+        md += [f'## {idx}. {title}','',*['- '+b for b in bullets],'',f'{note_label}: {note}','']
     c.save();(REPORTS/'midterm_slides.md').write_text('\n'.join(md),encoding='utf-8')
 
 

@@ -3,9 +3,9 @@
 **Nguồn chính hiện tại là Kaggle 20 epoch, notebook 08/09 executed.**
 
 1. [Báo cáo](midterm_report.pdf) / [Markdown](midterm_report.md).
-2. [20 slide](midterm_slides.pdf) / [ghi chú](midterm_slides.md).
+2. [20 slide tiếng Anh](midterm_slides.pdf) / [speaker notes](midterm_slides.md).
 3. [Kết quả, Q1–Q5 và evidence mới](kaggle_equal20_2026-11-05/README.md).
-4. [Lời dẫn và Q&A](../docs/midterm_presentation_2026-11-05.md).
+4. [Script tiếng Anh + Q&A](../docs/midterm_presentation_en.md) / [PDF](../docs/midterm_presentation_en.pdf).
 
 `kaggle_equal20_2026-11-05/model_comparison.csv` có đủ sáu model và metric đúng tập nhãn; `paired_emotion27_delta.csv` dùng cùng 27 cảm xúc; `neutral_metrics.csv` chỉ Neutral. `provenance.json` ghi checksum, môi trường và đối chiếu LF/CRLF. Evidence chỉ chứa ID/nhãn/xác suất/metadata, không có raw text hoặc trọng số.
 

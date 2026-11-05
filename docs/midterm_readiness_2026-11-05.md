@@ -16,7 +16,7 @@
 
 Hai executed notebook và ZIP nguồn được giữ nguyên. Importer không train, không inference lại, không nạp pickle, không xuất raw text/trọng số. Bảng model ít epoch, các báo cáo theo ngày cũ và output notebook 01–07 chỉ là lịch sử. Các artifact lịch sử không bị chỉnh thành số mới.
 
-Trước buổi trình bày: điền thông tin nhóm; nhóm xác nhận phần đọc lỗi; chuẩn bị giải thích giới hạn official split, một seed và chưa có test. Dùng docs/midterm_presentation_2026-11-05.md và reports/midterm_slides.pdf.
+Trước buổi trình bày: điền thông tin nhóm; nhóm xác nhận phần đọc lỗi; chuẩn bị giải thích giới hạn official split, một seed và chưa có test. Thuyết trình bằng tiếng Anh: dùng docs/midterm_presentation_en.md (có bản PDF) và reports/midterm_slides.pdf. Lời dẫn tiếng Việt giữ để ôn tập.
 
 ## Kiểm tra bộ tài liệu hiện tại
 

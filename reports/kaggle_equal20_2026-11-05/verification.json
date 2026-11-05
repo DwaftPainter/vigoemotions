@@ -22,13 +22,18 @@
     },
     "reports/midterm_slides.pdf": {
       "pages": 20,
-      "sha256": "1dc3153f234c9aeacd304b253b4f782765acc9e984d9c511e98bf79999a3e9a1",
-      "extractable_characters": 5490
+      "sha256": "774d53189eb5c171a909491d2bbc5cea6b36b0e3e9f950eb4b4445711911b612",
+      "extractable_characters": 6364
     },
     "docs/VIGOEMOTIONS_3_MODELS_STUDY_GUIDE_VI.pdf": {
       "pages": 22,
       "sha256": "41e565d6aa3a397c236ea8ad27323106d91467ba7c8dfed54a2c9b8824d8bbb3",
       "extractable_characters": 57386
+    },
+    "docs/midterm_presentation_en.pdf": {
+      "pages": 6,
+      "sha256": "f27624311bda9c8050cd4b7895b3bda0b8d5d9d584937ca1b7d8804814d2dcef",
+      "extractable_characters": 15243
     }
   },
   "code_quotes_verified": 16,
@@ -38,5 +43,16 @@
   "markdown_targets_exist": true,
   "representative_pdf_pages_visually_inspected": true,
   "test_model_scoring": false,
-  "historical_model_metrics_in_primary_report": false
+  "historical_model_metrics_in_primary_report": false,
+  "english_presentation": {
+    "slides": 20,
+    "matching_script_sections": 20,
+    "spoken_words": 1438,
+    "target_minutes": "12–15, including short pauses and handovers; Q&A additional",
+    "qa_answers": 12,
+    "related_tests_rerun": 7,
+    "all_key_metrics_checked": true,
+    "representative_slide_and_script_pages_visually_inspected": true,
+    "source_notebooks_unchanged": true
+  }
 }
