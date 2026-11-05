@@ -147,3 +147,48 @@ Speaker notes: For the final evaluation, we will test whether one threshold suit
 - Sources: course brief, ViGoEmotions, PhoBERT and libraries.
 
 Speaker notes: To conclude, PhoBERT gives the strongest overall results in both settings. Adding Neutral does not improve shared-emotion F1 in this run, and Neutral prediction still makes substantial errors. Saved Kaggle predictions and histories support these findings. Our next step is controlled threshold evaluation. Thank you; we welcome your questions.
+
+
+<!-- Optional supplementary slides: 16–17; use for Q&A only. -->
+
+## 16. Supplementary Table A · Model performance
+
+Validation n = 2,066 · threshold 0.5 · full-label scores reported separately
+
+| Labels | Model | Macro-F1 ↑ | Micro-F1 ↑ | Hamming ↓ | LRAP ↑ | Best ep. | Train time |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 27 | TF-IDF + OvR LR | 0.2388 | 0.2712 | 0.0606 | 0.6407 | — | 2.75 s |
+| 27 | BiGRU | 0.4220 | 0.4590 | 0.0626 | 0.6191 | 17 | 80.3 s |
+| 27 | PhoBERT | 0.5974 | 0.5996 | 0.0550 | 0.7419 | 14 | 4.05 h |
+| 28 | TF-IDF + OvR LR | 0.2310 | 0.2662 | 0.0601 | 0.6096 | — | 2.52 s |
+| 28 | BiGRU | 0.4086 | 0.4483 | 0.0628 | 0.5851 | 20 | 83.6 s |
+| 28 | PhoBERT | 0.5783 | 0.5829 | 0.0575 | 0.7077 | 15 | 3.90 h |
+
+Both neural models trained for 20 epochs. Best ep. is the selected checkpoint. Rank models within each label block; full 27-label and 28-label Macro-F1 use different label sets.
+
+Source: current model_comparison.csv. CPU TF-IDF; Tesla T4 neural. Times exclude preprocessing; no test scores.
+
+Speaker notes: Optional backup for Q&A. Main presentation ends at slide 15.
+
+## 17. Supplementary Table B · Pair and text-style analysis
+
+27-output study only · validation · threshold 0.5 · supplementary detail for slide 11
+
+| Model | Joint TP | Support | Recall |
+| --- | --- | --- | --- |
+| TF-IDF + OvR LR | 2 | 122 | 1.64% |
+| BiGRU | 37 | 122 | 30.33% |
+| PhoBERT | 63 | 122 | 51.64% |
+
+| Group | n | BiGRU F1 | PhoBERT F1 | Δ (pp) |
+| --- | --- | --- | --- | --- |
+| All | 2,066 | 0.4220 | 0.5974 | +17.54 |
+| Emoji-heavy | 199 | 0.3506 | 0.4789 | +12.83 |
+| Short | 343 | 0.4303 | 0.5654 | +13.51 |
+| Teencode | 307 | 0.3333 | 0.5547 | +22.13 |
+
+Joint recall counts both emotions predicted among examples annotated with both; extra predicted labels are allowed. Style groups overlap and differ in size; Δ = PhoBERT − BiGRU in Macro-F1 percentage points. One seed; no causal or significance claim.
+
+Sources: current pair_preservation.csv; neural_style_comparison.csv. Pair selected by training co-occurrence; no test metrics.
+
+Speaker notes: Optional backup for Q&A; groups overlap and findings are descriptive.

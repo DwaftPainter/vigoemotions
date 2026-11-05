@@ -142,3 +142,9 @@ No. It is the best point in an exploratory validation grid for a fixed checkpoin
 - Read 0.5974 as “zero point five nine seven four”. Keep decimal points in English slides.
 - A change of 0.0138 in an F1 score is about 1.38 percentage points; do not call it a 1.38 percent relative change.
 - Say “validation results”, “in this run”, and “preliminary review” where appropriate. Do not claim test performance or statistical significance.
+
+## Supplementary tables — slides 16–17
+
+Slides 1–15 are the approved main presentation. Their wording, order, numerical results and speaker notes are unchanged. Keep the original timing and handovers above.
+
+Slides 16–17 are optional backup tables for Q&A; they are not part of the timed script. Slide 16 contains the six-model validation results, with 27-label and 28-label metrics in separate blocks. Slide 17 gives additional pair-preservation and text-style numbers from the 27-output study. Show these only if useful when answering a question; no extra spoken script is required.

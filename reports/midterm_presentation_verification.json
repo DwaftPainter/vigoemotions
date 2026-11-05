@@ -1,0 +1,119 @@
+{
+  "scope": "Visual redesign of approved main slides; two optional supporting tables only",
+  "approved_content_commit": "51f2332",
+  "approved_snapshot": "reports/kaggle_equal20_2026-11-05/slides.json",
+  "approved_snapshot_sha256": "b3f255f12caeb8c40c030f54cde755dfb8f8cc8f2b73f07a9be2a9baac133335",
+  "main_slides": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "supplementary_slides": [
+    16,
+    17
+  ],
+  "page_count": 17,
+  "page_size_points": [
+    1280,
+    720
+  ],
+  "main_spoken_words": 803,
+  "content_preservation": {
+    "titles": "unchanged",
+    "bullet_wording_and_numbers": "unchanged",
+    "order": "unchanged",
+    "speaker_notes": "unchanged",
+    "main_markdown": "byte-identical approved Markdown retained as prefix",
+    "script": "entire approved script retained as byte-identical prefix; only optional slides 16–17 note appended",
+    "original_script_sha256": "a374d2ad386ff5265d16779033a81d210b254f3aa443508ad313200ee1cc1d61",
+    "original_markdown_sha256": "3741da5eec50bb853cf00ad51a8e39d772e365c38dfab7a28d67f53870487cf4",
+    "approved_content_functions_unchanged": [
+      "presentation_content",
+      "questions",
+      "script_markdown",
+      "render_script"
+    ],
+    "original_figures_unchanged": {
+      "reports/figures/label_frequency.png": "80d16a422ac4cc3835e2d2deeaed43c5a18e8f2c3614c035e434c6e438a9286b",
+      "reports/kaggle_equal20_2026-11-05/figures/learning_curves.png": "74b98e8313670fe1bfe2d6a155d96c73a3015f64e7417a0e8359da441d485f94"
+    },
+    "every_title_and_bullet_found_in_main_pdf_pages": true
+  },
+  "appendix_sources": [
+    "model_comparison.csv",
+    "pair_preservation.csv",
+    "neural_style_comparison.csv"
+  ],
+  "appendix_scope": "Current verified equal-20 validation results; full 27/28 metrics separate; pair/style analyses use 27 outputs",
+  "automated_checks": {
+    "tests_passed": 12,
+    "test_modules": [
+      "test_locked_presentation",
+      "test_import_equal20_results",
+      "test_report_summary"
+    ],
+    "text_boxes_checked": 262,
+    "text_overlap_count": 0,
+    "overflow_checks": "passed",
+    "reproduced_pdf_page_content_streams": "identical to final PDF"
+  },
+  "visual_inspection": {
+    "pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "result": "passed",
+    "checks": [
+      "clipping",
+      "text overlap",
+      "font sizes",
+      "spacing",
+      "table legibility",
+      "original wording"
+    ]
+  },
+  "protected_inputs": {
+    "files_checked": 105,
+    "changed_files": [],
+    "evidence_files": 101,
+    "executed_notebooks": {
+      "notebooks/09_kaggle_equal_20ep_28_labels_executed.ipynb": "41d4df8db2ac1ac4a22e171ff216c028da3c3a7480d8d58674a0e1d04c28960d",
+      "notebooks/08_kaggle_equal_20ep_27_labels_executed.ipynb": "360aa267fd94fe8b97043b559df8c301a46f06373719a91535441a5a1e2f06d3"
+    },
+    "baseline_aggregate_sha256": "49e55556f9a4940606c5d7bef6b173c46a12f494eea45e684f241621f8faf220"
+  },
+  "generated_outputs_sha256": {
+    "reports/midterm_slides.pdf": "1693bc601392453f60688428438eac9caeef1a7307a96a64021987df6f303464",
+    "reports/midterm_slides.md": "3f9d021cc9424658529cc198affd5467f21e115cdf0c0adaade4e2d0fd7f2e8e",
+    "reports/midterm_slide_design.json": "349768fc4caa50c56fc401a8599fa07054246e0d5b97ed0bd15fc94dc760f67d",
+    "docs/midterm_presentation_en.md": "b947dc9c834c4e98ef3504e03fa5f1e35110ab47dc53b415134abc0cedb36f7d",
+    "docs/midterm_presentation_en.pdf": "339f6bd3d49fe07f33c7f6e8af804b43d90c4a8473488d220a2110dd5a96e890"
+  }
+}
