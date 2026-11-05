@@ -1,13 +1,13 @@
 # ViGoEmotions — English Midterm Presentation Script
 
-15 slides; 830 spoken words. Target: about 8–9 minutes, including short pauses and handovers. Finish before the 10-minute limit; leave any remaining time for questions.
+15 slides; 803 spoken words. Target: about 8–9 minutes, including short pauses and handovers. Finish before the 10-minute limit; leave any remaining time for questions.
 
 Use this script with reports/midterm_slides.pdf. The numerical results come from the verified Kaggle 20-epoch studies. The Vietnamese report and study guide remain available for preparation.
 
 ## Suggested timing
 
-- Slides 1–5: introduction, data and model setup, about 2–2.5 minutes.
-- Slides 6–9: results, Neutral comparison and learning curves, about 2.5–3 minutes.
+- Slides 1–4: compact introduction, data and protocol, about 2 minutes.
+- Slides 5–9: results and learning curves, about 3 minutes.
 - Slides 10–13: midterm questions and errors, about 2–2.5 minutes.
 - Slides 14–15: final research question and conclusion, about 1 minute.
 
@@ -16,72 +16,72 @@ Use this script with reports/midterm_slides.pdf. The numerical results come from
 - Add your real group details to the submitted materials; do not read these preparation instructions aloud.
 - Confirm the six AI-assisted error-review observations before presenting them as your team’s analysis.
 - Rehearse once with a timer. Read key results, rather than every number on a slide.
-- Possible handover points: after slide 5 (setup) and slide 9 (results). Allocate these sections to your actual team members.
+- Possible handover points: after slide 4 (setup) and slide 9 (results). Allocate these sections to your actual team members.
 - Rehearse at roughly 110–120 words per minute. If behind schedule, shorten the learning-curve and frequency comments; keep the main results and conclusion.
 
 ## Slide-by-slide script
 
-### Slide 01 — ViGoEmotions
+### Slide 01 — ViGoEmotions: Task and Dataset
 
 Good morning. Our project recognizes emotions in Vietnamese social-media comments. Because one comment can express several emotions, this is a multi-label task. The dataset contains twenty thousand, six hundred and sixty-four comments. We compare three models, with and without an explicit Neutral output. I will briefly cover the setup, then focus on our results and analysis.
 
-### Slide 02 — Dataset, split and emotion frequency
+### Slide 02 — Data Profile and Leakage Prevention
 
 Comments average about one point eight six emotions, and the median length is eleven whitespace tokens. We keep the supplied split, remove one training copy of a test comment, and fit vocabulary only on training data. Unicode and whitespace are normalized. Our distribution audit does not prove the original stratification algorithm, so that requirement still needs clarification.
 
-### Slide 03 — 27 vs 28 outputs: one additional decision
+### Slide 03 — 27 vs 28 Outputs: What Changes?
 
 The twenty-seven-output model predicts emotions only. Neutral-only comments have an all-zero emotion target. The twenty-eight-output model adds a learned Neutral label. We preserve mixed annotations, where Neutral appears with emotions. Both neural settings use sigmoid outputs and binary cross-entropy because labels are not mutually exclusive. Validation contains ninety-four Neutral-positive examples.
 
-### Slide 04 — Three routes from text to multi-label scores
-
-This diagram shows the three processing routes. TF-IDF uses lexical features and one classifier per label. BiGRU learns embeddings and reads sequences in both directions. PhoBERT uses Vietnamese word segmentation and BPE before a pretrained backbone and a new classification head. The neural routes use independent sigmoid outputs; there is no single-label softmax decision.
-
-### Slide 05 — Architectures and training configurations
+### Slide 04 — Models and Shared Training Protocol
 
 We compare TF-IDF with one-versus-rest Logistic Regression, a bidirectional GRU trained from scratch, and full PhoBERT fine-tuning. Both neural models complete twenty epochs in each setting. TF-IDF uses a solver limit instead. We share the seed and split, and select checkpoints by validation Macro-F1 on the same twenty-seven emotions at threshold zero point five.
 
 Optional handover: “That is our setup. My teammate will now present the results.”
 
-### Slide 06 — PhoBERT leads within each label setting
+### Slide 05 — Results: 27 Emotions
 
-The table separates full twenty-seven-emotion and twenty-eight-label evaluation. PhoBERT leads within each block: Macro-F1 is zero point five nine seven four and zero point five seven eight three, respectively. The additional columns show Micro-F1, Hamming Loss, rankings, selected epochs, and measured training time. Different label sets mean these two overall F1 scores should not be directly subtracted.
+For twenty-seven emotions, Macro-F1 is 0.2388 for TF-IDF, 0.4220 for BiGRU, and 0.5974 for PhoBERT. PhoBERT leads on all four overall metrics in this setting. Macro-F1 weights labels equally; Micro-F1 pools decisions across labels. Hamming Loss measures incorrect decisions, while LRAP evaluates probability rankings.
 
-### Slide 07 — Adding Neutral does not raise shared-emotion F1 here
+### Slide 06 — Results: 28 Labels Including Neutral
+
+For twenty-eight labels, Macro-F1 is 0.2310, 0.4086, and 0.5783, respectively. PhoBERT again performs best within this setting. However, these scores include Neutral. We cannot directly subtract the overall twenty-seven-label and twenty-eight-label scores to measure the benefit of Neutral, because their evaluated label sets differ.
+
+### Slide 07 — Does Neutral Help the Shared 27 Emotions?
 
 For a comparison on identical labels, we score only the twenty-seven emotion columns of the expanded model. PhoBERT then reaches 0.5836, about 1.38 percentage points below the twenty-seven-output model. TF-IDF is unchanged and BiGRU decreases slightly. This run shows no improvement on the shared emotions, but one seed cannot establish a general causal conclusion.
 
-### Slide 08 — A learned Neutral output still makes substantial errors
+### Slide 08 — Neutral Detection Remains Difficult
 
 PhoBERT identifies 45 of the ninety-four Neutral-positive validation examples. It misses 49 and produces 67 false positives, giving Neutral F1 of 0.4369. So the additional label is learned, but still difficult. The twenty-seven-output model has no Neutral classifier; its Neutral F1 is undefined, not zero. An empty prediction is also not automatically Neutral.
 
-### Slide 09 — Twenty epochs trained; the last checkpoint need not win
+### Slide 09 — Learning Curves and Best Checkpoints
 
-These curves use the same twenty-seven-emotion checkpoint-selection metric for both output settings. Both neural models completed twenty epochs. The selected PhoBERT checkpoints are at epochs fourteen and fifteen. Selection is based on validation, not simply the final epoch. Training loss continued to decrease, but validation loss was not recorded, so we do not claim confirmed overfitting.
+These curves cover all twenty epochs. The best PhoBERT checkpoints occur at epochs fourteen and fifteen. We finish training before loading the selected checkpoint. Validation F1 fluctuates after the best epoch even while training loss decreases. Because validation loss was not recorded, we avoid diagnosing confirmed overfitting from training loss alone.
 
 Optional handover: “My teammate will now discuss the analysis and next steps.”
 
-### Slide 10 — Performance varies by label, beyond raw frequency
+### Slide 10 — Q1–Q2: Per-Label Performance and Frequency
 
 For individual emotions, PhoBERT performs best on gratitude and worst on disapproval. The correlation between training frequency and per-label F1 is approximately 0.018, with a p-value of 0.928. These descriptive results do not support a simple rule that more frequent labels are always easier. The report includes every label for all three models.
 
-### Slide 11 — Research questions: a compact evidence checklist
+### Slide 11 — Q3–Q4: Label Pairs and Text Styles
 
 Our most frequent training pair is disappointment and sadness. PhoBERT predicts both correctly in 63 of 122 validation cases containing both labels. For text styles, its largest advantage over BiGRU is in teencode, at about 22.1 percentage points of Macro-F1. Teencode means informal online spellings and abbreviations. Our style groups use heuristics and can overlap, so this finding needs cautious interpretation.
 
-### Slide 12 — PhoBERT gains little from this global threshold grid
+### Slide 12 — Q5: Does the Default Threshold Matter?
 
 We also vary the threshold while keeping the checkpoint fixed. For PhoBERT, the best validation grid point is 0.35, with Macro-F1 0.5978, compared with 0.5974 at zero point five. The gain is tiny and Hamming Loss worsens. This is exploratory analysis, not a test improvement; the main comparison stays at zero point five.
 
-### Slide 13 — Neutral errors: implied affect versus surface cues
+### Slide 13 — Error Analysis: New Neutral Predictions
 
-Two examples illustrate the six-case preliminary, AI-assisted review. On the left, a comment annotated as relief is predicted as Neutral. On the right, a Neutral comment is assigned anger and annoyance. Implied affect and profanity are possible explanations, not proven causes. We show IDs and abstract observations, and the interpretations still need team confirmation.
+A preliminary, AI-assisted review examines three confident Neutral false positives and three Neutral misses. These examples suggest difficulties with implied emotion, short text, HTML, and profanity. These are hypotheses, not proven causes. The review needs team confirmation. We publish sample IDs and abstract observations instead of the original comments.
 
-### Slide 14 — Is one threshold suitable for every emotion?
+### Slide 14 — Final Research Question and Next Steps
 
 For the final evaluation, we will test whether one threshold suits every emotion. We will freeze the best neural checkpoint and compare the default threshold, a tuned global threshold, and per-label thresholds. We select thresholds on validation, lock all choices, then evaluate test once. We also plan a detailed review of at least twenty false negatives and twenty false positives.
 
-### Slide 15 — What the current study supports
+### Slide 15 — Conclusions and Evidence
 
 To conclude, PhoBERT gives the strongest overall results in both settings. Adding Neutral does not improve shared-emotion F1 in this run, and Neutral prediction still makes substantial errors. Saved Kaggle predictions and histories support these findings. Our next step is controlled threshold evaluation. Thank you; we welcome your questions.
 
