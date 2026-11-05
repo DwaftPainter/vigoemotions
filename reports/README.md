@@ -14,3 +14,5 @@ Các bảng EDA trong `tables/label_frequency.csv`, `dataset_summary.csv`, `text
 Snapshot `midterm_2026-11-04/`, `pre_midterm*`, lượt local và các tài liệu theo ngày trước đây đã chuyển vào [archive/reports/](../archive/README.md). Các bảng **model** trong tables/ và run JSON ở reports root vẫn phục vụ script/test lịch sử. Không dùng điểm trong các nguồn đó cho báo cáo hiện tại. EDA dùng chung vẫn giữ nguyên; toàn bộ phân tích model hiện tại ở kaggle_equal20_2026-11-05/.
 
 Lệnh build chính: `python scripts/import_equal20_results.py`, sau đó `python scripts/build_report.py`. Không train lại, không chấm test và không ghi đè artifact lịch sử.
+
+Để dựng lại riêng presentation 15 slide và script tiếng Anh, dùng `python scripts/build_equal20_presentation.py`. [Định nghĩa slide hiện tại](midterm_slide_design.json) nằm ngoài evidence; `kaggle_equal20_2026-11-05/slides.json` là snapshot trước redesign. Bản mới có bảy bảng, pipeline, learning curves, biểu đồ per-label và threshold. [Kiểm chứng presentation](midterm_presentation_verification.json) ghi kết quả kiểm tra riêng; evidence thí nghiệm và notebook executed được giữ nguyên.

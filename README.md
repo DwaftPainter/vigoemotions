@@ -46,6 +46,8 @@ Trong môi trường local có dependencies theo `requirements.txt`:
 
 Tạo riêng slide/script tiếng Anh từ evidence đã kiểm chứng: `.venv/bin/python scripts/build_equal20_presentation.py`. Lệnh build report đầy đủ cũng giữ slide bằng tiếng Anh.
 
+Slide hiện tại dùng bố cục học thuật 16:9, bảy bảng dữ liệu, sơ đồ pipeline và biểu đồ vector. Nội dung/bố cục nằm ở `scripts/academic_slide_design.py`, các hàm render dùng lại ở `scripts/academic_slides.py`; bản định nghĩa tự sinh ở [midterm_slide_design.json](reports/midterm_slide_design.json). Build riêng presentation chỉ đọc evidence và cập nhật slide, speaker notes, script. [Kiểm tra presentation](reports/midterm_presentation_verification.json) tách riêng khỏi kiểm chứng thí nghiệm.
+
 Import cần hai ZIP, notebook executed và CSV nguồn. Evidence/tổng hợp mới nằm riêng tại `reports/kaggle_equal20_2026-11-05/`; không ghi đè bảng model các lượt cũ. Build report thiếu evidence mới sẽ dừng, không tự quay về số cũ. Cẩm nang kiểm tra nguyên văn các đoạn trích source trước khi render.
 
 Để train lượt mới: `.venv/bin/python scripts/package_kaggle_equal_epochs.py`, upload ZIP code và ba CSV nguồn thành hai Dataset Private, import notebook 08 hoặc 09, bật GPU + Internet. Chạy theo [hướng dẫn Kaggle](docs/kaggle_equal_epochs.md). Không cần train lại để dùng các kết quả hiện có.

@@ -1,0 +1,1488 @@
+[
+  {
+    "layout": "title",
+    "section": "MIDTERM",
+    "title": "ViGoEmotions",
+    "subtitle": "Three models. Two label spaces. One shared 20-epoch protocol.",
+    "takeaway": null,
+    "source": "ViGoEmotions / ATI 2026 / Kaggle notebooks 08–09 / Validation only",
+    "headline": "What changes when Neutral becomes\na learned output?",
+    "stats": [
+      [
+        "3",
+        "model families"
+      ],
+      [
+        "20",
+        "epochs for every neural run"
+      ],
+      [
+        "2",
+        "label settings: 27 and 28"
+      ]
+    ],
+    "notes": "Good morning. Our project recognizes emotions in Vietnamese social-media comments. Because one comment can express several emotions, this is a multi-label task. The dataset contains twenty thousand, six hundred and sixty-four comments. We compare three models, with and without an explicit Neutral output. I will briefly cover the setup, then focus on our results and analysis."
+  },
+  {
+    "layout": "table_chart",
+    "section": "01 / DATA",
+    "title": "Dataset, split and emotion frequency",
+    "subtitle": "20,664 source comments • fixed supplied partitions • label statistics from training data",
+    "takeaway": "Preserve the split; fit text representations on train only.",
+    "source": "Sources: current study annotation_counts.csv; fixed split IDs; PhoBERT-27 per-label table. No test model scores.",
+    "table": {
+      "headers": [
+        "Split",
+        "Source n",
+        "Used n",
+        "Role"
+      ],
+      "rows": [
+        [
+          "Train",
+          "16,531",
+          "16,530",
+          "Fit model parameters"
+        ],
+        [
+          "Validation",
+          "2,066",
+          "2,066",
+          "Select checkpoint / explore thresholds"
+        ],
+        [
+          "Test",
+          "2,067",
+          "2,067",
+          "Held out from model evaluation"
+        ],
+        [
+          "Total",
+          "20,664",
+          "20,663",
+          "One train–test text overlap removed"
+        ]
+      ],
+      "x": 64,
+      "top": 520,
+      "widths": [
+        125,
+        120,
+        120,
+        340
+      ],
+      "row_height": 58,
+      "alignments": [
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    "bars": {
+      "labels": [
+        "amusement",
+        "sadness",
+        "annoyance",
+        "joy",
+        "anger",
+        "relief"
+      ],
+      "values": [
+        2868,
+        2785,
+        2662,
+        1614,
+        1589,
+        635
+      ],
+      "x": 807,
+      "top": 479,
+      "width": 409,
+      "height": 260,
+      "label_width": 133
+    },
+    "stats": [
+      {
+        "x": 64,
+        "top": 207,
+        "width": 230,
+        "number": "1.859",
+        "label": "emotions / train comment"
+      },
+      {
+        "x": 330,
+        "top": 207,
+        "width": 230,
+        "number": "11 / 47",
+        "label": "median tokens / characters"
+      }
+    ],
+    "annotations": [
+      {
+        "value": "Most frequent five + least frequent label",
+        "x": 807,
+        "top": 520,
+        "width": 409,
+        "size": 14,
+        "color": "#607487",
+        "height": 35
+      }
+    ],
+    "notes": "Comments average about one point eight six emotions, and the median length is eleven whitespace tokens. We keep the supplied split, remove one training copy of a test comment, and fit vocabulary only on training data. Unicode and whitespace are normalized. Our distribution audit does not prove the original stratification algorithm, so that requirement still needs clarification."
+  },
+  {
+    "layout": "encoding",
+    "section": "02 / TARGETS",
+    "title": "27 vs 28 outputs: one additional decision",
+    "subtitle": "The label mapping and validation examples stay fixed; Neutral becomes an explicit target.",
+    "takeaway": "A missing emotion prediction is not automatically a Neutral prediction.",
+    "source": "Sources: config27.json; evidence/28/config.json; annotation_counts.csv. Encoding examples are schematic targets.",
+    "table": {
+      "headers": [
+        "Property",
+        "27-emotion model",
+        "28-label model"
+      ],
+      "rows": [
+        [
+          "Output space",
+          "27 emotion decisions",
+          "27 emotions + Neutral"
+        ],
+        [
+          "Neutral-only target",
+          "All 27 emotion entries are zero",
+          "Neutral = 1; emotion entries = 0"
+        ],
+        [
+          "Mixed annotation",
+          "Retain the emotion entries",
+          "Retain emotions and Neutral"
+        ],
+        [
+          "Reported full Macro-F1",
+          "Average over 27 labels",
+          "Average over 28 labels"
+        ]
+      ],
+      "x": 64,
+      "top": 520,
+      "widths": [
+        280,
+        436,
+        436
+      ],
+      "row_height": 57,
+      "alignments": [
+        0,
+        0,
+        0
+      ]
+    },
+    "notes": "The twenty-seven-output model predicts emotions only. Neutral-only comments have an all-zero emotion target. The twenty-eight-output model adds a learned Neutral label. We preserve mixed annotations, where Neutral appears with emotions. Both neural settings use sigmoid outputs and binary cross-entropy because labels are not mutually exclusive. Validation contains ninety-four Neutral-positive examples."
+  },
+  {
+    "layout": "pipeline",
+    "section": "03 / METHODS",
+    "title": "Three routes from text to multi-label scores",
+    "subtitle": "Model-specific text representations • 27 or 28 independent label decisions",
+    "takeaway": "Text representation changes across models; the label decision remains independent for each output.",
+    "source": "Sources: frozen run configurations; train_neural.py; neutral_28_labels.py. Neural training: BCEWithLogitsLoss.",
+    "routes": [
+      {
+        "name": "TF-IDF + LR",
+        "tag": "Lexical baseline",
+        "color": "#597594",
+        "top": 520,
+        "nodes": [
+          [
+            "Regex tokens",
+            "1–2 grams"
+          ],
+          [
+            "TF-IDF",
+            "Fit vocabulary on train"
+          ],
+          [
+            "OvR classifiers",
+            "One LR per label"
+          ],
+          [
+            "Label scores",
+            "Threshold at 0.5"
+          ]
+        ]
+      },
+      {
+        "name": "BiGRU",
+        "tag": "Learn from scratch",
+        "color": "#007F86",
+        "top": 400,
+        "nodes": [
+          [
+            "Token IDs",
+            "Lowercase + whitespace"
+          ],
+          [
+            "Embedding",
+            "128 dimensions"
+          ],
+          [
+            "BiGRU + linear",
+            "Forward + backward"
+          ],
+          [
+            "Sigmoid scores",
+            "27 / 28 outputs"
+          ]
+        ]
+      },
+      {
+        "name": "PhoBERT",
+        "tag": "Full fine-tuning",
+        "color": "#142D46",
+        "top": 280,
+        "nodes": [
+          [
+            "Segment + BPE",
+            "VnCoreNLP tokenizer"
+          ],
+          [
+            "PhoBERT backbone",
+            "Pretrained Vietnamese"
+          ],
+          [
+            "Classification head",
+            "Train with backbone"
+          ],
+          [
+            "Sigmoid scores",
+            "27 / 28 outputs"
+          ]
+        ]
+      }
+    ],
+    "caption": "Shared preprocessing: Unicode NFC + whitespace normalization; retain Vietnamese accents and negation.",
+    "notes": "This diagram shows the three processing routes. TF-IDF uses lexical features and one classifier per label. BiGRU learns embeddings and reads sequences in both directions. PhoBERT uses Vietnamese word segmentation and BPE before a pretrained backbone and a new classification head. The neural routes use independent sigmoid outputs; there is no single-label softmax decision."
+  },
+  {
+    "layout": "full_table",
+    "section": "03 / METHODS",
+    "title": "Architectures and training configurations",
+    "subtitle": "Shared seed 42 • fixed split • threshold 0.5 • Tesla T4 for neural models",
+    "takeaway": "Equal epochs control the training budget; they do not imply equal compute.",
+    "source": "Sources: frozen manifests and six run.json files. Parameter counts shown as 27 / 28 outputs; rounded to millions.",
+    "table": {
+      "headers": [
+        "Model",
+        "Representation / architecture",
+        "Parameters 27 / 28",
+        "Batch / learning rate",
+        "Budget"
+      ],
+      "rows": [
+        [
+          "TF-IDF + OvR LR",
+          "Unigram/bigram; up to 40k features; liblinear, C = 1",
+          "0.941M / 0.975M",
+          "Not neural",
+          "max_iter = 1,000"
+        ],
+        [
+          "BiGRU",
+          "Train from scratch; embed/hidden 128; length 128",
+          "2.128M / 2.129M",
+          "64 / 0.001",
+          "20 epochs"
+        ],
+        [
+          "PhoBERT",
+          "VnCoreNLP + BPE; full fine-tuning; length 256",
+          "135.019M / 135.020M",
+          "16 / 2e-5",
+          "20 epochs"
+        ]
+      ],
+      "x": 64,
+      "top": 520,
+      "widths": [
+        185,
+        345,
+        210,
+        230,
+        182
+      ],
+      "row_height": 88,
+      "highlights": [
+        [
+          2,
+          0
+        ]
+      ],
+      "alignments": [
+        0,
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    "caption": "Select by validation emotion27 Macro-F1 at 0.5, including for the 28-output model; ties keep the earliest epoch.",
+    "notes": "We compare TF-IDF with one-versus-rest Logistic Regression, a bidirectional GRU trained from scratch, and full PhoBERT fine-tuning. Both neural models complete twenty epochs in each setting. TF-IDF uses a solver limit instead. We share the seed and split, and select checkpoints by validation Macro-F1 on the same twenty-seven emotions at threshold zero point five."
+  },
+  {
+    "layout": "full_table",
+    "section": "04 / RESULTS",
+    "title": "PhoBERT leads within each label setting",
+    "subtitle": "Validation n = 2,066 • threshold 0.5 • separate full-label evaluations for 27 and 28 outputs",
+    "takeaway": "Rank models within each block; the two Macro-F1 blocks evaluate different label sets.",
+    "source": "Source: model_comparison.csv. ↑ higher / ↓ lower is better. CPU TF-IDF; T4 neural. Times exclude preprocessing.",
+    "table": {
+      "headers": [
+        "Labels",
+        "Model",
+        "Macro-F1 ↑",
+        "Micro-F1 ↑",
+        "Hamming ↓",
+        "LRAP ↑",
+        "Best ep.",
+        "Train time"
+      ],
+      "rows": [
+        [
+          "27",
+          "TF-IDF + OvR LR",
+          "0.2388",
+          "0.2712",
+          "0.0606",
+          "0.6407",
+          "—",
+          "2.75 s"
+        ],
+        [
+          "27",
+          "BiGRU",
+          "0.4220",
+          "0.4590",
+          "0.0626",
+          "0.6191",
+          "17",
+          "80.3 s"
+        ],
+        [
+          "27",
+          "PhoBERT",
+          "0.5974",
+          "0.5996",
+          "0.0550",
+          "0.7419",
+          "14",
+          "4.05 h"
+        ],
+        [
+          "28",
+          "TF-IDF + OvR LR",
+          "0.2310",
+          "0.2662",
+          "0.0601",
+          "0.6096",
+          "—",
+          "2.52 s"
+        ],
+        [
+          "28",
+          "BiGRU",
+          "0.4086",
+          "0.4483",
+          "0.0628",
+          "0.5851",
+          "20",
+          "83.6 s"
+        ],
+        [
+          "28",
+          "PhoBERT",
+          "0.5783",
+          "0.5829",
+          "0.0575",
+          "0.7077",
+          "15",
+          "3.90 h"
+        ]
+      ],
+      "x": 64,
+      "top": 520,
+      "widths": [
+        85,
+        205,
+        145,
+        145,
+        145,
+        145,
+        110,
+        172
+      ],
+      "row_height": 49,
+      "group_starts": [
+        3
+      ],
+      "highlights": [
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          5,
+          5
+        ]
+      ],
+      "font_size": 16
+    },
+    "caption": "Both neural models completed 20 epochs. “Best ep.” identifies the selected checkpoint, not the number of epochs trained.",
+    "notes": "The table separates full twenty-seven-emotion and twenty-eight-label evaluation. PhoBERT leads within each block: Macro-F1 is zero point five nine seven four and zero point five seven eight three, respectively. The additional columns show Micro-F1, Hamming Loss, rankings, selected epochs, and measured training time. Different label sets mean these two overall F1 scores should not be directly subtracted."
+  },
+  {
+    "layout": "paired",
+    "section": "05 / NEUTRAL COMPARISON",
+    "title": "Adding Neutral does not raise shared-emotion F1 here",
+    "subtitle": "Same 27 emotion columns • same validation IDs • shared checkpoint selection • one seed",
+    "takeaway": "PhoBERT changes by −1.38 percentage points on the shared 27-emotion evaluation.",
+    "source": "Source: paired_emotion27_delta.csv. Δ = 28-output projection minus 27-output score, in percentage points.",
+    "table": {
+      "headers": [
+        "Model",
+        "27-output F1",
+        "28 → 27 F1",
+        "Δ (pp)"
+      ],
+      "rows": [
+        [
+          "TF-IDF + OvR LR",
+          "0.2388",
+          "0.2388",
+          "+0.00"
+        ],
+        [
+          "BiGRU",
+          "0.4220",
+          "0.4195",
+          "-0.25"
+        ],
+        [
+          "PhoBERT",
+          "0.5974",
+          "0.5836",
+          "-1.38"
+        ]
+      ],
+      "x": 64,
+      "top": 520,
+      "widths": [
+        225,
+        165,
+        165,
+        150
+      ],
+      "row_height": 70,
+      "highlights": [
+        [
+          2,
+          3
+        ]
+      ],
+      "alignments": [
+        0,
+        2,
+        2,
+        2
+      ]
+    },
+    "comparison": [
+      {
+        "model": "TF-IDF + OvR LR",
+        "values": [
+          [
+            "27 outputs",
+            0.2388252871629776,
+            "#142D46"
+          ],
+          [
+            "28 → 27",
+            0.2388252871629776,
+            "#007F86"
+          ]
+        ]
+      },
+      {
+        "model": "BiGRU",
+        "values": [
+          [
+            "27 outputs",
+            0.4219756383620212,
+            "#142D46"
+          ],
+          [
+            "28 → 27",
+            0.4194855622020935,
+            "#007F86"
+          ]
+        ]
+      },
+      {
+        "model": "PhoBERT",
+        "values": [
+          [
+            "27 outputs",
+            0.597409592448629,
+            "#142D46"
+          ],
+          [
+            "28 → 27",
+            0.5835797863529424,
+            "#007F86"
+          ]
+        ]
+      }
+    ],
+    "caption": "This controls the epoch budget and scoring label space. It does not establish a general causal effect or statistical significance.",
+    "notes": "For a comparison on identical labels, we score only the twenty-seven emotion columns of the expanded model. PhoBERT then reaches 0.5836, about 1.38 percentage points below the twenty-seven-output model. TF-IDF is unchanged and BiGRU decreases slightly. This run shows no improvement on the shared emotions, but one seed cannot establish a general causal conclusion."
+  },
+  {
+    "layout": "neutral",
+    "section": "06 / NEUTRAL DETECTION",
+    "title": "A learned Neutral output still makes substantial errors",
+    "subtitle": "28-label setting only • 94 Neutral-positive validation examples: 75 Neutral-only + 19 mixed",
+    "takeaway": "PhoBERT finds 45 of 94 Neutral examples, with 67 false alarms.",
+    "source": "Source: neutral_metrics.csv. Threshold 0.5; support 94 for all models. No Neutral metric for the 27-output model.",
+    "table": {
+      "headers": [
+        "Model",
+        "Precision",
+        "Recall",
+        "F1",
+        "TP",
+        "FP",
+        "FN"
+      ],
+      "rows": [
+        [
+          "TF-IDF + OvR LR",
+          "0.5000",
+          "0.0106",
+          "0.0208",
+          "1",
+          "1",
+          "93"
+        ],
+        [
+          "BiGRU",
+          "0.1778",
+          "0.0851",
+          "0.1151",
+          "8",
+          "37",
+          "86"
+        ],
+        [
+          "PhoBERT",
+          "0.4018",
+          "0.4787",
+          "0.4369",
+          "45",
+          "67",
+          "49"
+        ]
+      ],
+      "x": 64,
+      "top": 520,
+      "widths": [
+        280,
+        185,
+        185,
+        185,
+        105,
+        105,
+        107
+      ],
+      "row_height": 62,
+      "highlights": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "alignments": [
+        0,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    "stats": [
+      {
+        "x": 118,
+        "top": 252,
+        "width": 300,
+        "number": "45",
+        "label": "correct Neutral detections"
+      },
+      {
+        "x": 499,
+        "top": 252,
+        "width": 300,
+        "number": "49",
+        "label": "missed Neutral examples",
+        "color": "#A56C22"
+      },
+      {
+        "x": 880,
+        "top": 252,
+        "width": 300,
+        "number": "67",
+        "label": "false Neutral predictions",
+        "color": "#142D46"
+      }
+    ],
+    "caption": "An empty prediction is not a substitute for an explicitly trained Neutral label.",
+    "notes": "PhoBERT identifies 45 of the ninety-four Neutral-positive validation examples. It misses 49 and produces 67 false positives, giving Neutral F1 of 0.4369. So the additional label is learned, but still difficult. The twenty-seven-output model has no Neutral classifier; its Neutral F1 is undefined, not zero. An empty prediction is also not automatically Neutral."
+  },
+  {
+    "layout": "curves",
+    "section": "07 / TRAINING DYNAMICS",
+    "title": "Twenty epochs trained; the last checkpoint need not win",
+    "subtitle": "Both curves in each panel use the same 27-emotion checkpoint-selection metric.",
+    "takeaway": "Best PhoBERT checkpoints: epoch 14 for 27 outputs and epoch 15 for 28 outputs.",
+    "source": "Sources: evidence/{27,28}/{gru,phobert}/run.json. All histories contain epochs 1–20; no early stopping.",
+    "charts": [
+      {
+        "title": "BiGRU",
+        "series": [
+          {
+            "name": "27 outputs · best 17",
+            "x": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "y": [
+              0.03555485700722091,
+              0.17834929375776645,
+              0.27129847835997006,
+              0.3152110421763484,
+              0.3439695478465623,
+              0.3581291253857337,
+              0.3853785214853275,
+              0.39855954892202233,
+              0.39756731225522407,
+              0.40600230091633666,
+              0.40749552103943637,
+              0.405774143331713,
+              0.4079363804118239,
+              0.410399341433403,
+              0.41427878583845656,
+              0.4067200323711591,
+              0.4219756383620212,
+              0.40707753808389735,
+              0.4094425027520611,
+              0.4186882007319703
+            ],
+            "color": "#142D46",
+            "dash": null
+          },
+          {
+            "name": "28 outputs · best 20",
+            "x": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "y": [
+              0.03969313027700512,
+              0.1645988318370584,
+              0.24870976120460478,
+              0.316350219183741,
+              0.3428408096768975,
+              0.36682388629310353,
+              0.3785622116812035,
+              0.39207845430381844,
+              0.40543911716369635,
+              0.4107638529967691,
+              0.4053937819568315,
+              0.4100996634213704,
+              0.4133657035435692,
+              0.4109729937194529,
+              0.41892957780703255,
+              0.41492868588539866,
+              0.4102012295072758,
+              0.41679254850837544,
+              0.405400427342537,
+              0.41948556220209354
+            ],
+            "color": "#007F86",
+            "dash": [
+              5,
+              3
+            ]
+          }
+        ],
+        "x": 64,
+        "y": 214,
+        "width": 552,
+        "height": 280,
+        "xlim": [
+          1,
+          20
+        ],
+        "ylim": [
+          0,
+          0.68
+        ],
+        "xticks": [
+          1,
+          5,
+          10,
+          15,
+          20
+        ],
+        "yticks": [
+          0,
+          0.2,
+          0.4,
+          0.6
+        ],
+        "xlabel": "Training epoch",
+        "ylabel": "Validation emotion27 Macro-F1",
+        "markers": [
+          {
+            "x": 17,
+            "y": 0.4219756383620212,
+            "label": "",
+            "color": "#142D46"
+          },
+          {
+            "x": 20,
+            "y": 0.41948556220209354,
+            "label": "",
+            "color": "#007F86"
+          }
+        ]
+      },
+      {
+        "title": "PhoBERT",
+        "series": [
+          {
+            "name": "27 outputs · best 14",
+            "x": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "y": [
+              0.0,
+              0.08002160250662896,
+              0.3342832260499033,
+              0.43393415943737984,
+              0.5412303068090067,
+              0.5620310510964979,
+              0.5653143752248143,
+              0.5780104071636172,
+              0.5827691480971153,
+              0.5833932168173548,
+              0.5889012584005349,
+              0.5829808262649725,
+              0.5946654857016659,
+              0.597409592448629,
+              0.5928700965123411,
+              0.5907194436077988,
+              0.5880531587942454,
+              0.5875948392384869,
+              0.5911192601256222,
+              0.5911182805050077
+            ],
+            "color": "#142D46",
+            "dash": null
+          },
+          {
+            "name": "28 outputs · best 15",
+            "x": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "y": [
+              0.003806542961472539,
+              0.15252165758415548,
+              0.3514926996028284,
+              0.48111282861971805,
+              0.5067367097546195,
+              0.5124217567829609,
+              0.5402022369536945,
+              0.5657101559396432,
+              0.5741816576676384,
+              0.5619375452071886,
+              0.5726882678981028,
+              0.5806612056141403,
+              0.5735000109979143,
+              0.578769362586397,
+              0.5835797863529424,
+              0.5790272807432525,
+              0.5718977804913167,
+              0.5797157691588439,
+              0.5835645622924308,
+              0.5729327188224779
+            ],
+            "color": "#007F86",
+            "dash": [
+              5,
+              3
+            ]
+          }
+        ],
+        "x": 664,
+        "y": 214,
+        "width": 552,
+        "height": 280,
+        "xlim": [
+          1,
+          20
+        ],
+        "ylim": [
+          0,
+          0.68
+        ],
+        "xticks": [
+          1,
+          5,
+          10,
+          15,
+          20
+        ],
+        "yticks": [
+          0,
+          0.2,
+          0.4,
+          0.6
+        ],
+        "xlabel": "Training epoch",
+        "ylabel": "Validation emotion27 Macro-F1",
+        "markers": [
+          {
+            "x": 14,
+            "y": 0.597409592448629,
+            "label": "",
+            "color": "#142D46"
+          },
+          {
+            "x": 15,
+            "y": 0.5835797863529424,
+            "label": "",
+            "color": "#007F86"
+          }
+        ]
+      }
+    ],
+    "caption": "Train BCE continued to decrease; validation loss was not recorded. These curves alone do not confirm overfitting.",
+    "notes": "These curves use the same twenty-seven-emotion checkpoint-selection metric for both output settings. Both neural models completed twenty epochs. The selected PhoBERT checkpoints are at epochs fourteen and fifteen. Selection is based on validation, not simply the final epoch. Training loss continued to decrease, but validation loss was not recorded, so we do not claim confirmed overfitting."
+  },
+  {
+    "layout": "analysis",
+    "section": "08 / Q1–Q2",
+    "title": "Performance varies by label, beyond raw frequency",
+    "subtitle": "PhoBERT, 27 outputs • per-label validation F1 at threshold 0.5",
+    "takeaway": "Gratitude is strongest; disapproval is weakest. Frequency shows little monotonic association in this run.",
+    "source": "Sources: per_label_metrics.csv; frequency_f1.csv; current PhoBERT-27 per-label table. Descriptive, single-seed analysis.",
+    "bars": {
+      "labels": [
+        "gratitude",
+        "embarrassment",
+        "pride",
+        "realization",
+        "excitement",
+        "disapproval"
+      ],
+      "values": [
+        0.8369565217391305,
+        0.7729083665338645,
+        0.7397260273972602,
+        0.4640883977900552,
+        0.4606060606060606,
+        0.3622641509433962
+      ],
+      "x": 64,
+      "top": 479,
+      "width": 566,
+      "height": 269,
+      "maximum": 1,
+      "value_format": "f1",
+      "label_width": 157,
+      "colors_by_row": [
+        "#007F86",
+        "#007F86",
+        "#007F86",
+        "#597594",
+        "#597594",
+        "#597594"
+      ]
+    },
+    "scatter": {
+      "series": [
+        {
+          "name": "27 emotion labels",
+          "x": [
+            2868,
+            824,
+            1614,
+            1175,
+            762,
+            1046,
+            1062,
+            774,
+            883,
+            765,
+            635,
+            916,
+            687,
+            651,
+            840,
+            676,
+            745,
+            728,
+            707,
+            885,
+            1522,
+            2785,
+            747,
+            1206,
+            1589,
+            2662,
+            969
+          ],
+          "y": [
+            0.6434540389972145,
+            0.4606060606060606,
+            0.5321100917431193,
+            0.5833333333333334,
+            0.5370370370370371,
+            0.671875,
+            0.6396761133603239,
+            0.7397260273972602,
+            0.5882352941176471,
+            0.8369565217391305,
+            0.5785123966942148,
+            0.6551724137931034,
+            0.4640883977900552,
+            0.5086705202312138,
+            0.6266094420600858,
+            0.4916201117318435,
+            0.6970954356846473,
+            0.5388127853881278,
+            0.7192118226600985,
+            0.7729083665338645,
+            0.4987654320987654,
+            0.6819484240687679,
+            0.6735751295336787,
+            0.4765100671140939,
+            0.5761772853185596,
+            0.575107296137339,
+            0.3622641509433962
+          ],
+          "color": "#007F86"
+        }
+      ],
+      "x": 690,
+      "y": 214,
+      "width": 526,
+      "height": 280,
+      "xlim": [
+        0,
+        3200
+      ],
+      "ylim": [
+        0,
+        1
+      ],
+      "xticks": [
+        0,
+        1000,
+        2000,
+        3000
+      ],
+      "yticks": [
+        0,
+        0.25,
+        0.5,
+        0.75,
+        1
+      ],
+      "xlabel": "Positive training instances",
+      "ylabel": "Validation per-label F1",
+      "scatter": true,
+      "show_legend": false
+    },
+    "association": "Spearman ρ = 0.018; p = 0.928",
+    "caption": "Selected top three and bottom three labels; full 27-label results remain in the report.",
+    "notes": "For individual emotions, PhoBERT performs best on gratitude and worst on disapproval. The correlation between training frequency and per-label F1 is approximately 0.018, with a p-value of 0.928. These descriptive results do not support a simple rule that more frequent labels are always easier. The report includes every label for all three models."
+  },
+  {
+    "layout": "full_table",
+    "section": "09 / Q1–Q5",
+    "title": "Research questions: a compact evidence checklist",
+    "subtitle": "Current 27-output study • frozen checkpoints • validation-only diagnostics",
+    "takeaway": "The findings depend on the label, text style, metric and decision threshold.",
+    "source": "Sources: label_extremes, frequency_f1, pair_preservation, neural_style_comparison, threshold_sensitivity.csv.",
+    "table": {
+      "headers": [
+        "RQ",
+        "What was measured?",
+        "Selected result",
+        "Interpretation / boundary"
+      ],
+      "rows": [
+        [
+          "Q1",
+          "Highest / lowest label F1",
+          "Gratitude 0.8370; disapproval 0.3623",
+          "PhoBERT-27; full label table in report"
+        ],
+        [
+          "Q2",
+          "Training frequency vs F1",
+          "Spearman ρ 0.018; p 0.928",
+          "Descriptive association, not causation"
+        ],
+        [
+          "Q3",
+          "Disappointment + sadness",
+          "PhoBERT: 63/122 jointly correct (51.64%)",
+          "Pair chosen from train: 904 occurrences"
+        ],
+        [
+          "Q4",
+          "PhoBERT advantage by style",
+          "Teencode: 0.5547 vs GRU 0.3333; +22.13 pp",
+          "Largest gap among heuristic groups; n = 307"
+        ],
+        [
+          "Q5",
+          "Fixed vs explored threshold",
+          "τ 0.50 → 0.35: Macro-F1 0.5974 → 0.5978",
+          "Tiny F1 gain; Hamming Loss worsens"
+        ]
+      ],
+      "x": 64,
+      "top": 520,
+      "widths": [
+        70,
+        300,
+        435,
+        347
+      ],
+      "row_height": 66,
+      "font_size": 16,
+      "alignments": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "notes": "Our most frequent training pair is disappointment and sadness. PhoBERT predicts both correctly in 63 of 122 validation cases containing both labels. For text styles, its largest advantage over BiGRU is in teencode, at about 22.1 percentage points of Macro-F1. Teencode means informal online spellings and abbreviations. Our style groups use heuristics and can overlap, so this finding needs cautious interpretation."
+  },
+  {
+    "layout": "threshold",
+    "section": "10 / DECODING",
+    "title": "PhoBERT gains little from this global threshold grid",
+    "subtitle": "27 outputs • same checkpoint • thresholds explored on validation only",
+    "takeaway": "Keep the main comparison at 0.5; test generalization remains unknown.",
+    "source": "Source: current analysis/27_emotion27/*/tables/*_thresholds_val.csv. Grid 0.05–0.80, step 0.05.",
+    "chart": {
+      "series": [
+        {
+          "name": "TF-IDF + OvR LR",
+          "x": [
+            0.05,
+            0.1,
+            0.15,
+            0.2,
+            0.25,
+            0.3,
+            0.35,
+            0.4,
+            0.45,
+            0.5,
+            0.55,
+            0.6,
+            0.65,
+            0.7,
+            0.75,
+            0.8
+          ],
+          "y": [
+            0.3197218923438765,
+            0.4696017605797877,
+            0.4843704104090776,
+            0.4542301502110993,
+            0.4151189155895711,
+            0.3798057556432991,
+            0.3420878997747047,
+            0.3017586024407507,
+            0.273400922339002,
+            0.2388252871629776,
+            0.2108948866146116,
+            0.1847801148311506,
+            0.1606882662019102,
+            0.1376046409093421,
+            0.1179670305966809,
+            0.0979775680314049
+          ],
+          "color": "#597594"
+        },
+        {
+          "name": "BiGRU",
+          "x": [
+            0.05,
+            0.1,
+            0.15,
+            0.2,
+            0.25,
+            0.3,
+            0.35,
+            0.4,
+            0.45,
+            0.5,
+            0.55,
+            0.6,
+            0.65,
+            0.7,
+            0.75,
+            0.8
+          ],
+          "y": [
+            0.4022302697411912,
+            0.429365770726184,
+            0.439704299630636,
+            0.4405803044106735,
+            0.4357788495949893,
+            0.4355834191025236,
+            0.4330893443345062,
+            0.4313115376407307,
+            0.4273079638716009,
+            0.4219756383620212,
+            0.4147884506489089,
+            0.4063450846215102,
+            0.3925525981491943,
+            0.3765528719814758,
+            0.3649071197566749,
+            0.3517251677587581
+          ],
+          "color": "#007F86"
+        },
+        {
+          "name": "PhoBERT",
+          "x": [
+            0.05,
+            0.1,
+            0.15,
+            0.2,
+            0.25,
+            0.3,
+            0.35,
+            0.4,
+            0.45,
+            0.5,
+            0.55,
+            0.6,
+            0.65,
+            0.7,
+            0.75,
+            0.8
+          ],
+          "y": [
+            0.5247768629607735,
+            0.5577200380816454,
+            0.5785034561565988,
+            0.5863706803812485,
+            0.5914734743704978,
+            0.5962903745055731,
+            0.5978433128696495,
+            0.5972777506236611,
+            0.5976428815258217,
+            0.597409592448629,
+            0.595384806088567,
+            0.5921967140040305,
+            0.5872940564371176,
+            0.5805312593222707,
+            0.5771046622949147,
+            0.5718051902961774
+          ],
+          "color": "#142D46"
+        }
+      ],
+      "x": 64,
+      "y": 213,
+      "width": 766,
+      "height": 314,
+      "xlim": [
+        0.05,
+        0.8
+      ],
+      "ylim": [
+        0,
+        0.7
+      ],
+      "xticks": [
+        0.05,
+        0.2,
+        0.35,
+        0.5,
+        0.65,
+        0.8
+      ],
+      "yticks": [
+        0,
+        0.2,
+        0.4,
+        0.6
+      ],
+      "xlabel": "Decision threshold",
+      "ylabel": "Validation Macro-F1"
+    },
+    "stats": [
+      {
+        "x": 908,
+        "top": 491,
+        "width": 308,
+        "number": "0.5974",
+        "label": "Macro-F1 at τ = 0.50",
+        "color": "#142D46"
+      },
+      {
+        "x": 908,
+        "top": 371,
+        "width": 308,
+        "number": "0.5978",
+        "label": "Macro-F1 at τ = 0.35"
+      },
+      {
+        "x": 908,
+        "top": 251,
+        "width": 308,
+        "number": "+0.043 pp",
+        "label": "exploratory F1 difference"
+      }
+    ],
+    "caption": "Hamming Loss rises from 0.0550 to 0.0587; LRAP is independent of the cutoff.",
+    "notes": "We also vary the threshold while keeping the checkpoint fixed. For PhoBERT, the best validation grid point is 0.35, with Macro-F1 0.5978, compared with 0.5974 at zero point five. The gain is tiny and Hamming Loss worsens. This is exploratory analysis, not a test improvement; the main comparison stays at zero point five."
+  },
+  {
+    "layout": "two_column",
+    "section": "11 / ERROR ANALYSIS",
+    "title": "Neutral errors: implied affect versus surface cues",
+    "subtitle": "Two illustrative cases from the six-case preliminary, AI-assisted review; no raw comments reproduced.",
+    "takeaway": "Interpretations are hypotheses from selected cases, not established error causes.",
+    "source": "Source: phobert28_error_review.csv; current PhoBERT-28 validation predictions. Team confirmation remains pending.",
+    "panels": [
+      {
+        "x": 64,
+        "heading": "False positive / Neutral",
+        "id": "Validation ID 30099",
+        "color": "#007F86",
+        "truth": "Annotated: relief",
+        "prediction": "Predicted: Neutral",
+        "probability": "P(Neutral) = 0.9965",
+        "hypothesis": "Hypothesis: implied emotion in an explanatory comment."
+      },
+      {
+        "x": 664,
+        "heading": "False negative / Neutral",
+        "id": "Validation ID 6238",
+        "color": "#A56C22",
+        "truth": "Annotated: Neutral",
+        "prediction": "Predicted: anger + annoyance",
+        "probability": "P(Neutral) = 0.00005",
+        "hypothesis": "Hypothesis: profanity may resemble negative affect."
+      }
+    ],
+    "caption": "Review scope: three confident Neutral false positives and three low-probability Neutral misses, selected deliberately.",
+    "notes": "Two examples illustrate the six-case preliminary, AI-assisted review. On the left, a comment annotated as relief is predicted as Neutral. On the right, a Neutral comment is assigned anger and annoyance. Implied affect and profanity are possible explanations, not proven causes. We show IDs and abstract observations, and the interpretations still need team confirmation."
+  },
+  {
+    "layout": "final_plan",
+    "section": "12 / FINAL EXPERIMENT",
+    "title": "Is one threshold suitable for every emotion?",
+    "subtitle": "Planned controlled decoding comparison • no new test results claimed",
+    "takeaway": "Hold model weights fixed; change the decoder, then evaluate held-out test once.",
+    "source": "Source: course Final RQ1 and current midterm protocol. Thresholds selected strictly on validation predictions.",
+    "checkpoint": "Freeze the best neural checkpoint: current PhoBERT-27",
+    "strategies": [
+      [
+        "Fixed threshold",
+        "Use τ = 0.5 for every emotion."
+      ],
+      [
+        "Global tuned",
+        "Select one shared threshold on validation."
+      ],
+      [
+        "Per-label tuned",
+        "Select a separate threshold for each emotion."
+      ]
+    ],
+    "nodes": [
+      [
+        "1. Tune on validation",
+        "Compare decoders; review FP / FN"
+      ],
+      [
+        "2. Lock all choices",
+        "Checkpoint + thresholds + protocol"
+      ],
+      [
+        "3. Evaluate test once",
+        "Report scores and limitations"
+      ]
+    ],
+    "notes": "For the final evaluation, we will test whether one threshold suits every emotion. We will freeze the best neural checkpoint and compare the default threshold, a tuned global threshold, and per-label thresholds. We select thresholds on validation, lock all choices, then evaluate test once. We also plan a detailed review of at least twenty false negatives and twenty false positives."
+  },
+  {
+    "layout": "conclusions",
+    "section": "13 / CONCLUSIONS",
+    "title": "What the current study supports",
+    "subtitle": "Three evidence-backed observations; a focused next experiment",
+    "takeaway": "PhoBERT is the strongest model in each setting; Neutral and decoder design remain open questions.",
+    "source": "Sources: current Kaggle 08–09 artifacts; ViGoEmotions (EACL 2026, doi:10.18653/v1/2026.eacl-long.129); PhoBERT (2020).",
+    "findings": [
+      [
+        "PhoBERT leads within both label spaces",
+        "Macro-F1: 0.5974 over 27 emotions; 0.5783 over all 28 labels."
+      ],
+      [
+        "Neutral is not a shared-emotion F1 gain here",
+        "The 28-output projection is 1.38 pp lower than PhoBERT-27."
+      ],
+      [
+        "Evaluate decoding with a frozen backbone",
+        "Explore fixed, global and per-label thresholds without retraining."
+      ]
+    ],
+    "limits": [
+      "One seed; validation-based selection.",
+      "No model test scores or significance claims.",
+      "Original stratification algorithm unverified.",
+      "Heuristic styles; error review needs confirmation."
+    ],
+    "notes": "To conclude, PhoBERT gives the strongest overall results in both settings. Adding Neutral does not improve shared-emotion F1 in this run, and Neutral prediction still makes substantial errors. Saved Kaggle predictions and histories support these findings. Our next step is controlled threshold evaluation. Thank you; we welcome your questions."
+  }
+]
