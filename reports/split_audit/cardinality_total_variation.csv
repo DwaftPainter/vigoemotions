@@ -1,0 +1,5 @@
+encoding,heldout,total_variation_vs_train
+emotion27,val,0.01587743602086967
+emotion27,test,0.011718500996999764
+labels28,val,0.012525087127807161
+labels28,test,0.010695160402382272

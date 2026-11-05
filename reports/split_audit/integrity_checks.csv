@@ -1,0 +1,12 @@
+check,passed,observed
+train/val: IDs disjoint,True,0
+train/val: normalized text disjoint,True,0
+train/test: IDs disjoint,True,0
+train/test: normalized text disjoint,True,0
+val/test: IDs disjoint,True,0
+val/test: normalized text disjoint,True,0
+train: fixed IDs/order match,True,1
+val: fixed IDs/order match,True,1
+test: fixed IDs/order match,True,1
+excluded train IDs match,True,1
+Source CSV/fixed ID files unchanged,True,1

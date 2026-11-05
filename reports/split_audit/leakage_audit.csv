@@ -1,0 +1,7 @@
+stage,left_split,right_split,shared_ids,shared_normalized_texts,left_rows_with_shared_text,right_rows_with_shared_text
+raw,train,val,0,0,0,0
+raw,train,test,0,1,1,1
+raw,val,test,0,0,0,0
+effective,train,val,0,0,0,0
+effective,train,test,0,0,0,0
+effective,val,test,0,0,0,0
