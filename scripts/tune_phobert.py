@@ -234,7 +234,7 @@ def main():
         parser.error('--resume is only supported with the run command')
     output = args.output.resolve()
     if args.action == 'prepare':
-        prepare(output, json.loads((ROOT/'configs/midterm.json').read_text()))
+        prepare(output, json.loads((ROOT/'configs/baseline27_4ep.json').read_text()))
     elif args.action == 'summarize':
         comparison, winner = summarize(output)
         print(comparison.to_string(index=False)); print('Selected:', winner.run)
@@ -246,7 +246,7 @@ def main():
         if not output.exists():
             if args.resume:
                 parser.error('--resume requires an existing prepared study; no artifacts were changed')
-            prepare(output, json.loads((ROOT/'configs/midterm.json').read_text()))
+            prepare(output, json.loads((ROOT/'configs/baseline27_4ep.json').read_text()))
         if args.resume:
             try:
                 load_plan(output)

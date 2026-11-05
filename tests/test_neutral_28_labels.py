@@ -183,6 +183,25 @@ class Neutral28Tests(unittest.TestCase):
             self.assertEqual(cases.available_count.tolist(), [1,1,1,1])
             self.assertNotIn('text', cases.columns)
 
+    def test_validation_case_display_reuses_saved_probabilities_without_loading_jvm(self):
+        import contextlib
+        import io
+        frame = fixture_frames().iloc[:2].copy()
+        p = np.full((2, 28), .1)
+        p[0, 27] = .8
+        p[1, 2] = .8
+        with tempfile.TemporaryDirectory(dir=study.ROOT) as tmp:
+            out = Path(tmp)
+            study.save_evaluation(out, 'tfidf_lr', 'val', frame, p)
+            write_json(out/'models/tfidf_lr/run.json', {})
+            with patch.object(study, 'checked_study', return_value=(out, {}, {'val': frame})), \
+                 patch.object(study, 'load_predictor', side_effect=AssertionError('Must not initialize JVM')), \
+                 contextlib.redirect_stdout(io.StringIO()) as output:
+                cases = study.find_validation_cases(out, out, display_text=True)
+            self.assertEqual(cases.available_count.tolist(), [1, 1, 0, 0])
+            self.assertIn('0.8', output.getvalue())
+            self.assertNotIn('text', pd.read_csv(out/'validation_prediction_cases.csv').columns)
+
     def test_test_evaluation_requires_all_models_and_prevents_future_training(self):
         with tempfile.TemporaryDirectory(dir=study.ROOT) as tmp:
             out = Path(tmp)

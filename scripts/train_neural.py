@@ -106,7 +106,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model',choices=['gru','phobert'],required=True)
     parser.add_argument('--vncorenlp-dir',type=Path,default=ROOT/'data/vncorenlp')
-    parser.add_argument('--config',type=Path,default=ROOT/'configs/midterm.json')
+    parser.add_argument('--config',type=Path,default=ROOT/'configs/baseline27_4ep.json')
     parser.add_argument('--output-dir',type=Path,help='New directory for an isolated experiment')
     parser.add_argument('--checkpoint',type=Path,help='New private checkpoint path for an isolated experiment')
     args = parser.parse_args()

@@ -26,7 +26,7 @@ class PhoBERTTuningTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.output = Path(self.temp.name)/'study'
-        self.base = json.loads((ROOT/'configs/midterm.json').read_text())
+        self.base = json.loads((ROOT/'configs/baseline27_4ep.json').read_text())
         self.runtime = dict(python='fixture-python', platform='fixture-platform', processor='fixture-cpu',
             packages={'torch': 'fixture-torch', 'transformers': 'fixture-transformers'},
             data_sha256={'train': 'train', 'val': 'val', 'test': 'test'})

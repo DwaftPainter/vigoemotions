@@ -473,8 +473,11 @@ def find_validation_cases(out, data_dir, display_text=False):
         path = out/'models'/name/'val_predictions.npz'
         if not (out/'models'/name/'run.json').exists():
             continue
-        predictor = load_predictor(out, name) if display_text else None
         with np.load(path, allow_pickle=False) as saved:
+            np.testing.assert_array_equal(saved['sample_id'], frames['val'].id.to_numpy(dtype=str))
+            np.testing.assert_array_equal(saved['true_label_vector'], targets28(frames['val']))
+            np.testing.assert_array_equal(saved['labels'], LABELS28)
+            validate_probabilities(saved['true_label_vector'], saved['probability_vector'])
             pred = saved['probability_vector'] >= .5
             emotions = pred[:, :27].sum(axis=1)
             masks = {'neutral_only': pred[:, 27] & (emotions == 0),
@@ -492,11 +495,10 @@ def find_validation_cases(out, data_dir, display_text=False):
                     index = indices[0]
                     text = frames['val'].set_index('id').loc[row['sample_id'], 'text']
                     print('Private input:', text)
-                    reloaded = predictor([text])
-                    np.testing.assert_allclose(reloaded, saved['probability_vector'][index:index+1],
-                                               atol=1e-5, rtol=1e-4)
-                    print(prediction_tables([text], reloaded)[1].to_string(index=False))
-        del predictor
+                    # Saved validation probabilities already correspond to this exact ID/target.
+                    # Reusing them avoids restarting the VnCoreNLP JVM after inference.
+                    probability = saved['probability_vector'][index:index+1]
+                    print(prediction_tables([text], probability)[1].to_string(index=False))
     result = pd.DataFrame(rows)
     result.to_csv(out/'validation_prediction_cases.csv', index=False)
     return result
@@ -717,7 +719,7 @@ def main():
     parser.add_argument('action', choices=['init', 'train', 'report', 'test', 'examples'])
     parser.add_argument('--output', type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument('--data-dir', type=Path, default=ROOT/'data')
-    parser.add_argument('--base-config', type=Path, default=ROOT/'configs/midterm.json')
+    parser.add_argument('--base-config', type=Path, default=ROOT/'configs/neutral28_12ep_base.json')
     parser.add_argument('--baseline-reports', type=Path, default=ROOT/'reports')
     parser.add_argument('--model', choices=MODELS)
     parser.add_argument('--vncorenlp-dir', type=Path)

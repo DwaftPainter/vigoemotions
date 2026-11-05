@@ -14,7 +14,7 @@ from evaluate import save_evaluation
 
 
 def main():
-    config = json.loads((ROOT/'configs/midterm.json').read_text())
+    config = json.loads((ROOT/'configs/baseline27_4ep.json').read_text())
     frames, _ = load_data()
     params = config['tfidf'].copy()
     params['ngram_range'] = tuple(params['ngram_range'])

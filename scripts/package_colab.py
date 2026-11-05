@@ -3,18 +3,21 @@ import argparse
 from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
 
+from submission_package import is_public_report, write_public_member
+
 ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--include-results', action='store_true',
                     help='Include derived reports to compare tuning with existing baselines')
 args = parser.parse_args()
 files = []
-for folder in ('scripts', 'configs', 'tests', 'docs', 'notebooks') + (('reports',) if args.include_results else ()):
+for folder in ('scripts', 'configs', 'tests', 'docs', 'notebooks', 'splits') + (('reports',) if args.include_results else ()):
     files.extend(p for p in (ROOT/folder).rglob('*') if p.is_file()
-                 and '__pycache__' not in p.parts and '.ipynb_checkpoints' not in p.parts)
+                 and '__pycache__' not in p.parts and '.ipynb_checkpoints' not in p.parts
+                 and (folder not in ('reports', 'splits') or is_public_report(p, ROOT)))
 files.extend(ROOT/name for name in ('README.md','README_PRE_MIDTERM.md',
                                     'requirements-colab.txt','requirements.txt'))
 with ZipFile(ROOT/'vigoemotions_colab.zip','w',ZIP_DEFLATED) as archive:
     for path in sorted(files):
-        archive.write(path,path.relative_to(ROOT))
+        write_public_member(archive, path, ROOT)
 print('Created vigoemotions_colab.zip; raw data, checkpoints and vocab excluded.')

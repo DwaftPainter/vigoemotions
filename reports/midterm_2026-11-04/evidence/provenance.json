@@ -3,7 +3,7 @@
   "source_zip": "vigoemotions_neutral28_private_results.zip",
   "source_zip_sha256": "0b00002c82044ef20efb4dfc3b5cf7ac0b4cd8d6519057f9b27e3be24bc6399f",
   "notebook": "notebooks/06_kaggle_neutral_28_labels.ipynb",
-  "notebook_sha256": "cb88ad7954621dcd5181d6f5430a7f4e0ddfe5107a168361235545c79143af9d",
+  "notebook_sha256": "1dcde364abe0d963902cbefe326bfa4b07259ccc00f147f1588cac93f6350180",
   "source_members_sha256": {
     "annotation_counts.csv": "5cdf07ca31ead8578993d5b84bd0c3ebc52e99a2610b3b0a766367b5a9fb02c5",
     "metrics_summary.csv": "22bbec9885bc7478353af0a2a290c6ac8970118aca6b7654147cd0060404ff32",
@@ -17,7 +17,10 @@
     "models/gru/run.json": "6d43dfe465640de887baf922425875b3ce7f72592215d8e795b48b4bf8a79579",
     "models/gru/history.csv": "6720064615041df7bd060b52eb97e4c13801d2cbe82681b8b37ab8f0beb12b61",
     "models/phobert/run.json": "56f8f40ef8767dd73e490ddbfcb9c673150f2b7ae4b318fe4b116c77b9697861",
-    "models/phobert/history.csv": "3be8c6d1644d182153d2f1840df2beaddab9ec81b8276b197ca652b2ffef9229"
+    "models/phobert/history.csv": "3be8c6d1644d182153d2f1840df2beaddab9ec81b8276b197ca652b2ffef9229",
+    "models/tfidf_lr/val_predictions.npz": "c0936ed7e7a09838d15774463c6957f146d99aafdec6a19d6bbd01ae8e3953e4",
+    "models/gru/val_predictions.npz": "22baede6591581337a7fe4d0cdade24cf7e42d686d8d453ec3e0c95125dadde0",
+    "models/phobert/val_predictions.npz": "e8e397074aa902208fef31861a0fdeca7477397da6d9aae57dc6764fa0ebb936"
   },
   "checks": [
     "Recomputed 28-label and emotion27 metrics from all three saved NPZs",
@@ -36,5 +39,7 @@
     }
   ],
   "baseline27_source": "reports/tables and reports/predictions (14/10 baseline, not 23/10 rerun)",
-  "exported_content": "Aggregate CSVs and run metadata only; no raw text, checkpoints, vocabulary or notebook outputs"
+  "exported_content": "Aggregate CSVs, ID/label/probability NPZs and run metadata only; no raw text, weights or vocabulary",
+  "executed_source_notebook_sha256": "cb88ad7954621dcd5181d6f5430a7f4e0ddfe5107a168361235545c79143af9d",
+  "notebook_sanitization": "05/11: clear all outputs/execution metadata; private executed snapshot hash retained above"
 }
