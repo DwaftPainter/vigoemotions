@@ -10,6 +10,10 @@ Cập nhật 05/11/2026. Mỗi bảng kết quả đi cùng một profile rõ r�
 
 Hai profile đầu được sao chép trực tiếp từ run/study metadata đã kiểm chứng. Profile Neutral base có `label_count=27`; lệnh `init` thêm Neutral, đặt 28 đầu ra và quy tắc chọn checkpoint bằng validation Macro-F1 28 nhãn tại 0,5. Không suy ra rằng baseline gốc chạy 12 epoch từ config base của study mới.
 
+## Workflow Kaggle chính mới — 20/20
+
+Theo lựa chọn ngày 05/11, notebook 08 (27 nhãn) và 09 (28 nhãn) dùng chung `configs/kaggle_equal_20ep.json`: BiGRU và PhoBERT cùng 20 epoch, cùng chọn checkpoint bằng emotion27 Macro-F1. TF-IDF giữ cùng solver, không có epoch neural. Các profile/bảng lịch sử ở trên được giữ nguyên; không dùng chúng thay điểm của lượt Kaggle mới. Xem [hướng dẫn đầy đủ](kaggle_equal_epochs.md). Chưa có kết quả GPU 20/20 mới.
+
 ## Kiểm chứng số liệu đã lưu, không train lại
 
 ```bash

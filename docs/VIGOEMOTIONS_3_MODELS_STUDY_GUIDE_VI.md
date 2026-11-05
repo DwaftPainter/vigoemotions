@@ -15,6 +15,8 @@ Tài liệu tiếng Việt dành cho sinh viên mới học ML/NLP.
 
 **Hoàn thiện 05/11:** Notebook 07 đã có audit split; report có phụ lục F1 mọi nhãn và chín ca PhoBERT đọc định tính hỗ trợ AI. Profile 27/4 epoch và Neutral 12 epoch được tách riêng; xem [lệnh tái lập](reproducibility_profiles.md) và [trạng thái trước nộp](midterm_readiness_2026-11-05.md).
 
+**Workflow huấn luyện mới:** Kaggle notebook 08 (27 nhãn) và 09 (28 nhãn) chạy độc lập, BiGRU/PhoBERT cùng 20 epoch, chọn checkpoint chung trên 27 cảm xúc; chưa có điểm GPU mới. Các chương giải thích kết quả lịch sử vẫn giữ nguyên. Xem [giao thức Kaggle](kaggle_equal_epochs.md).
+
 ### Bạn cần trả lời được điều gì?
 
 Một bình luận được biến thành số như thế nào? Mô hình học điều gì từ nhãn? Trọng số thay đổi ở dòng mã nào? Điểm validation nói được và chưa nói được điều gì?
@@ -161,11 +163,14 @@ Máy tính cần số để nhân ma trận và tối ưu hàm mất mát. TF-ID
 
 Không có `train_baselines.py` trong bản này. Điểm vào thực tế là `scripts/train_tfidf.py::main`.
 
-Nguồn [MÃ]: `scripts/train_tfidf.py:17–24`.
+Nguồn [MÃ]: `scripts/train_tfidf.py:17–27`.
 
-<!-- source:scripts/train_tfidf.py:17:24 -->
+<!-- source:scripts/train_tfidf.py:17:27 -->
 ```python
-    config = json.loads((ROOT/'configs/baseline27_4ep.json').read_text())
+    config = config or json.loads((ROOT/'configs/baseline27_4ep.json').read_text())
+    out = ROOT/'reports' if output_dir is None else output_dir
+    if output_dir is not None:
+        out.mkdir(parents=True, exist_ok=False)
     frames, _ = load_data()
     params = config['tfidf'].copy()
     params['ngram_range'] = tuple(params['ngram_range'])
@@ -175,9 +180,9 @@ Nguồn [MÃ]: `scripts/train_tfidf.py:17–24`.
     model = OneVsRestClassifier(LogisticRegression(**config['logistic_regression']), n_jobs=1)
 ```
 
-**Dòng 17:** đọc config. **18:** nhận các tập đã kiểm tra/lọc trùng. **19:** sao chép tham số TF-IDF. **20:** đổi danh sách `[1,2]` trong JSON thành tuple `(1,2)`; đây là nơi cấu hình unigram/bigram đi vào vectorizer.
+**Dòng 17:** nhận config được truyền vào hoặc đọc profile baseline gốc. **18–20:** chọn namespace output; output riêng phải mới để không ghi đè. **21:** nhận các tập đã kiểm tra/lọc trùng. **22:** sao chép tham số TF-IDF. **23:** đổi danh sách `[1,2]` thành tuple `(1,2)`.
 
-**21:** khởi tạo `TfidfVectorizer`; chưa học vocabulary. **22:** bắt đầu đồng hồ. **23:** `fit_transform` vừa học vocabulary/IDF **chỉ từ train**, vừa chuyển train thành ma trận X thưa. **24:** tạo Logistic Regression từ config rồi bọc bằng `OneVsRestClassifier`, chạy từng nhãn với `n_jobs=1`.
+**24:** khởi tạo `TfidfVectorizer`; chưa học vocabulary. **25:** bắt đầu đồng hồ. **26:** `fit_transform` vừa học vocabulary/IDF **chỉ từ train**, vừa chuyển train thành ma trận X thưa. **27:** tạo Logistic Regression từ config rồi bọc bằng `OneVsRestClassifier`, chạy từng nhãn với `n_jobs=1`.
 
 | Tham số | Giá trị và ý nghĩa |
 | --- | --- |
@@ -202,9 +207,9 @@ Theo [API OneVsRestClassifier 1.6.1](https://scikit-learn.org/1.6/modules/genera
 <!-- page -->
 ### 2.5. Fit, dự đoán và đánh giá
 
-Nguồn [MÃ]: `scripts/train_tfidf.py:25–32`.
+Nguồn [MÃ]: `scripts/train_tfidf.py:28–35`.
 
-<!-- source:scripts/train_tfidf.py:25:32 -->
+<!-- source:scripts/train_tfidf.py:28:35 -->
 ```python
     with warnings.catch_warnings(), threadpool_limits(limits=1):
         warnings.simplefilter('error', ConvergenceWarning)
@@ -213,12 +218,12 @@ Nguồn [MÃ]: `scripts/train_tfidf.py:25–32`.
     val = model.predict_proba(vectorizer.transform(frames['val'].normalized))
     parameters = sum(est.coef_.size + est.intercept_.size for est in model.estimators_)
     metadata = {'parameter_count':parameters, 'train_seconds':seconds}
-    save_evaluation('tfidf_lr',frames,{'val':val},metadata)
+    save_evaluation('tfidf_lr',frames,{'val':val},metadata,output_dir=out)
 ```
 
-**25:** giữ cảnh báo trong phạm vi fit và giới hạn thread của thư viện số xuống 1. **26:** biến `ConvergenceWarning` thành lỗi để không im lặng nhận mô hình chưa hội tụ trong hạn mức solver. **27:** fit toàn bộ OvR trên X và target `(16.530,27)`.
+**28:** giữ cảnh báo trong phạm vi fit và giới hạn thread của thư viện số xuống 1. **29:** biến `ConvergenceWarning` thành lỗi để không im lặng nhận mô hình chưa hội tụ trong hạn mức solver. **30:** fit toàn bộ OvR trên X và target `(16.530,27)`.
 
-**28:** dừng đồng hồ sau TF-IDF fit + classifier fit. **29:** chỉ `transform` validation bằng vocabulary/IDF đã học, rồi dự đoán xác suất; không fit lại. **30:** đếm hệ số và bias của các classifier. **31:** gom metadata. **32:** gửi xác suất validation cho `save_evaluation`.
+**31:** dừng đồng hồ sau TF-IDF fit + classifier fit. **32:** chỉ `transform` validation bằng vocabulary/IDF đã học, rồi dự đoán xác suất; không fit lại. **33:** đếm hệ số và bias của các classifier. **34:** gom metadata. **35:** gửi xác suất validation cho `save_evaluation`.
 
 [MÃ] Ngưỡng thực sự được áp dụng trong `scripts/common.py:71–78`: `probabilities >= 0.5`. Ví dụ tự tạo `[0,7; 0,2; 0,5]` thành `[1;0;1]`; dấu bằng được tính là có nhãn. Một hàng không có đầu ra ≥0,5 giữ vector toàn 0, không có fallback “lấy nhãn cao nhất”.
 
@@ -232,7 +237,7 @@ Nó phụ thuộc ngram quan sát được, không có embedding ngữ cảnh pr
 
 > **Bài nói khoảng một phút:** “Mô hình đầu tiên biến bình luận thành vector TF-IDF của unigram và bigram. Vocabulary và IDF chỉ được học từ train để tránh leakage. Sau đó nhóm huấn luyện 27 Logistic Regression theo One-vs-Rest, mỗi mô hình trả lời có hay không một cảm xúc. Xác suất từng nhãn được so với ngưỡng 0,5 nên một câu có thể nhận nhiều nhãn. Cấu hình dùng tối đa 40.000 đặc trưng, thực tế có 34.837. Macro-F1 validation đạt khoảng 0,2388. Baseline này đơn giản và giúp kiểm tra lợi ích của việc học biểu diễn chuỗi và pretrained, nhưng khó hiểu ngữ cảnh dài hoặc từ ngữ khác cách viết đã gặp.”
 
-**Năm câu hỏi nhanh:** (1) Vì sao dùng bigram? Để thêm tín hiệu cụm hai token, ví dụ phủ định. (2) Fit IDF ở đâu? Train, dòng 23. (3) Vì sao OvR? Vì target có 27 cột nhị phân. (4) Dùng AdamW không? Không, LR dùng solver `liblinear`. (5) Có đủ 40.000 feature không? Không, run lưu 34.837.
+**Năm câu hỏi nhanh:** (1) Vì sao dùng bigram? Để thêm tín hiệu cụm hai token, ví dụ phủ định. (2) Fit IDF ở đâu? Train, dòng 26. (3) Vì sao OvR? Vì target có 27 cột nhị phân. (4) Dùng AdamW không? Không, LR dùng solver `liblinear`. (5) Có đủ 40.000 feature không? Không, run lưu 34.837.
 
 **Ba ngộ nhận:** tên Regression không có nghĩa dự đoán giá trị liên tục ở bài này; TF-IDF không phải embedding có ngữ cảnh; `max_iter=1000` không phải 1.000 epoch neural.
 
@@ -785,7 +790,7 @@ Nguồn: `reports/tables/{tfidf_lr,gru,phobert}_metrics.csv`; `reports/{tfidf_lr
 
 ### 8.4. Thận trọng với nguyên nhân và tốc độ
 
-Thời gian TF-IDF gồm fit vectorizer+OvR, loại tải dữ liệu/đánh giá (`scripts/train_tfidf.py:22–36`). Neural gồm vòng train, validation mỗi epoch và ghi checkpoint, loại preprocessing/download (`scripts/train_neural.py:141–172`). Hai run neural ghi GPU **Tesla T4**; thời gian trên không gồm 0,9664 giây chuẩn bị BiGRU hay 46,4202 giây chuẩn bị PhoBERT ghi trong JSON.
+Thời gian TF-IDF gồm fit vectorizer+OvR, loại tải dữ liệu/đánh giá (`scripts/train_tfidf.py:25–42`). Neural gồm vòng train, validation mỗi epoch và ghi checkpoint, loại preprocessing/download (`scripts/train_neural.py:141–172`). Hai run neural ghi GPU **Tesla T4**; thời gian trên không gồm 0,9664 giây chuẩn bị BiGRU hay 46,4202 giây chuẩn bị PhoBERT ghi trong JSON.
 
 Có thể báo lại thời gian đo với phạm vi như trên; không gọi đây là tỷ lệ tăng tốc công bằng giữa các thuật toán, hay suy ra thời gian trên máy khác. Thời gian tổng còn phụ thuộc tokenizer, phần cứng, số epoch và batch; package trong run JSON phản ánh môi trường đo, có thể khác `requirements.txt` hiện tại.
 
@@ -837,11 +842,11 @@ PhoBERT có nhiều tầng dễ nhầm: pretrained khác fine-tuning, segmentati
 
 **4. Không nhãn nào vượt 0,5 thì sao?** Giữ vector dự đoán toàn 0; mã không ép một nhãn top-1 (`scripts/common.py:71–72`). Không được gọi đó là xác suất Neutral đã học riêng.
 
-**5. Tại sao cần OvR?** Mỗi cột cảm xúc là một bài toán có/không; OvR huấn luyện một Logistic Regression cho mỗi cột (`scripts/train_tfidf.py:24–27`).
+**5. Tại sao cần OvR?** Mỗi cột cảm xúc là một bài toán có/không; OvR huấn luyện một Logistic Regression cho mỗi cột (`scripts/train_tfidf.py:27–30`).
 
 **6. TF-IDF có dùng tách từ VnCoreNLP không?** Không. Vectorizer dùng regex từ config; nhánh VnCoreNLP chỉ phục vụ PhoBERT (`configs/baseline27_4ep.json:22–31`, `scripts/train_neural.py:63–67`).
 
-**7. Vì sao chỉ fit vocabulary trên train?** Để vocabulary/IDF không học thông tin phân bố từ val/test. Validation chỉ transform; BiGRU xây Counter trên train (`scripts/train_tfidf.py:23–29`, `scripts/train_neural.py:48–49`).
+**7. Vì sao chỉ fit vocabulary trên train?** Để vocabulary/IDF không học thông tin phân bố từ val/test. Validation chỉ transform; BiGRU xây Counter trên train (`scripts/train_tfidf.py:26–32`, `scripts/train_neural.py:48–49`).
 
 **8. BiGRU có được fine-tune không?** Trong dự án, nó được khởi tạo mới, không nạp pretrained weights: training from scratch (`scripts/train_neural.py:19–25`, `scripts/train_neural.py:52`).
 
@@ -884,7 +889,7 @@ PhoBERT có nhiều tầng dễ nhầm: pretrained khác fine-tuning, segmentati
 
 **26. Code clipping làm gì?** Giới hạn norm gradient 1,0 trước bước optimizer, không giới hạn trực tiếp trọng số và không dừng sớm (`scripts/train_neural.py:148–150`).
 
-**27. Điểm test của nhóm bao nhiêu?** Chưa có trong các artifact baseline đang dùng. Train scripts chỉ truyền xác suất `val` vào đánh giá; không tự lấy điểm validation gọi là test (`scripts/train_tfidf.py:32`, `scripts/train_neural.py:166`).
+**27. Điểm test của nhóm bao nhiêu?** Chưa có trong các artifact baseline đang dùng. Train scripts chỉ truyền xác suất `val` vào đánh giá; không tự lấy điểm validation gọi là test (`scripts/train_tfidf.py:35`, `scripts/train_neural.py:166`).
 
 **28. F1 thấp một nhãn có nghĩa nhãn đó sai không?** Không. Có thể do ngưỡng, tín hiệu yếu, dữ liệu, biểu diễn hay tối ưu; bảng per-label không tự xác định nguyên nhân. Cần kiểm tra thêm trước khi kết luận.
 
@@ -912,7 +917,7 @@ PhoBERT có nhiều tầng dễ nhầm: pretrained khác fine-tuning, segmentati
 
 `common.py::multihot` ở `scripts/common.py:32–37`; `normalize/load_data` ở `scripts/common.py:40–64`; `scores` ở `scripts/common.py:71–78`.
 
-`train_tfidf.py::main` ở `scripts/train_tfidf.py:16–37`; `train_neural.py::BiGRU` ở `scripts/train_neural.py:19–31`; `segmented_texts/prepare` ở `scripts/train_neural.py:34–86`; `predict` ở `scripts/train_neural.py:95–102`; full fine-tuning và checkpoint ở `scripts/train_neural.py:134–166`.
+`train_tfidf.py::main` ở `scripts/train_tfidf.py:16–43`; `train_neural.py::BiGRU` ở `scripts/train_neural.py:19–31`; `segmented_texts/prepare` ở `scripts/train_neural.py:34–86`; `predict` ở `scripts/train_neural.py:95–102`; full fine-tuning và checkpoint ở `scripts/train_neural.py:134–166`.
 
 `evaluate.py::save_evaluation` ở `scripts/evaluate.py:15–53`; `tune_phobert.py::prepare/load_plan` ở `scripts/tune_phobert.py:23–45`; kiểm tra/chọn study ở `scripts/tune_phobert.py:48–142` và `scripts/tune_phobert.py:172–179`. `scripts/build_report.py:236–538` (`main`) tổng hợp báo cáo, không huấn luyện mô hình; notebook 03/04/05 gọi các script tương ứng.
 

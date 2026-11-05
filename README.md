@@ -5,6 +5,8 @@ Báo cáo/slide viết tiếng Việt; kết quả đo trên **validation**, tes
 
 ## Mở nội dung
 
+- **Workflow Kaggle chính mới:** [Notebook 08 — 27 nhãn](notebooks/08_kaggle_equal_20ep_27_labels.ipynb), [Notebook 09 — 28 nhãn](notebooks/09_kaggle_equal_20ep_28_labels.ipynb), [cách chạy và nguồn kết quả](docs/kaggle_equal_epochs.md). Dùng một profile `configs/kaggle_equal_20ep.json`; TF-IDF giữ cùng solver. Chưa có kết quả GPU mới, các điểm midterm bên dưới vẫn là lịch sử.
+
 - **Notebook local đã chạy lại:** 01/02/03/07 giữ output tổng hợp an toàn; [kết quả lượt local riêng](reports/local_notebook_run_2026-11-05/README.md). TF-IDF được fit lại trên CPU; các kết quả baseline lịch sử giữ nguyên.
 
 - **Chốt nội dung 05/11:** [trạng thái các mục trước nộp](docs/midterm_readiness_2026-11-05.md), [profile và lệnh tái lập](docs/reproducibility_profiles.md), [audit split](notebooks/07_split_distribution_audit.ipynb), [thông tin nhóm chờ cung cấp](docs/team_information.md). Report đã thêm phụ lục per-label và chín ca đọc lỗi PhoBERT có hỗ trợ AI; nhóm cần xác nhận khi bảo vệ.

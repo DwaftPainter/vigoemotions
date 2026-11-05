@@ -13,8 +13,11 @@ from common import ROOT, load_data, targets, environment, write_json
 from evaluate import save_evaluation
 
 
-def main():
-    config = json.loads((ROOT/'configs/baseline27_4ep.json').read_text())
+def main(config=None, output_dir=None):
+    config = config or json.loads((ROOT/'configs/baseline27_4ep.json').read_text())
+    out = ROOT/'reports' if output_dir is None else output_dir
+    if output_dir is not None:
+        out.mkdir(parents=True, exist_ok=False)
     frames, _ = load_data()
     params = config['tfidf'].copy()
     params['ngram_range'] = tuple(params['ngram_range'])
@@ -29,8 +32,11 @@ def main():
     val = model.predict_proba(vectorizer.transform(frames['val'].normalized))
     parameters = sum(est.coef_.size + est.intercept_.size for est in model.estimators_)
     metadata = {'parameter_count':parameters, 'train_seconds':seconds}
-    save_evaluation('tfidf_lr',frames,{'val':val},metadata)
-    write_json(ROOT/'reports/tfidf_lr_run.json',dict(config=config,
+    save_evaluation('tfidf_lr',frames,{'val':val},metadata,output_dir=out)
+    if output_dir is not None:
+        import joblib
+        joblib.dump(dict(vectorizer=vectorizer,model=model),out/'model.joblib')
+    write_json(out/'tfidf_lr_run.json',dict(config=config,device='cpu',
         environment=environment(),features=len(vectorizer.vocabulary_),
         parameter_definition='27 x (TF-IDF feature count + intercept); IDF values excluded',
         time_definition='Training TF-IDF fit + OvR fit; excludes data loading and evaluation',

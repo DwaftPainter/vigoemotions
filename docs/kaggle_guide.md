@@ -1,5 +1,7 @@
 # Chạy ViGoEmotions trên Kaggle
 
+**Luồng chính mới:** [hai notebook 08/09 riêng cho 27/28 nhãn, cùng 20 epoch](kaggle_equal_epochs.md). Hướng dẫn 04/05 bên dưới giữ cho các lượt lịch sử.
+
 Các lượt chạy dùng [profile cấu hình tách riêng](reproducibility_profiles.md). Notebook 04 mặc định baseline 10/4; profile Kaggle 25/20 giữ riêng, không sửa đè `midterm.json`. Notebook/gói chia sẻ đã xóa output.
 
 ## 1. File đã chuẩn bị

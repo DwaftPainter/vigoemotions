@@ -110,6 +110,8 @@ def study_config(base):
     config.update(label_count=28, neutral_id=27, threshold=0.5,
         neutral_policy='preserve_original_annotations',
         checkpoint_selection='Highest validation 28-label Macro-F1 at 0.5; ties keep earliest epoch')
+    if config.get('checkpoint_selection_metric') == 'emotion27_macro_f1':
+        config['checkpoint_selection'] = 'Highest validation emotion27 Macro-F1 at 0.5; ties keep earliest epoch'
     if base.get('label_count') != 27 or base.get('neutral_id') != 27 or base.get('threshold') != .5:
         raise ValueError('Expected a 27-label baseline config with Neutral ID 27 and threshold 0.5')
     return config
@@ -241,6 +243,14 @@ def train_tfidf(train, val, config, folder):
         time_definition='TF-IDF fit + OvR fit; excludes data loading/evaluation')
 
 
+def checkpoint_score(config, y, probabilities):
+    criterion = config.get('checkpoint_selection_metric', 'macro_f1')
+    if criterion not in ('macro_f1', 'emotion27_macro_f1'):
+        raise ValueError(f'Unknown checkpoint selection metric: {criterion}')
+    width = 27 if criterion == 'emotion27_macro_f1' else y.shape[1]
+    return scores(y[:, :width], probabilities[:, :width])['macro_f1']
+
+
 def train_neural28(name, train, val, config, folder, segmenter_dir, allow_cpu=False):
     from collections import Counter
     import torch
@@ -309,11 +319,12 @@ def train_neural28(name, train, val, config, folder, segmenter_dir, allow_cpu=Fa
             total += loss.item()*len(y)
         p = predict(model, name, loaders['val'], device)
         row = dict(epoch=epoch, loss=total/len(train), **scores(targets28(val), p))
+        row['selection_macro_f1'] = checkpoint_score(config, targets28(val), p)
         history.append(row)
         pd.DataFrame(history).to_csv(folder/'history.csv', index=False)
         print(row, flush=True)
-        if row['macro_f1'] > best:
-            best, best_epoch = row['macro_f1'], epoch
+        if row['selection_macro_f1'] > best:
+            best, best_epoch = row['selection_macro_f1'], epoch
             torch.save(model.state_dict(), folder/'best.pt')
     if device.type == 'cuda':
         torch.cuda.synchronize()
@@ -527,7 +538,9 @@ def baseline_row(out, study, name):
         keys = ('tfidf', 'logistic_regression', 'seed') if name == 'tfidf_lr' else (name, 'seed')
         differences = [key for key in keys if old_cfg.get(key) != new_cfg.get(key)]
         conditions.append('Model settings match' if not differences else 'DIFFERENT settings: '+', '.join(differences))
-        conditions.append('Baseline checkpoint selected by 27-label Macro-F1; new checkpoint by 28-label Macro-F1')
+        conditions.append('Both checkpoints selected by emotion27 Macro-F1' if
+            new_cfg.get('checkpoint_selection_metric') == 'emotion27_macro_f1' else
+            'Baseline checkpoint selected by 27-label Macro-F1; new checkpoint by 28-label Macro-F1')
         new_run_path = out/'models'/name/'run.json'
         if new_run_path.exists() and old.get('device') != read_json(new_run_path).get('device'):
             conditions.append('Different or unverified hardware/device')
@@ -637,8 +650,8 @@ Thêm Neutral (ID 27) vào 27 cảm xúc IDs 0–26. Không thay thế thí nghi
 Seed {study['config']['seed']}; ngưỡng cố định 0.5. Giữ split và quy tắc loại train trùng heldout của project.
 Văn bản NFC/chuẩn hóa khoảng trắng như `common.normalize`; TF-IDF và neural giữ hyperparameters từ config baseline.
 BiGRU {study['config']['gru']['epochs']} epoch; PhoBERT {study['config']['phobert']['epochs']} epoch.
-Chọn epoch bằng validation Macro-F1 trên 28 nhãn; hòa chọn epoch sớm nhất.
-Đổi tập nhãn chọn checkpoint là hệ quả của 28 đầu ra và được nêu rõ khi so sánh baseline 27 nhãn.
+Quy tắc chọn checkpoint: {study['config']['checkpoint_selection']}.
+Đối chiếu tập nhãn chọn checkpoint của từng study trước khi so sánh baseline 27 nhãn.
 
 ## 2. Mã hóa Neutral và bất nhất annotation
 Vector multi-hot có đúng 28 phần tử. [27] → chỉ phần tử 27 bằng 1;
