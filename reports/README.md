@@ -3,7 +3,7 @@
 **Nguồn chính hiện tại là Kaggle 20 epoch, notebook 08/09 executed.**
 
 1. [Báo cáo](midterm_report.pdf) / [Markdown](midterm_report.md).
-2. [15 slide tiếng Anh](midterm_slides.pdf) / [speaker notes](midterm_slides.md).
+2. [18 slide tiếng Anh](midterm_slides.pdf) / [speaker notes](midterm_slides.md).
 3. [Kết quả, Q1–Q5 và evidence mới](kaggle_equal20_2026-11-05/README.md).
 4. [Script tiếng Anh + Q&A](../docs/midterm_presentation_en.md) / [PDF](../docs/midterm_presentation_en.pdf).
 
@@ -15,4 +15,4 @@ Snapshot `midterm_2026-11-04/`, `pre_midterm*`, lượt local và các tài li�
 
 Lệnh build chính: `python scripts/import_equal20_results.py`, sau đó `python scripts/build_report.py`. Không train lại, không chấm test và không ghi đè artifact lịch sử.
 
-Để dựng lại riêng presentation 15 slide và script tiếng Anh, dùng `python scripts/build_equal20_presentation.py`. [Định nghĩa slide hiện tại](midterm_slide_design.json) nằm ngoài evidence; `kaggle_equal20_2026-11-05/slides.json` là snapshot trước redesign. Bản mới có bảy bảng, pipeline, learning curves, biểu đồ per-label và threshold. [Kiểm chứng presentation](midterm_presentation_verification.json) ghi kết quả kiểm tra riêng; evidence thí nghiệm và notebook executed được giữ nguyên.
+Để dựng lại riêng presentation 18 slide và script tiếng Anh, dùng `python scripts/build_equal20_presentation.py`. [Định nghĩa slide hiện tại](midterm_slide_design.json) nằm ngoài evidence; `kaggle_equal20_2026-11-05/slides.json` là snapshot trước redesign. Bản mới có 11 bảng, pipeline, learning curves và các slide riêng cho Q1–Q5. Q3 so sánh joint recall cả ba model; Q4 có bốn nhóm style; Q5 có đường threshold và bảng default/best. [Kiểm chứng presentation](midterm_presentation_verification.json) ghi kết quả kiểm tra riêng; evidence thí nghiệm và notebook executed được giữ nguyên.

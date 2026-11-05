@@ -997,12 +997,13 @@
     "notes": "These curves use the same twenty-seven-emotion checkpoint-selection metric for both output settings. Both neural models completed twenty epochs. The selected PhoBERT checkpoints are at epochs fourteen and fifteen. Selection is based on validation, not simply the final epoch. Training loss continued to decrease, but validation loss was not recorded, so we do not claim confirmed overfitting."
   },
   {
-    "layout": "analysis",
-    "section": "08 / Q1–Q2",
-    "title": "Performance varies by label, beyond raw frequency",
-    "subtitle": "PhoBERT, 27 outputs • per-label validation F1 at threshold 0.5",
-    "takeaway": "Gratitude is strongest; disapproval is weakest. Frequency shows little monotonic association in this run.",
-    "source": "Sources: per_label_metrics.csv; frequency_f1.csv; current PhoBERT-27 per-label table. Descriptive, single-seed analysis.",
+    "layout": "table_chart",
+    "section": "08 / Q1",
+    "title": "Q1 · Which emotions are easiest and hardest?",
+    "subtitle": "27-output study • per-label validation F1 at threshold 0.5 • bars show selected PhoBERT labels",
+    "takeaway": "Gratitude ranks highest for every model; the weakest label depends on the model.",
+    "source": "Sources: label_extremes.csv; current analysis/27_emotion27/*/tables/*_per_label.csv. Full label tables in report.",
+    "rq": "Q1",
     "bars": {
       "labels": [
         "gratitude",
@@ -1022,7 +1023,7 @@
       ],
       "x": 64,
       "top": 479,
-      "width": 566,
+      "width": 560,
       "height": 269,
       "maximum": 1,
       "value_format": "f1",
@@ -1036,6 +1037,83 @@
         "#597594"
       ]
     },
+    "table": {
+      "headers": [
+        "Model",
+        "Highest label / F1",
+        "Lowest label / F1"
+      ],
+      "rows": [
+        [
+          "TF-IDF + OvR LR",
+          "gratitude\n0.6797",
+          "realization\n0.0000"
+        ],
+        [
+          "BiGRU",
+          "gratitude\n0.7701",
+          "realization\n0.0940"
+        ],
+        [
+          "PhoBERT",
+          "gratitude\n0.8370",
+          "disapproval\n0.3623"
+        ]
+      ],
+      "x": 656,
+      "top": 520,
+      "widths": [
+        150,
+        200,
+        210
+      ],
+      "row_height": 76,
+      "highlights": [
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "alignments": [
+        0,
+        0,
+        0
+      ]
+    },
+    "annotations": [
+      {
+        "value": "PhoBERT: top three and bottom three labels",
+        "x": 64,
+        "top": 520,
+        "width": 560,
+        "size": 14,
+        "color": "#607487",
+        "height": 35
+      },
+      {
+        "value": "Per-label F1 reveals weaknesses hidden by the overall average. These are single-run validation results.",
+        "x": 656,
+        "top": 219,
+        "width": 560,
+        "size": 17,
+        "color": "#607487",
+        "height": 65
+      }
+    ],
+    "notes": "Gratitude is the easiest label for all three models. The weakest label is realization for TF-IDF and BiGRU, but disapproval for PhoBERT. The bars show selected PhoBERT labels; the table compares each model’s extremes. Overall F1 hides these differences."
+  },
+  {
+    "layout": "table_chart",
+    "section": "09 / Q2",
+    "title": "Q2 · Does label frequency predict F1?",
+    "subtitle": "27-output study • training counts versus validation per-label F1 • one point per emotion",
+    "takeaway": "PhoBERT shows almost no monotonic frequency–F1 association in this run.",
+    "source": "Sources: frequency_f1.csv; current PhoBERT-27 per-label table. Descriptive correlation across 27 labels per model.",
+    "rq": "Q2",
     "scatter": {
       "series": [
         {
@@ -1101,10 +1179,10 @@
           "color": "#007F86"
         }
       ],
-      "x": 690,
-      "y": 214,
-      "width": 526,
-      "height": 280,
+      "x": 64,
+      "y": 185,
+      "width": 710,
+      "height": 340,
       "xlim": [
         0,
         3200
@@ -1127,86 +1205,283 @@
         1
       ],
       "xlabel": "Positive training instances",
-      "ylabel": "Validation per-label F1",
+      "ylabel": "PhoBERT validation per-label F1",
       "scatter": true,
       "show_legend": false
     },
-    "association": "Spearman ρ = 0.018; p = 0.928",
-    "caption": "Selected top three and bottom three labels; full 27-label results remain in the report.",
-    "notes": "For individual emotions, PhoBERT performs best on gratitude and worst on disapproval. The correlation between training frequency and per-label F1 is approximately 0.018, with a p-value of 0.928. These descriptive results do not support a simple rule that more frequent labels are always easier. The report includes every label for all three models."
-  },
-  {
-    "layout": "full_table",
-    "section": "09 / Q1–Q5",
-    "title": "Research questions: a compact evidence checklist",
-    "subtitle": "Current 27-output study • frozen checkpoints • validation-only diagnostics",
-    "takeaway": "The findings depend on the label, text style, metric and decision threshold.",
-    "source": "Sources: label_extremes, frequency_f1, pair_preservation, neural_style_comparison, threshold_sensitivity.csv.",
     "table": {
       "headers": [
-        "RQ",
-        "What was measured?",
-        "Selected result",
-        "Interpretation / boundary"
+        "Model",
+        "Spearman ρ",
+        "p-value"
       ],
       "rows": [
         [
-          "Q1",
-          "Highest / lowest label F1",
-          "Gratitude 0.8370; disapproval 0.3623",
-          "PhoBERT-27; full label table in report"
+          "TF-IDF + OvR LR",
+          "0.242",
+          "0.223"
         ],
         [
-          "Q2",
-          "Training frequency vs F1",
-          "Spearman ρ 0.018; p 0.928",
-          "Descriptive association, not causation"
+          "BiGRU",
+          "0.313",
+          "0.112"
         ],
         [
-          "Q3",
-          "Disappointment + sadness",
-          "PhoBERT: 63/122 jointly correct (51.64%)",
-          "Pair chosen from train: 904 occurrences"
+          "PhoBERT",
+          "0.018",
+          "0.928"
+        ]
+      ],
+      "x": 815,
+      "top": 520,
+      "widths": [
+        150,
+        120,
+        131
+      ],
+      "row_height": 66,
+      "alignments": [
+        0,
+        2,
+        2
+      ],
+      "highlights": [
+        [
+          2,
+          1
+        ]
+      ]
+    },
+    "annotations": [
+      {
+        "value": "Frequency alone does not explain label difficulty. Association is not causation; one seed was evaluated.",
+        "x": 815,
+        "top": 245,
+        "width": 401,
+        "size": 17,
+        "color": "#607487",
+        "height": 100
+      }
+    ],
+    "notes": "For Q2, each dot represents one emotion under PhoBERT. Its frequency–F1 correlation is only 0.018. The table also shows TF-IDF and BiGRU. These descriptive correlations do not establish causation; frequency alone cannot explain which labels are difficult."
+  },
+  {
+    "layout": "table_chart",
+    "section": "10 / Q3",
+    "title": "Q3 · How often are both emotions recovered?",
+    "subtitle": "27-output study • threshold 0.5 • disappointment + sadness (top training pair: 904)",
+    "takeaway": "PhoBERT recovers both emotions in 63/122 positive-pair cases; about half are still missed.",
+    "source": "Sources: pair_preservation.csv; current 27-output pair tables. Extra predicted labels allowed; this is joint recall, not precision.",
+    "rq": "Q3",
+    "table": {
+      "headers": [
+        "Model",
+        "Joint TP",
+        "Val. support",
+        "Joint recall"
+      ],
+      "rows": [
+        [
+          "TF-IDF + OvR LR",
+          "2",
+          "122",
+          "1.64%"
         ],
         [
-          "Q4",
-          "PhoBERT advantage by style",
-          "Teencode: 0.5547 vs GRU 0.3333; +22.13 pp",
-          "Largest gap among heuristic groups; n = 307"
+          "BiGRU",
+          "37",
+          "122",
+          "30.33%"
         ],
         [
-          "Q5",
-          "Fixed vs explored threshold",
-          "τ 0.50 → 0.35: Macro-F1 0.5974 → 0.5978",
-          "Tiny F1 gain; Hamming Loss worsens"
+          "PhoBERT",
+          "63",
+          "122",
+          "51.64%"
         ]
       ],
       "x": 64,
       "top": 520,
       "widths": [
-        70,
-        300,
-        435,
-        347
+        240,
+        130,
+        165,
+        170
       ],
-      "row_height": 66,
-      "font_size": 16,
+      "row_height": 70,
       "alignments": [
         0,
-        0,
-        0,
-        0
+        2,
+        2,
+        2
+      ],
+      "highlights": [
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ]
       ]
     },
-    "notes": "Our most frequent training pair is disappointment and sadness. PhoBERT predicts both correctly in 63 of 122 validation cases containing both labels. For text styles, its largest advantage over BiGRU is in teencode, at about 22.1 percentage points of Macro-F1. Teencode means informal online spellings and abbreviations. Our style groups use heuristics and can overlap, so this finding needs cautious interpretation."
+    "bars": {
+      "labels": [
+        "TF-IDF + LR",
+        "BiGRU",
+        "PhoBERT"
+      ],
+      "values": [
+        0.0163934426229508,
+        0.3032786885245901,
+        0.5163934426229508
+      ],
+      "x": 807,
+      "top": 460,
+      "width": 409,
+      "height": 195,
+      "label_width": 143,
+      "maximum": 1,
+      "value_format": "percent"
+    },
+    "annotations": [
+      {
+        "value": "JOINT RECALL · 0–100% scale",
+        "x": 807,
+        "top": 520,
+        "width": 409,
+        "size": 14,
+        "color": "#007F86",
+        "bold": true,
+        "height": 30
+      },
+      {
+        "value": "Joint recall = cases with both labels predicted ÷ cases annotated with both labels.",
+        "x": 64,
+        "top": 225,
+        "width": 1152,
+        "size": 19,
+        "color": "#142D46",
+        "bold": true,
+        "height": 55
+      },
+      {
+        "value": "The pair was selected by training co-occurrence, then measured on validation; extra labels do not invalidate a hit.",
+        "x": 64,
+        "top": 183,
+        "width": 1152,
+        "size": 15,
+        "color": "#607487",
+        "height": 40
+      }
+    ],
+    "notes": "For Q3, we choose disappointment and sadness because they co-occur most often in training. Validation contains 122 comments annotated with both. TF-IDF recovers both in two cases, BiGRU in thirty-seven, and PhoBERT in sixty-three. Joint recall is therefore 1.64, 30.33 and 51.64 percent. Other predicted labels are allowed, so this does not measure pair precision."
+  },
+  {
+    "layout": "full_table",
+    "section": "11 / Q4",
+    "title": "Q4 · How does performance vary by text style?",
+    "subtitle": "27-output study • validation Macro-F1 over all 27 emotions • threshold 0.5",
+    "takeaway": "PhoBERT leads in every style group; its largest gap over BiGRU is teencode (+22.13 pp).",
+    "source": "Sources: current analysis/27_emotion27/*/tables/*_styles.csv; neural_style_comparison.csv. Δ = PhoBERT − BiGRU.",
+    "rq": "Q4",
+    "table": {
+      "headers": [
+        "Text-style group",
+        "n",
+        "TF-IDF + LR",
+        "BiGRU",
+        "PhoBERT",
+        "Δ Pho−GRU (pp)"
+      ],
+      "rows": [
+        [
+          "All comments",
+          "2,066",
+          "0.2388",
+          "0.4220",
+          "0.5974",
+          "+17.54"
+        ],
+        [
+          "Emoji-heavy (≥ 2)",
+          "199",
+          "0.1690",
+          "0.3506",
+          "0.4789",
+          "+12.83"
+        ],
+        [
+          "Short (≤ 5 tokens)",
+          "343",
+          "0.3310",
+          "0.4303",
+          "0.5654",
+          "+13.51"
+        ],
+        [
+          "Teencode",
+          "307",
+          "0.1671",
+          "0.3333",
+          "0.5547",
+          "+22.13"
+        ]
+      ],
+      "x": 64,
+      "top": 520,
+      "widths": [
+        240,
+        100,
+        190,
+        180,
+        200,
+        242
+      ],
+      "row_height": 64,
+      "alignments": [
+        0,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "highlights": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ]
+    },
+    "caption": "Groups overlap and are heuristic subsets, not a partition. Short = ≤ 5 whitespace tokens; emoji-heavy = ≥ 2 emoji matches; teencode = lexicon match. Group sizes differ; no significance claim.",
+    "notes": "Q4 compares every available text-style group using the same twenty-seven labels. PhoBERT leads in all four rows. Its largest advantage over BiGRU is teencode: 22.13 percentage points on 307 examples. These groups use heuristic rules and overlap. Their sample counts differ, so this is descriptive rather than a controlled style effect."
   },
   {
     "layout": "threshold",
-    "section": "10 / DECODING",
-    "title": "PhoBERT gains little from this global threshold grid",
-    "subtitle": "27 outputs • same checkpoint • thresholds explored on validation only",
-    "takeaway": "Keep the main comparison at 0.5; test generalization remains unknown.",
+    "section": "12 / Q5",
+    "title": "Q5 · Lower thresholds affect models differently",
+    "subtitle": "27-output study • fixed checkpoint per model • validation grid: 0.05–0.80, step 0.05",
+    "takeaway": "TF-IDF benefits most in exploratory F1; PhoBERT is almost unchanged. Keep the main comparison at 0.5.",
     "source": "Source: current analysis/27_emotion27/*/tables/*_thresholds_val.csv. Grid 0.05–0.80, step 0.05.",
+    "rq": "Q5",
     "chart": {
       "series": [
         {
@@ -1357,38 +1632,189 @@
         0.6
       ],
       "xlabel": "Decision threshold",
-      "ylabel": "Validation Macro-F1"
+      "ylabel": "Validation Macro-F1",
+      "markers": [
+        {
+          "x": 0.15,
+          "y": 0.4843704104090776,
+          "color": "#597594"
+        },
+        {
+          "x": 0.2,
+          "y": 0.4405803044106735,
+          "color": "#007F86"
+        },
+        {
+          "x": 0.35,
+          "y": 0.5978433128696495,
+          "color": "#142D46"
+        }
+      ]
     },
     "stats": [
       {
         "x": 908,
         "top": 491,
         "width": 308,
-        "number": "0.5974",
-        "label": "Macro-F1 at τ = 0.50",
-        "color": "#142D46"
+        "number": "+24.555 pp",
+        "label": "TF-IDF + OvR LR · τ 0.50 → 0.15",
+        "color": "#597594"
       },
       {
         "x": 908,
         "top": 371,
         "width": 308,
-        "number": "0.5978",
-        "label": "Macro-F1 at τ = 0.35"
+        "number": "+1.860 pp",
+        "label": "BiGRU · τ 0.50 → 0.20",
+        "color": "#007F86"
       },
       {
         "x": 908,
         "top": 251,
         "width": 308,
         "number": "+0.043 pp",
-        "label": "exploratory F1 difference"
+        "label": "PhoBERT · τ 0.50 → 0.35",
+        "color": "#142D46"
       }
     ],
-    "caption": "Hamming Loss rises from 0.0550 to 0.0587; LRAP is independent of the cutoff.",
-    "notes": "We also vary the threshold while keeping the checkpoint fixed. For PhoBERT, the best validation grid point is 0.35, with Macro-F1 0.5978, compared with 0.5974 at zero point five. The gain is tiny and Hamming Loss worsens. This is exploratory analysis, not a test improvement; the main comparison stays at zero point five."
+    "caption": "Callouts show the F1 change from 0.5 to the best grid point. Circles mark grid maxima; these are not test improvements.",
+    "notes": "Q5 keeps each checkpoint fixed and varies only the threshold. The three curves respond differently. TF-IDF gains about 24.55 percentage points of validation Macro-F1; BiGRU gains 1.86; PhoBERT gains only 0.043. Circles mark the best grid points, not test improvements."
+  },
+  {
+    "layout": "full_table",
+    "section": "12 / Q5",
+    "title": "Q5 · F1 gains come with more label errors",
+    "subtitle": "27-output study • same validation examples and checkpoint within each model • Macro-F1-selected grid points",
+    "takeaway": "Every best-F1 grid point has higher Hamming Loss; tuning F1 does not optimize every metric.",
+    "source": "Sources: model_comparison.csv (27 outputs); threshold_sensitivity.csv. Δ F1 versus each model’s default, in percentage points.",
+    "rq": "Q5",
+    "table": {
+      "headers": [
+        "Model",
+        "Threshold setting",
+        "τ",
+        "Macro-F1 ↑",
+        "Hamming ↓",
+        "Δ F1 (pp)"
+      ],
+      "rows": [
+        [
+          "TF-IDF + OvR LR",
+          "Default",
+          "0.50",
+          "0.2388",
+          "0.0606",
+          "—"
+        ],
+        [
+          "TF-IDF + OvR LR",
+          "Exploratory best",
+          "0.15",
+          "0.4844",
+          "0.0867",
+          "+24.555"
+        ],
+        [
+          "BiGRU",
+          "Default",
+          "0.50",
+          "0.4220",
+          "0.0626",
+          "—"
+        ],
+        [
+          "BiGRU",
+          "Exploratory best",
+          "0.20",
+          "0.4406",
+          "0.0784",
+          "+1.860"
+        ],
+        [
+          "PhoBERT",
+          "Default",
+          "0.50",
+          "0.5974",
+          "0.0550",
+          "—"
+        ],
+        [
+          "PhoBERT",
+          "Exploratory best",
+          "0.35",
+          "0.5978",
+          "0.0587",
+          "+0.043"
+        ]
+      ],
+      "x": 64,
+      "top": 520,
+      "widths": [
+        220,
+        245,
+        95,
+        200,
+        200,
+        192
+      ],
+      "row_height": 43,
+      "group_starts": [
+        2,
+        4
+      ],
+      "alignments": [
+        0,
+        0,
+        2,
+        2,
+        2,
+        2
+      ],
+      "highlights": [
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          5,
+          5
+        ]
+      ]
+    },
+    "caption": "Best = highest Macro-F1 on the explored validation grid, not an independently validated optimum. Main results remain at 0.5. LRAP is cutoff-independent; test generalization is unknown.",
+    "notes": "The table compares the default and exploratory best thresholds for every model. Lower thresholds improve Macro-F1 but increase Hamming Loss in all three cases. Choosing on validation can overestimate generalization. We keep the main comparison at 0.5 and will lock decoding choices before evaluating test."
   },
   {
     "layout": "two_column",
-    "section": "11 / ERROR ANALYSIS",
+    "section": "13 / ERROR ANALYSIS",
     "title": "Neutral errors: implied affect versus surface cues",
     "subtitle": "Two illustrative cases from the six-case preliminary, AI-assisted review; no raw comments reproduced.",
     "takeaway": "Interpretations are hypotheses from selected cases, not established error causes.",
@@ -1420,7 +1846,7 @@
   },
   {
     "layout": "final_plan",
-    "section": "12 / FINAL EXPERIMENT",
+    "section": "14 / FINAL EXPERIMENT",
     "title": "Is one threshold suitable for every emotion?",
     "subtitle": "Planned controlled decoding comparison • no new test results claimed",
     "takeaway": "Hold model weights fixed; change the decoder, then evaluate held-out test once.",
@@ -1458,7 +1884,7 @@
   },
   {
     "layout": "conclusions",
-    "section": "13 / CONCLUSIONS",
+    "section": "15 / CONCLUSIONS",
     "title": "What the current study supports",
     "subtitle": "Three evidence-backed observations; a focused next experiment",
     "takeaway": "PhoBERT is the strongest model in each setting; Neutral and decoder design remain open questions.",

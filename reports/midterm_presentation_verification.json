@@ -1,25 +1,49 @@
 {
   "source_study": "reports/kaggle_equal20_2026-11-05",
-  "scope": "Presentation redesign only; validation results; no retraining or test scoring",
-  "slide_count": 15,
+  "scope": "18-slide expansion with dedicated Q1–Q5 analysis; validation results only; no retraining or test scoring",
+  "analysis_label_space": "Q1–Q5 use the 27-output study. Neutral effects use the shared 27 emotions; Neutral detection uses 28 outputs.",
+  "slide_count": 18,
   "page_size_points": [
     1280,
     720
   ],
-  "table_count": 7,
-  "speaker_script_words": 830,
+  "table_count": 11,
+  "dedicated_research_question_slides": {
+    "Q1": [
+      10
+    ],
+    "Q2": [
+      11
+    ],
+    "Q3": [
+      12
+    ],
+    "Q4": [
+      13
+    ],
+    "Q5": [
+      14,
+      15
+    ]
+  },
+  "speaker_script_words": 935,
   "automated_checks": {
-    "tests_passed": 11,
+    "tests_passed": 15,
     "test_modules": [
       "test_academic_presentation",
       "test_import_equal20_results",
       "test_report_summary"
     ],
-    "text_boxes_checked": 479,
+    "text_boxes_checked": 598,
     "text_box_collisions": [],
     "renderer_overflow_checks": "passed",
+    "markdown_table_structure": "11 tables checked for row and column counts, including multiline cells",
     "full_label_metrics": "Six current CSV rows checked, including checkpoint epochs",
-    "neutral_comparison": "Shared 27-label F1 and Neutral TP/FP/FN independently recomputed from current NPZ"
+    "neutral_comparison": "Shared 27-label F1 and Neutral TP/FP/FN independently recomputed from current NPZ",
+    "q3": "Joint TP, validation support and joint recall independently recomputed from all three 27-output NPZ",
+    "q4": "All four groups: validation counts and Macro-F1 checked against all three current style tables; differences checked in percentage points",
+    "q5": "Default and best-grid thresholds, Macro-F1 and Hamming Loss independently checked against current sweeps and NPZ for all three models",
+    "research_question_pages": "Q1–Q5 titles verified in the extracted PDF text"
   },
   "visual_inspection": {
     "slides": [
@@ -37,7 +61,10 @@
       12,
       13,
       14,
-      15
+      15,
+      16,
+      17,
+      18
     ],
     "checks": [
       "overflow",
@@ -45,7 +72,9 @@
       "text overlap",
       "table readability",
       "spacing",
-      "chart labels"
+      "chart labels",
+      "scientific caveats",
+      "dedicated Q1–Q5 hierarchy"
     ],
     "result": "passed"
   },
@@ -60,10 +89,10 @@
     "aggregate_sha256": "6b5318b65fa6d860b4bb1d3d59f0a7e2bea81804706f1f1370165c8eb452b612"
   },
   "generated_outputs_sha256": {
-    "reports/midterm_slides.pdf": "04cba340969ff436883a48b0168e730381a85a44ad878c04c8668edb13ae4c63",
-    "reports/midterm_slides.md": "626201d9d78f2e0c136191553ff0ac002840861478a046cdf35c7e0dbe3bc2f0",
-    "reports/midterm_slide_design.json": "7602681e83ee285dc5f1bcccca1932a3f53b69a5a71eaa1d46273a9a5c68913f",
-    "docs/midterm_presentation_en.md": "c8404891af9f1cc48a3fe970a3cda5595ffc0d383a64f04a9d5ff02dd1ba8ff0",
-    "docs/midterm_presentation_en.pdf": "b0edd4d536648020e315962a16f2ea6fa8838fb09799c8a86c839367855ae968"
+    "reports/midterm_slides.pdf": "82a2d106b49c3beb6e7567332d5d5f869abe0bf2adbf711305621ff17cfd06a9",
+    "reports/midterm_slides.md": "5c5855ac7a38717739a3cdb3be9daecf18ffd7805a496dad923aeecc059f5824",
+    "reports/midterm_slide_design.json": "e3a19e136e815dadea66a75860e6cc960c0d63ea7934bf0c2e321ce187e9d2bb",
+    "docs/midterm_presentation_en.md": "6e452e9caff35f081f83d90fd27f774849fb7304ea9cd026fdb2fddc74fdb020",
+    "docs/midterm_presentation_en.pdf": "d33d0e6e443f326612d68aea6b14050cc128d08ac7b10c21893677f79e4c77a6"
   }
 }

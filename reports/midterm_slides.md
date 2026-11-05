@@ -1,6 +1,6 @@
 # ViGoEmotions — Midterm research presentation
 
-15 slides • English • validation results from the verified Kaggle 20-epoch studies.
+18 slides • English • validation results from the verified Kaggle 20-epoch studies.
 
 Experiment inputs are read-only. Slide definitions: reports/midterm_slide_design.json.
 
@@ -47,6 +47,8 @@ What changes when Neutral becomes a learned output?
 - joy: 1,614
 - anger: 1,589
 - relief: 635
+
+Most frequent five + least frequent label
 
 **Takeaway:** Preserve the split; fit text representations on train only.
 
@@ -197,11 +199,17 @@ Train BCE continued to decrease; validation loss was not recorded. These curves 
 
 **Speaker notes:** These curves use the same twenty-seven-emotion checkpoint-selection metric for both output settings. Both neural models completed twenty epochs. The selected PhoBERT checkpoints are at epochs fourteen and fifteen. Selection is based on validation, not simply the final epoch. Training loss continued to decrease, but validation loss was not recorded, so we do not claim confirmed overfitting.
 
-## 10. Performance varies by label, beyond raw frequency
+## 10. Q1 · Which emotions are easiest and hardest?
 
-**Layout:** analysis · **Section:** 08 / Q1–Q2
+**Layout:** table_chart · **Section:** 08 / Q1
 
-PhoBERT, 27 outputs • per-label validation F1 at threshold 0.5
+27-output study • per-label validation F1 at threshold 0.5 • bars show selected PhoBERT labels
+
+| Model | Highest label / F1 | Lowest label / F1 |
+| --- | --- | --- |
+| TF-IDF + OvR LR | gratitude<br>0.6797 | realization<br>0.0000 |
+| BiGRU | gratitude<br>0.7701 | realization<br>0.0940 |
+| PhoBERT | gratitude<br>0.8370 | disapproval<br>0.3623 |
 
 **Chart — selected labels:**
 
@@ -212,62 +220,137 @@ PhoBERT, 27 outputs • per-label validation F1 at threshold 0.5
 - excitement: 0.4606
 - disapproval: 0.3623
 
+PhoBERT: top three and bottom three labels
+
+Per-label F1 reveals weaknesses hidden by the overall average. These are single-run validation results.
+
+**Takeaway:** Gratitude ranks highest for every model; the weakest label depends on the model.
+
+**Source / protocol:** Sources: label_extremes.csv; current analysis/27_emotion27/*/tables/*_per_label.csv. Full label tables in report.
+
+**Speaker notes:** Gratitude is the easiest label for all three models. The weakest label is realization for TF-IDF and BiGRU, but disapproval for PhoBERT. The bars show selected PhoBERT labels; the table compares each model’s extremes. Overall F1 hides these differences.
+
+## 11. Q2 · Does label frequency predict F1?
+
+**Layout:** table_chart · **Section:** 09 / Q2
+
+27-output study • training counts versus validation per-label F1 • one point per emotion
+
+| Model | Spearman ρ | p-value |
+| --- | --- | --- |
+| TF-IDF + OvR LR | 0.242 | 0.223 |
+| BiGRU | 0.313 | 0.112 |
+| PhoBERT | 0.018 | 0.928 |
+
 **Chart:** training frequency versus validation F1 across all 27 emotion labels.
-Spearman ρ = 0.018; p = 0.928
 
-Selected top three and bottom three labels; full 27-label results remain in the report.
+Frequency alone does not explain label difficulty. Association is not causation; one seed was evaluated.
 
-**Takeaway:** Gratitude is strongest; disapproval is weakest. Frequency shows little monotonic association in this run.
+**Takeaway:** PhoBERT shows almost no monotonic frequency–F1 association in this run.
 
-**Source / protocol:** Sources: per_label_metrics.csv; frequency_f1.csv; current PhoBERT-27 per-label table. Descriptive, single-seed analysis.
+**Source / protocol:** Sources: frequency_f1.csv; current PhoBERT-27 per-label table. Descriptive correlation across 27 labels per model.
 
-**Speaker notes:** For individual emotions, PhoBERT performs best on gratitude and worst on disapproval. The correlation between training frequency and per-label F1 is approximately 0.018, with a p-value of 0.928. These descriptive results do not support a simple rule that more frequent labels are always easier. The report includes every label for all three models.
+**Speaker notes:** For Q2, each dot represents one emotion under PhoBERT. Its frequency–F1 correlation is only 0.018. The table also shows TF-IDF and BiGRU. These descriptive correlations do not establish causation; frequency alone cannot explain which labels are difficult.
 
-## 11. Research questions: a compact evidence checklist
+## 12. Q3 · How often are both emotions recovered?
 
-**Layout:** full_table · **Section:** 09 / Q1–Q5
+**Layout:** table_chart · **Section:** 10 / Q3
 
-Current 27-output study • frozen checkpoints • validation-only diagnostics
+27-output study • threshold 0.5 • disappointment + sadness (top training pair: 904)
 
-| RQ | What was measured? | Selected result | Interpretation / boundary |
+| Model | Joint TP | Val. support | Joint recall |
 | --- | --- | --- | --- |
-| Q1 | Highest / lowest label F1 | Gratitude 0.8370; disapproval 0.3623 | PhoBERT-27; full label table in report |
-| Q2 | Training frequency vs F1 | Spearman ρ 0.018; p 0.928 | Descriptive association, not causation |
-| Q3 | Disappointment + sadness | PhoBERT: 63/122 jointly correct (51.64%) | Pair chosen from train: 904 occurrences |
-| Q4 | PhoBERT advantage by style | Teencode: 0.5547 vs GRU 0.3333; +22.13 pp | Largest gap among heuristic groups; n = 307 |
-| Q5 | Fixed vs explored threshold | τ 0.50 → 0.35: Macro-F1 0.5974 → 0.5978 | Tiny F1 gain; Hamming Loss worsens |
+| TF-IDF + OvR LR | 2 | 122 | 1.64% |
+| BiGRU | 37 | 122 | 30.33% |
+| PhoBERT | 63 | 122 | 51.64% |
 
-**Takeaway:** The findings depend on the label, text style, metric and decision threshold.
+**Chart — selected labels:**
 
-**Source / protocol:** Sources: label_extremes, frequency_f1, pair_preservation, neural_style_comparison, threshold_sensitivity.csv.
+- TF-IDF + LR: 1.64%
+- BiGRU: 30.33%
+- PhoBERT: 51.64%
 
-**Speaker notes:** Our most frequent training pair is disappointment and sadness. PhoBERT predicts both correctly in 63 of 122 validation cases containing both labels. For text styles, its largest advantage over BiGRU is in teencode, at about 22.1 percentage points of Macro-F1. Teencode means informal online spellings and abbreviations. Our style groups use heuristics and can overlap, so this finding needs cautious interpretation.
+JOINT RECALL · 0–100% scale
 
-## 12. PhoBERT gains little from this global threshold grid
+Joint recall = cases with both labels predicted ÷ cases annotated with both labels.
 
-**Layout:** threshold · **Section:** 10 / DECODING
+The pair was selected by training co-occurrence, then measured on validation; extra labels do not invalidate a hit.
 
-27 outputs • same checkpoint • thresholds explored on validation only
+**Takeaway:** PhoBERT recovers both emotions in 63/122 positive-pair cases; about half are still missed.
 
-**0.5974:** Macro-F1 at τ = 0.50
+**Source / protocol:** Sources: pair_preservation.csv; current 27-output pair tables. Extra predicted labels allowed; this is joint recall, not precision.
 
-**0.5978:** Macro-F1 at τ = 0.35
+**Speaker notes:** For Q3, we choose disappointment and sadness because they co-occur most often in training. Validation contains 122 comments annotated with both. TF-IDF recovers both in two cases, BiGRU in thirty-seven, and PhoBERT in sixty-three. Joint recall is therefore 1.64, 30.33 and 51.64 percent. Other predicted labels are allowed, so this does not measure pair precision.
 
-**+0.043 pp:** exploratory F1 difference
+## 13. Q4 · How does performance vary by text style?
+
+**Layout:** full_table · **Section:** 11 / Q4
+
+27-output study • validation Macro-F1 over all 27 emotions • threshold 0.5
+
+| Text-style group | n | TF-IDF + LR | BiGRU | PhoBERT | Δ Pho−GRU (pp) |
+| --- | --- | --- | --- | --- | --- |
+| All comments | 2,066 | 0.2388 | 0.4220 | 0.5974 | +17.54 |
+| Emoji-heavy (≥ 2) | 199 | 0.1690 | 0.3506 | 0.4789 | +12.83 |
+| Short (≤ 5 tokens) | 343 | 0.3310 | 0.4303 | 0.5654 | +13.51 |
+| Teencode | 307 | 0.1671 | 0.3333 | 0.5547 | +22.13 |
+
+Groups overlap and are heuristic subsets, not a partition. Short = ≤ 5 whitespace tokens; emoji-heavy = ≥ 2 emoji matches; teencode = lexicon match. Group sizes differ; no significance claim.
+
+**Takeaway:** PhoBERT leads in every style group; its largest gap over BiGRU is teencode (+22.13 pp).
+
+**Source / protocol:** Sources: current analysis/27_emotion27/*/tables/*_styles.csv; neural_style_comparison.csv. Δ = PhoBERT − BiGRU.
+
+**Speaker notes:** Q4 compares every available text-style group using the same twenty-seven labels. PhoBERT leads in all four rows. Its largest advantage over BiGRU is teencode: 22.13 percentage points on 307 examples. These groups use heuristic rules and overlap. Their sample counts differ, so this is descriptive rather than a controlled style effect.
+
+## 14. Q5 · Lower thresholds affect models differently
+
+**Layout:** threshold · **Section:** 12 / Q5
+
+27-output study • fixed checkpoint per model • validation grid: 0.05–0.80, step 0.05
+
+**+24.555 pp:** TF-IDF + OvR LR · τ 0.50 → 0.15
+
+**+1.860 pp:** BiGRU · τ 0.50 → 0.20
+
+**+0.043 pp:** PhoBERT · τ 0.50 → 0.35
 
 **Chart:** validation Macro-F1 versus decision threshold for TF-IDF, BiGRU and PhoBERT.
 
-Hamming Loss rises from 0.0550 to 0.0587; LRAP is independent of the cutoff.
+Callouts show the F1 change from 0.5 to the best grid point. Circles mark grid maxima; these are not test improvements.
 
-**Takeaway:** Keep the main comparison at 0.5; test generalization remains unknown.
+**Takeaway:** TF-IDF benefits most in exploratory F1; PhoBERT is almost unchanged. Keep the main comparison at 0.5.
 
 **Source / protocol:** Source: current analysis/27_emotion27/*/tables/*_thresholds_val.csv. Grid 0.05–0.80, step 0.05.
 
-**Speaker notes:** We also vary the threshold while keeping the checkpoint fixed. For PhoBERT, the best validation grid point is 0.35, with Macro-F1 0.5978, compared with 0.5974 at zero point five. The gain is tiny and Hamming Loss worsens. This is exploratory analysis, not a test improvement; the main comparison stays at zero point five.
+**Speaker notes:** Q5 keeps each checkpoint fixed and varies only the threshold. The three curves respond differently. TF-IDF gains about 24.55 percentage points of validation Macro-F1; BiGRU gains 1.86; PhoBERT gains only 0.043. Circles mark the best grid points, not test improvements.
 
-## 13. Neutral errors: implied affect versus surface cues
+## 15. Q5 · F1 gains come with more label errors
 
-**Layout:** two_column · **Section:** 11 / ERROR ANALYSIS
+**Layout:** full_table · **Section:** 12 / Q5
+
+27-output study • same validation examples and checkpoint within each model • Macro-F1-selected grid points
+
+| Model | Threshold setting | τ | Macro-F1 ↑ | Hamming ↓ | Δ F1 (pp) |
+| --- | --- | --- | --- | --- | --- |
+| TF-IDF + OvR LR | Default | 0.50 | 0.2388 | 0.0606 | — |
+| TF-IDF + OvR LR | Exploratory best | 0.15 | 0.4844 | 0.0867 | +24.555 |
+| BiGRU | Default | 0.50 | 0.4220 | 0.0626 | — |
+| BiGRU | Exploratory best | 0.20 | 0.4406 | 0.0784 | +1.860 |
+| PhoBERT | Default | 0.50 | 0.5974 | 0.0550 | — |
+| PhoBERT | Exploratory best | 0.35 | 0.5978 | 0.0587 | +0.043 |
+
+Best = highest Macro-F1 on the explored validation grid, not an independently validated optimum. Main results remain at 0.5. LRAP is cutoff-independent; test generalization is unknown.
+
+**Takeaway:** Every best-F1 grid point has higher Hamming Loss; tuning F1 does not optimize every metric.
+
+**Source / protocol:** Sources: model_comparison.csv (27 outputs); threshold_sensitivity.csv. Δ F1 versus each model’s default, in percentage points.
+
+**Speaker notes:** The table compares the default and exploratory best thresholds for every model. Lower thresholds improve Macro-F1 but increase Hamming Loss in all three cases. Choosing on validation can overestimate generalization. We keep the main comparison at 0.5 and will lock decoding choices before evaluating test.
+
+## 16. Neutral errors: implied affect versus surface cues
+
+**Layout:** two_column · **Section:** 13 / ERROR ANALYSIS
 
 Two illustrative cases from the six-case preliminary, AI-assisted review; no raw comments reproduced.
 
@@ -282,9 +365,9 @@ Review scope: three confident Neutral false positives and three low-probability 
 
 **Speaker notes:** Two examples illustrate the six-case preliminary, AI-assisted review. On the left, a comment annotated as relief is predicted as Neutral. On the right, a Neutral comment is assigned anger and annoyance. Implied affect and profanity are possible explanations, not proven causes. We show IDs and abstract observations, and the interpretations still need team confirmation.
 
-## 14. Is one threshold suitable for every emotion?
+## 17. Is one threshold suitable for every emotion?
 
-**Layout:** final_plan · **Section:** 12 / FINAL EXPERIMENT
+**Layout:** final_plan · **Section:** 14 / FINAL EXPERIMENT
 
 Planned controlled decoding comparison • no new test results claimed
 
@@ -302,9 +385,9 @@ Freeze the best neural checkpoint: current PhoBERT-27
 
 **Speaker notes:** For the final evaluation, we will test whether one threshold suits every emotion. We will freeze the best neural checkpoint and compare the default threshold, a tuned global threshold, and per-label thresholds. We select thresholds on validation, lock all choices, then evaluate test once. We also plan a detailed review of at least twenty false negatives and twenty false positives.
 
-## 15. What the current study supports
+## 18. What the current study supports
 
-**Layout:** conclusions · **Section:** 13 / CONCLUSIONS
+**Layout:** conclusions · **Section:** 15 / CONCLUSIONS
 
 Three evidence-backed observations; a focused next experiment
 

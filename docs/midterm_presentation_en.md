@@ -1,15 +1,15 @@
 # ViGoEmotions — English Midterm Presentation Script
 
-15 slides; 830 spoken words. Target: about 8–9 minutes, including short pauses and handovers. Finish before the 10-minute limit; leave any remaining time for questions.
+18 slides; 935 spoken words. Target: about 8–9 minutes, including short pauses and handovers. Finish before the 10-minute limit; leave any remaining time for questions.
 
 Use this script with reports/midterm_slides.pdf. The numerical results come from the verified Kaggle 20-epoch studies. The Vietnamese report and study guide remain available for preparation.
 
 ## Suggested timing
 
-- Slides 1–5: introduction, data and model setup, about 2–2.5 minutes.
-- Slides 6–9: results, Neutral comparison and learning curves, about 2.5–3 minutes.
-- Slides 10–13: midterm questions and errors, about 2–2.5 minutes.
-- Slides 14–15: final research question and conclusion, about 1 minute.
+- Slides 1–5: introduction, data and model setup, about 2 minutes.
+- Slides 6–9: results, Neutral comparison and learning curves, about 2 minutes.
+- Slides 10–15: dedicated Q1–Q5 analyses, about 3–3.5 minutes.
+- Slides 16–18: error analysis, final research question and conclusion, about 1.5 minutes.
 
 ## Before presenting
 
@@ -61,27 +61,39 @@ These curves use the same twenty-seven-emotion checkpoint-selection metric for b
 
 Optional handover: “My teammate will now discuss the analysis and next steps.”
 
-### Slide 10 — Performance varies by label, beyond raw frequency
+### Slide 10 — Q1 · Which emotions are easiest and hardest?
 
-For individual emotions, PhoBERT performs best on gratitude and worst on disapproval. The correlation between training frequency and per-label F1 is approximately 0.018, with a p-value of 0.928. These descriptive results do not support a simple rule that more frequent labels are always easier. The report includes every label for all three models.
+Gratitude is the easiest label for all three models. The weakest label is realization for TF-IDF and BiGRU, but disapproval for PhoBERT. The bars show selected PhoBERT labels; the table compares each model’s extremes. Overall F1 hides these differences.
 
-### Slide 11 — Research questions: a compact evidence checklist
+### Slide 11 — Q2 · Does label frequency predict F1?
 
-Our most frequent training pair is disappointment and sadness. PhoBERT predicts both correctly in 63 of 122 validation cases containing both labels. For text styles, its largest advantage over BiGRU is in teencode, at about 22.1 percentage points of Macro-F1. Teencode means informal online spellings and abbreviations. Our style groups use heuristics and can overlap, so this finding needs cautious interpretation.
+For Q2, each dot represents one emotion under PhoBERT. Its frequency–F1 correlation is only 0.018. The table also shows TF-IDF and BiGRU. These descriptive correlations do not establish causation; frequency alone cannot explain which labels are difficult.
 
-### Slide 12 — PhoBERT gains little from this global threshold grid
+### Slide 12 — Q3 · How often are both emotions recovered?
 
-We also vary the threshold while keeping the checkpoint fixed. For PhoBERT, the best validation grid point is 0.35, with Macro-F1 0.5978, compared with 0.5974 at zero point five. The gain is tiny and Hamming Loss worsens. This is exploratory analysis, not a test improvement; the main comparison stays at zero point five.
+For Q3, we choose disappointment and sadness because they co-occur most often in training. Validation contains 122 comments annotated with both. TF-IDF recovers both in two cases, BiGRU in thirty-seven, and PhoBERT in sixty-three. Joint recall is therefore 1.64, 30.33 and 51.64 percent. Other predicted labels are allowed, so this does not measure pair precision.
 
-### Slide 13 — Neutral errors: implied affect versus surface cues
+### Slide 13 — Q4 · How does performance vary by text style?
+
+Q4 compares every available text-style group using the same twenty-seven labels. PhoBERT leads in all four rows. Its largest advantage over BiGRU is teencode: 22.13 percentage points on 307 examples. These groups use heuristic rules and overlap. Their sample counts differ, so this is descriptive rather than a controlled style effect.
+
+### Slide 14 — Q5 · Lower thresholds affect models differently
+
+Q5 keeps each checkpoint fixed and varies only the threshold. The three curves respond differently. TF-IDF gains about 24.55 percentage points of validation Macro-F1; BiGRU gains 1.86; PhoBERT gains only 0.043. Circles mark the best grid points, not test improvements.
+
+### Slide 15 — Q5 · F1 gains come with more label errors
+
+The table compares the default and exploratory best thresholds for every model. Lower thresholds improve Macro-F1 but increase Hamming Loss in all three cases. Choosing on validation can overestimate generalization. We keep the main comparison at 0.5 and will lock decoding choices before evaluating test.
+
+### Slide 16 — Neutral errors: implied affect versus surface cues
 
 Two examples illustrate the six-case preliminary, AI-assisted review. On the left, a comment annotated as relief is predicted as Neutral. On the right, a Neutral comment is assigned anger and annoyance. Implied affect and profanity are possible explanations, not proven causes. We show IDs and abstract observations, and the interpretations still need team confirmation.
 
-### Slide 14 — Is one threshold suitable for every emotion?
+### Slide 17 — Is one threshold suitable for every emotion?
 
 For the final evaluation, we will test whether one threshold suits every emotion. We will freeze the best neural checkpoint and compare the default threshold, a tuned global threshold, and per-label thresholds. We select thresholds on validation, lock all choices, then evaluate test once. We also plan a detailed review of at least twenty false negatives and twenty false positives.
 
-### Slide 15 — What the current study supports
+### Slide 18 — What the current study supports
 
 To conclude, PhoBERT gives the strongest overall results in both settings. Adding Neutral does not improve shared-emotion F1 in this run, and Neutral prediction still makes substantial errors. Saved Kaggle predictions and histories support these findings. Our next step is controlled threshold evaluation. Thank you; we welcome your questions.
 
