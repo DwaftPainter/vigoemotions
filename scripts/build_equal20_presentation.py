@@ -282,7 +282,7 @@ def render_script(markdown):
 
 def build_presentation():
     from academic_slides import render_deck
-    from locked_slide_design import design_slides, presentation_markdown, SUPPLEMENT_NOTE
+    from locked_slide_design import design_slides, presentation_markdown, TABLE_NOTE
     slides = presentation_content()
     if len(slides) != 15:
         raise ValueError('The short presentation must contain exactly 15 slides')
@@ -290,12 +290,13 @@ def build_presentation():
     write_json(ROOT/'reports/midterm_slide_design.json', design)
     boxes = render_deck(design, ROOT/'reports/midterm_slides.pdf')
     (ROOT/'reports/midterm_slides.md').write_text(presentation_markdown(slides, design))
-    markdown, words = script_markdown(slides)
+    script_slides = [(s['title'], original[1], original[2], original[3]) for s, original in zip(design, slides)]
+    markdown, words = script_markdown(script_slides)
     if words > 950:
         raise ValueError('Shorten the spoken script to fit the presentation time limit')
-    SCRIPT.write_text(markdown + SUPPLEMENT_NOTE)
-    render_script(markdown + SUPPLEMENT_NOTE)
-    print(f'Built {len(slides)} unchanged main slides + 2 optional appendix tables; {words} unchanged spoken words.')
+    SCRIPT.write_text(markdown + TABLE_NOTE)
+    render_script(markdown + TABLE_NOTE)
+    print(f'Built {len(design)} slides; Q1–Q4 tables replace slides 10–11; {words} unchanged spoken words.')
     return design, boxes
 
 

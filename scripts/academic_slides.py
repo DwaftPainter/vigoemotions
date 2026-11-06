@@ -145,7 +145,7 @@ def panel(p, text, x, top, width, height, size=23, fill=PALE, color=INK, bold=Fa
 def frame(p, s, index):
     p.current=index
     p.rect(0,0,W,H)
-    p.label('SUPPLEMENTARY / Q&A' if s.get('supplemental') else 'ViGoEmotions / MIDTERM',64,686,1000)
+    p.label('RESEARCH QUESTION TABLES' if s.get('research_tables') else 'ViGoEmotions / MIDTERM',64,686,1000)
     p.text(s['title'],64,650,1152,31,NAVY,True,height=80)
     p.line(64,548,1216,548)
     p.line(64,548,124,548,TEAL,3)
@@ -275,11 +275,10 @@ def render_conclusion(p,s):
     p.text(b[4],64,140,1152,18,MUTED,height=58)
 
 
-def render_appendix(p,s):
-    if s['layout']=='appendix_analysis':
-        p.label('Disappointment + sadness · training count 904',64,519,552)
-        p.label('Text-style Macro-F1',644,519,572)
-    for table in s['tables']:p.table(**table)
+def render_question_tables(p,s):
+    for table in s['tables']:
+        p.label(table['question_title'],table['x'],519,sum(table['widths']))
+        p.table(**{key:value for key,value in table.items() if key not in ('rq','question_title')})
     p.text(s['caption'],64,174,1152,16,MUTED,height=93)
 
 
@@ -287,7 +286,7 @@ LAYOUTS={'title':render_title,'figure':render_figure,'encoding':render_encoding,
          'performance':render_performance,'neutral_effect':render_neutral_effect,
          'neutral_detection':render_neutral_detection,'questions':render_questions,
          'threshold':render_threshold,'errors':render_errors,'plan':render_plan,'conclusion':render_conclusion,
-         'appendix_performance':render_appendix,'appendix_analysis':render_appendix}
+         'question_tables':render_question_tables}
 
 
 def render_deck(slides,target):
