@@ -61,11 +61,11 @@ These curves cover all twenty epochs. The best PhoBERT checkpoints occur at epoc
 
 Optional handover: “My teammate will now discuss the analysis and next steps.”
 
-### Slide 10 — Q1–Q2: Per-Label Performance and Frequency
+### Slide 10 — Q1–Q2: Detailed Result Tables
 
 For individual emotions, PhoBERT performs best on gratitude and worst on disapproval. The correlation between training frequency and per-label F1 is approximately 0.018, with a p-value of 0.928. These descriptive results do not support a simple rule that more frequent labels are always easier. The report includes every label for all three models.
 
-### Slide 11 — Q3–Q4: Label Pairs and Text Styles
+### Slide 11 — Q3–Q4: Pair and Text-Style Tables
 
 Our most frequent training pair is disappointment and sadness. PhoBERT predicts both correctly in 63 of 122 validation cases containing both labels. For text styles, its largest advantage over BiGRU is in teencode, at about 22.1 percentage points of Macro-F1. Teencode means informal online spellings and abbreviations. Our style groups use heuristics and can overlap, so this finding needs cautious interpretation.
 
@@ -143,8 +143,8 @@ No. It is the best point in an exploratory validation grid for a fixed checkpoin
 - A change of 0.0138 in an F1 score is about 1.38 percentage points; do not call it a 1.38 percent relative change.
 - Say “validation results”, “in this run”, and “preliminary review” where appropriate. Do not claim test performance or statistical significance.
 
-## Supplementary tables — slides 16–17
+## Q1–Q4 result tables — slides 10–11
 
-Slides 1–15 are the approved main presentation. Their wording, order, numerical results and speaker notes are unchanged. Keep the original timing and handovers above.
+The presentation contains 15 slides. Slides 10–11 use the Q1–Q4 tables; the other 13 slides and all approved speaker notes remain unchanged. Keep the original timing and handovers above.
 
-Slides 16–17 are optional backup tables for Q&A; they are not part of the timed script. Slide 16 contains the six-model validation results, with 27-label and 28-label metrics in separate blocks. Slide 17 gives additional pair-preservation and text-style numbers from the 27-output study. Show these only if useful when answering a question; no extra spoken script is required.
+Slide 10 contains dedicated tables for Q1 (highest and lowest per-label F1) and Q2 (training-frequency versus F1 correlations). Slide 11 contains dedicated tables for Q3 (joint label recall) and Q4 (text-style Macro-F1). All tables use the 27-output validation study. Follow the existing script for these two slides and read the key PhoBERT results rather than every table entry.

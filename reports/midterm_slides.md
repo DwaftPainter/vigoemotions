@@ -89,23 +89,56 @@ Speaker notes: PhoBERT identifies 45 of the ninety-four Neutral-positive validat
 
 Speaker notes: These curves cover all twenty epochs. The best PhoBERT checkpoints occur at epochs fourteen and fifteen. We finish training before loading the selected checkpoint. Validation F1 fluctuates after the best epoch even while training loss decreases. Because validation loss was not recorded, we avoid diagnosing confirmed overfitting from training loss alone.
 
-## 10. Q1–Q2: Per-Label Performance and Frequency
+## 10. Q1–Q2: Detailed Result Tables
 
-- PhoBERT best label: gratitude, F1 0.8370.
-- Lowest label: disapproval, F1 0.3623.
-- Training frequency vs F1: Spearman rho 0.018.
-- p-value 0.928; descriptive evidence only.
-- Complete per-label results are in the report.
+27-output study only · validation · threshold 0.5 · dedicated tables for Q1 and Q2
+
+### Q1 / Highest and lowest per-label F1
+
+| Model | Highest label / F1 | Lowest label / F1 |
+| --- | --- | --- |
+| TF-IDF + OvR LR | gratitude<br>0.6797 | realization<br>0.0000 |
+| BiGRU | gratitude<br>0.7701 | realization<br>0.0940 |
+| PhoBERT | gratitude<br>0.8370 | disapproval<br>0.3623 |
+
+### Q2 / Frequency–F1 correlation
+
+| Model | Spearman ρ | p-value |
+| --- | --- | --- |
+| TF-IDF + OvR LR | 0.242 | 0.223 |
+| BiGRU | 0.313 | 0.112 |
+| PhoBERT | 0.018 | 0.928 |
+
+Q1 reports each model’s highest and lowest validation F1. Q2 correlates training frequency with per-label validation F1 across 27 emotions. Descriptive, one-seed analysis; no causal or significance claim.
+
+Sources: current label_extremes.csv; frequency_f1.csv. All results use 27 outputs; no test metrics.
 
 Speaker notes: For individual emotions, PhoBERT performs best on gratitude and worst on disapproval. The correlation between training frequency and per-label F1 is approximately 0.018, with a p-value of 0.928. These descriptive results do not support a simple rule that more frequent labels are always easier. The report includes every label for all three models.
 
-## 11. Q3–Q4: Label Pairs and Text Styles
+## 11. Q3–Q4: Pair and Text-Style Tables
 
-- Top training pair: disappointment–sadness (904 cases).
-- Both correct: 63/122 validation cases; joint recall 51.64%.
-- Largest PhoBERT–BiGRU style gap: teencode.
-- Macro-F1 gap: +22.13 percentage points.
-- Style groups are heuristic and may overlap.
+27-output study only · validation · threshold 0.5 · dedicated tables for Q3 and Q4
+
+### Q3 / Disappointment + sadness · train n = 904
+
+| Model | Joint TP | Support | Recall |
+| --- | --- | --- | --- |
+| TF-IDF + OvR LR | 2 | 122 | 1.64% |
+| BiGRU | 37 | 122 | 30.33% |
+| PhoBERT | 63 | 122 | 51.64% |
+
+### Q4 / Text-style Macro-F1
+
+| Group | n | BiGRU F1 | PhoBERT F1 | Δ (pp) |
+| --- | --- | --- | --- | --- |
+| All | 2,066 | 0.4220 | 0.5974 | +17.54 |
+| Emoji-heavy | 199 | 0.3506 | 0.4789 | +12.83 |
+| Short | 343 | 0.4303 | 0.5654 | +13.51 |
+| Teencode | 307 | 0.3333 | 0.5547 | +22.13 |
+
+Joint recall counts both emotions predicted among examples annotated with both; extra predicted labels are allowed. Style groups overlap and differ in size; Δ = PhoBERT − BiGRU in Macro-F1 percentage points. One seed; no causal or significance claim.
+
+Sources: current pair_preservation.csv; neural_style_comparison.csv. Pair selected by training co-occurrence; no test metrics.
 
 Speaker notes: Our most frequent training pair is disappointment and sadness. PhoBERT predicts both correctly in 63 of 122 validation cases containing both labels. For text styles, its largest advantage over BiGRU is in teencode, at about 22.1 percentage points of Macro-F1. Teencode means informal online spellings and abbreviations. Our style groups use heuristics and can overlap, so this finding needs cautious interpretation.
 
@@ -147,48 +180,3 @@ Speaker notes: For the final evaluation, we will test whether one threshold suit
 - Sources: course brief, ViGoEmotions, PhoBERT and libraries.
 
 Speaker notes: To conclude, PhoBERT gives the strongest overall results in both settings. Adding Neutral does not improve shared-emotion F1 in this run, and Neutral prediction still makes substantial errors. Saved Kaggle predictions and histories support these findings. Our next step is controlled threshold evaluation. Thank you; we welcome your questions.
-
-
-<!-- Optional supplementary slides: 16–17; use for Q&A only. -->
-
-## 16. Supplementary Table A · Model performance
-
-Validation n = 2,066 · threshold 0.5 · full-label scores reported separately
-
-| Labels | Model | Macro-F1 ↑ | Micro-F1 ↑ | Hamming ↓ | LRAP ↑ | Best ep. | Train time |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 27 | TF-IDF + OvR LR | 0.2388 | 0.2712 | 0.0606 | 0.6407 | — | 2.75 s |
-| 27 | BiGRU | 0.4220 | 0.4590 | 0.0626 | 0.6191 | 17 | 80.3 s |
-| 27 | PhoBERT | 0.5974 | 0.5996 | 0.0550 | 0.7419 | 14 | 4.05 h |
-| 28 | TF-IDF + OvR LR | 0.2310 | 0.2662 | 0.0601 | 0.6096 | — | 2.52 s |
-| 28 | BiGRU | 0.4086 | 0.4483 | 0.0628 | 0.5851 | 20 | 83.6 s |
-| 28 | PhoBERT | 0.5783 | 0.5829 | 0.0575 | 0.7077 | 15 | 3.90 h |
-
-Both neural models trained for 20 epochs. Best ep. is the selected checkpoint. Rank models within each label block; full 27-label and 28-label Macro-F1 use different label sets.
-
-Source: current model_comparison.csv. CPU TF-IDF; Tesla T4 neural. Times exclude preprocessing; no test scores.
-
-Speaker notes: Optional backup for Q&A. Main presentation ends at slide 15.
-
-## 17. Supplementary Table B · Pair and text-style analysis
-
-27-output study only · validation · threshold 0.5 · supplementary detail for slide 11
-
-| Model | Joint TP | Support | Recall |
-| --- | --- | --- | --- |
-| TF-IDF + OvR LR | 2 | 122 | 1.64% |
-| BiGRU | 37 | 122 | 30.33% |
-| PhoBERT | 63 | 122 | 51.64% |
-
-| Group | n | BiGRU F1 | PhoBERT F1 | Δ (pp) |
-| --- | --- | --- | --- | --- |
-| All | 2,066 | 0.4220 | 0.5974 | +17.54 |
-| Emoji-heavy | 199 | 0.3506 | 0.4789 | +12.83 |
-| Short | 343 | 0.4303 | 0.5654 | +13.51 |
-| Teencode | 307 | 0.3333 | 0.5547 | +22.13 |
-
-Joint recall counts both emotions predicted among examples annotated with both; extra predicted labels are allowed. Style groups overlap and differ in size; Δ = PhoBERT − BiGRU in Macro-F1 percentage points. One seed; no causal or significance claim.
-
-Sources: current pair_preservation.csv; neural_style_comparison.csv. Pair selected by training co-occurrence; no test metrics.
-
-Speaker notes: Optional backup for Q&A; groups overlap and findings are descriptive.

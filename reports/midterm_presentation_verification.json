@@ -1,9 +1,18 @@
 {
-  "scope": "Visual redesign of approved main slides; two optional supporting tables only",
+  "scope": "Replace only slides 10–11 with dedicated Q1–Q4 tables; remove duplicate ending pages",
   "approved_content_commit": "51f2332",
   "approved_snapshot": "reports/kaggle_equal20_2026-11-05/slides.json",
   "approved_snapshot_sha256": "b3f255f12caeb8c40c030f54cde755dfb8f8cc8f2b73f07a9be2a9baac133335",
-  "main_slides": [
+  "page_count": 15,
+  "page_size_points": [
+    1280,
+    720
+  ],
+  "replaced_slides": [
+    10,
+    11
+  ],
+  "unchanged_slides": [
     1,
     2,
     3,
@@ -13,61 +22,48 @@
     7,
     8,
     9,
-    10,
-    11,
     12,
     13,
     14,
     15
   ],
-  "supplementary_slides": [
-    16,
-    17
-  ],
-  "page_count": 17,
-  "page_size_points": [
-    1280,
-    720
-  ],
+  "dedicated_research_tables": {
+    "Q1": 10,
+    "Q2": 10,
+    "Q3": 11,
+    "Q4": 11
+  },
   "main_spoken_words": 803,
   "content_preservation": {
-    "titles": "unchanged",
-    "bullet_wording_and_numbers": "unchanged",
-    "order": "unchanged",
-    "speaker_notes": "unchanged",
-    "main_markdown": "byte-identical approved Markdown retained as prefix",
-    "script": "entire approved script retained as byte-identical prefix; only optional slides 16–17 note appended",
-    "original_script_sha256": "a374d2ad386ff5265d16779033a81d210b254f3aa443508ad313200ee1cc1d61",
-    "original_markdown_sha256": "3741da5eec50bb853cf00ad51a8e39d772e365c38dfab7a28d67f53870487cf4",
-    "approved_content_functions_unchanged": [
-      "presentation_content",
-      "questions",
-      "script_markdown",
-      "render_script"
-    ],
-    "original_figures_unchanged": {
-      "reports/figures/label_frequency.png": "80d16a422ac4cc3835e2d2deeaed43c5a18e8f2c3614c035e434c6e438a9286b",
-      "reports/kaggle_equal20_2026-11-05/figures/learning_curves.png": "74b98e8313670fe1bfe2d6a155d96c73a3015f64e7417a0e8359da441d485f94"
-    },
-    "every_title_and_bullet_found_in_main_pdf_pages": true
+    "other_13_slides": "approved titles, bullets, figures and notes unchanged",
+    "replacements": "Only slides 10–11 replace the original visual content, as explicitly requested; tables use verified validation artifacts",
+    "speaker_notes": "all 15 approved spoken notes unchanged",
+    "order": "same research-question positions; 15 slides total",
+    "markdown": "all 13 unaffected sections remain byte-identical",
+    "script": "only the two slide headings and the table-position preparation note change; all approved speech, timing, handovers and Q&A preserved",
+    "unchanged_pdf_page_streams": "identical to committed design except total-page footer 17 → 15",
+    "visual_baseline_commit": "18ba39321260c3116bb70f0c3ded360e8f6c7da6"
   },
-  "appendix_sources": [
-    "model_comparison.csv",
+  "table_sources": [
+    "label_extremes.csv",
+    "frequency_f1.csv",
     "pair_preservation.csv",
     "neural_style_comparison.csv"
   ],
-  "appendix_scope": "Current verified equal-20 validation results; full 27/28 metrics separate; pair/style analyses use 27 outputs",
+  "table_scope": "Current verified 27-output validation study; no test metrics",
   "automated_checks": {
-    "tests_passed": 12,
+    "tests_passed": 14,
     "test_modules": [
       "test_locked_presentation",
       "test_import_equal20_results",
       "test_report_summary"
     ],
-    "text_boxes_checked": 262,
+    "text_boxes_checked": 210,
     "text_overlap_count": 0,
     "overflow_checks": "passed",
-    "reproduced_pdf_page_content_streams": "identical to final PDF"
+    "reproduced_pdf_page_content_streams": "identical",
+    "q1_q2": "Recomputed per-label F1/extremes from saved validation NPZ and Spearman correlation from verified training counts",
+    "q3_q4": "Recomputed joint TP/support/recall from all three validation NPZ; recomputed style counts and neural Macro-F1 from validation style masks"
   },
   "visual_inspection": {
     "pages": [
@@ -85,19 +81,28 @@
       12,
       13,
       14,
-      15,
-      16,
-      17
+      15
     ],
-    "result": "passed",
-    "checks": [
-      "clipping",
-      "text overlap",
-      "font sizes",
-      "spacing",
-      "table legibility",
-      "original wording"
-    ]
+    "changed_pages_rendered_and_reviewed": [
+      10,
+      11
+    ],
+    "unchanged_pages_verified_by_content_streams": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      12,
+      13,
+      14,
+      15
+    ],
+    "result": "passed"
   },
   "protected_inputs": {
     "files_checked": 105,
@@ -110,10 +115,22 @@
     "baseline_aggregate_sha256": "49e55556f9a4940606c5d7bef6b173c46a12f494eea45e684f241621f8faf220"
   },
   "generated_outputs_sha256": {
-    "reports/midterm_slides.pdf": "1693bc601392453f60688428438eac9caeef1a7307a96a64021987df6f303464",
-    "reports/midterm_slides.md": "3f9d021cc9424658529cc198affd5467f21e115cdf0c0adaade4e2d0fd7f2e8e",
-    "reports/midterm_slide_design.json": "349768fc4caa50c56fc401a8599fa07054246e0d5b97ed0bd15fc94dc760f67d",
-    "docs/midterm_presentation_en.md": "b947dc9c834c4e98ef3504e03fa5f1e35110ab47dc53b415134abc0cedb36f7d",
-    "docs/midterm_presentation_en.pdf": "339f6bd3d49fe07f33c7f6e8af804b43d90c4a8473488d220a2110dd5a96e890"
+    "reports/midterm_slides.pdf": "ba95113abf0a2e7dcb8fd68dfdeb7c1795beba509b7f92fc67c6b26e25d9cdc3",
+    "reports/midterm_slides.md": "72b52dd8d921f23769ab5232635ea6ec7903905a9b6004861ce69dd20fe5c2d0",
+    "reports/midterm_slide_design.json": "3489941becd4731a15661816854421f41f44aa0b3a3d02d71eadb51a797199b2",
+    "docs/midterm_presentation_en.md": "9b52ff1ff138a5d8d68eb67ebf2996378e87ed3579f253146609e8000dd0681f",
+    "docs/midterm_presentation_en.pdf": "7f8247eab43ae6165a91f0c67de1effaf64055450da5018aa6ccc49c9cd6e95f"
+  },
+  "final_audit": {
+    "status": "passed",
+    "findings": [],
+    "validation_samples": 2066,
+    "tests_passed": 14,
+    "independent_prediction_recalculation": "All Q1–Q4 tables verified",
+    "regression_mutation": "Inverted rendering branch detected by test; source restored and focused test passed",
+    "script_pdf": "5 pages; all 15 slide headings and all approved spoken notes verified",
+    "training_performed": false,
+    "test_metrics_used": false,
+    "evidence_modified": false
   }
 }
