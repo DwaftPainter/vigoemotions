@@ -167,9 +167,8 @@ Speaker notes: A preliminary, AI-assisted review examines three confident Neutra
 - Freeze the best neural checkpoint and its weights.
 - Compare 0.5, global tuned and per-label thresholds.
 - Tune on validation; lock choices; evaluate test once.
-- Review at least 20 false negatives and 20 false positives.
 
-Speaker notes: For the final evaluation, we will test whether one threshold suits every emotion. We will freeze the best neural checkpoint and compare the default threshold, a tuned global threshold, and per-label thresholds. We select thresholds on validation, lock all choices, then evaluate test once. We also plan a detailed review of at least twenty false negatives and twenty false positives.
+Speaker notes: For the final evaluation, we will test whether one threshold suits every emotion. We will freeze the best neural checkpoint and compare the default threshold, a tuned global threshold, and per-label thresholds. We select thresholds on validation, lock all choices, then evaluate test once.
 
 ## 15. Conclusions and Evidence
 

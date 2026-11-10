@@ -263,7 +263,7 @@ def render_plan(p,s):
         x=64+i*392
         panel(p,text,x,407,368,201,23,TINT if i==2 else PALE)
         if i<2:p.arrow(x+372,306,x+385)
-    band(p,b[4])
+    if len(b)>4:band(p,b[4])
 
 
 def render_conclusion(p,s):

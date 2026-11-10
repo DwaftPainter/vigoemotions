@@ -1,0 +1,16 @@
+{
+  "status": "prepared_pending_human_reviews",
+  "seed": 42,
+  "per_cell": 12,
+  "sample_n": 71,
+  "unique_comments": 71,
+  "sample_outcomes": [
+    "TP",
+    "FP",
+    "FN"
+  ],
+  "blinding": "Only review_id/target_label and blank review fields in annotation packets; predictions/GT/key remain coordinator-only",
+  "no_completed_annotations_created": true,
+  "key_sha256": "9b14635d4e16193828f84194b7e298ac2f306a64d45be61a1834246edb2cae6e",
+  "review_text_sha256": "5a6a3907b047b237cb0ef8493cf0294e65948fad19be37a629fa802858c892a2"
+}

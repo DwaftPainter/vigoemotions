@@ -14,7 +14,7 @@ Tài liệu tiếng Việt dành cho sinh viên mới học ML/NLP.
 04  Validation emotion27 Macro-F1 tại 0,5 → chọn best checkpoint
 ```
 
-Nguồn: [bằng chứng mới](../reports/kaggle_equal20_2026-11-05/README.md), [lời dẫn/Q&A](midterm_presentation_2026-11-05.md), [profile tái lập](reproducibility_profiles.md). Thuật toán và ví dụ mã ở chương 1–6 giải thích nhánh 27; nhánh 28 dùng lại kiến trúc, thêm một output và chọn checkpoint trên 27 cột cảm xúc. Các default profile cũ xuất hiện trong đoạn mã nguyên văn không phải profile của notebook Kaggle: workflow truyền config equal20 rõ ràng.
+Nguồn: [bằng chứng mới](../reports/kaggle_equal20_2026-11-05/README.md), [lời dẫn/Q&A](../archive/docs/midterm_presentation_2026-11-05.md), [profile tái lập](reproducibility_profiles.md). Thuật toán và ví dụ mã ở chương 1–6 giải thích nhánh 27; nhánh 28 dùng lại kiến trúc, thêm một output và chọn checkpoint trên 27 cột cảm xúc. Các default profile cũ xuất hiện trong đoạn mã nguyên văn không phải profile của notebook Kaggle: workflow truyền config equal20 rõ ràng.
 
 ### Bạn cần trả lời được điều gì?
 
@@ -788,7 +788,7 @@ Dùng các bảng mới trong reports/kaggle_equal20_2026-11-05/: label_extremes
 
 Sáu ca PhoBERT 28 mới: ba Neutral FP tự tin nhất, ba Neutral FN xác suất thấp nhất. Giữ ID/nhãn/xác suất và mô tả trừu tượng; không copy raw text. Nhận xét về ngữ cảnh, HTML, câu ngắn và từ tục là giả thuyết có hỗ trợ AI, cần nhóm xác nhận. 20 FN/20 FP tự sinh mỗi model là ứng viên để đọc, không phải audit hoàn tất.
 
-Giới hạn chung: một seed, validation dùng chọn checkpoint/khảo sát ngưỡng, style rules có nhiễu, test chưa chấm. Bài thuyết trình chính dùng [script tiếng Anh ngắn, 15 slide](midterm_presentation_en.md); [lời dẫn tiếng Việt mở rộng](midterm_presentation_2026-11-05.md) giữ để ôn tập. Bổ sung tên/MSSV/phân công trước buổi bảo vệ.
+Giới hạn chung: một seed, validation dùng chọn checkpoint/khảo sát ngưỡng, style rules có nhiễu, test chưa chấm. Bài thuyết trình chính dùng [script tiếng Anh ngắn, 15 slide](midterm_presentation_en.md); [lời dẫn tiếng Việt mở rộng](../archive/docs/midterm_presentation_2026-11-05.md) giữ để ôn tập. Bổ sung tên/MSSV/phân công trước buổi bảo vệ.
 
 <!-- page -->
 

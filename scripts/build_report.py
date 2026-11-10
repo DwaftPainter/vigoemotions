@@ -572,7 +572,7 @@ Mã và tài liệu có hỗ trợ AI trong phiên hoàn thiện; số liệu TF
         text = text.replace('**Trạng thái (04/11/2026):**', '**Trạng thái (05/11/2026):**')
         text = text.replace('## 1. Mục tiêu và phạm vi',
             '**Thông tin nhóm:** Chưa được cung cấp. Bổ sung tên/MSSV/phân công tại docs/team_information.md trước khi nộp. '
-            'Đã bổ sung audit split, phụ lục F1 từng nhãn và chín ca đọc lỗi PhoBERT; xem docs/midterm_readiness_2026-11-05.md.\n\n## 1. Mục tiêu và phạm vi')
+            'Đã bổ sung audit split, phụ lục F1 từng nhãn và chín ca đọc lỗi PhoBERT; xem archive/docs/midterm_readiness_2026-11-05.md.\n\n## 1. Mục tiêu và phạm vi')
         text = text.replace('revision khóa trong configs/midterm.json', 'revision khóa trong configs/baseline27_4ep.json')
         text = text.replace('C: đủ metric, per-label, tham số, thời gian | Có cho mô hình đã chạy; tự sinh từ evaluator chung khi neural hoàn tất',
             'C: đủ metric, per-label, tham số, thời gian | Đủ cả ba mô hình; phụ lục A có F1 của mọi nhãn cho baseline 27 và study 28')

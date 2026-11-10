@@ -1,0 +1,7 @@
+target_label,outcome,population_n,sample_n,inclusion_probability
+gratitude,TP,77,12,0.15584415584415584
+gratitude,FP,11,11,1.0
+gratitude,FN,19,12,0.631578947368421
+disapproval,TP,48,12,0.25
+disapproval,FP,94,12,0.1276595744680851
+disapproval,FN,75,12,0.16

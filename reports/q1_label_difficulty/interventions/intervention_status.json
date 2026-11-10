@@ -1,0 +1,7 @@
+{
+  "status": "pending",
+  "proposed_pairs": 48,
+  "rejected_pairs": 0,
+  "verified_pairs": 0,
+  "reason": "No pairs verified by two independent humans; no model inference or intervention results generated"
+}

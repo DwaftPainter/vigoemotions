@@ -1,8 +1,8 @@
 # Lời dẫn midterm — kết quả Kaggle 20 epoch
 
-> **Ôn tập bằng tiếng Việt:** Slide chính đã chuyển sang tiếng Anh. Khi thuyết trình, dùng [script tiếng Anh và Q&A](midterm_presentation_en.md) hoặc [PDF luyện nói](midterm_presentation_en.pdf). Bản này giữ để nhóm ôn nội dung.
+> **Ôn tập bằng tiếng Việt:** Slide chính đã chuyển sang tiếng Anh. Khi thuyết trình, dùng [script tiếng Anh và Q&A](../../docs/midterm_presentation_en.md) hoặc [PDF luyện nói](../../docs/midterm_presentation_en.pdf). Bản này giữ để nhóm ôn nội dung.
 
-Đây là bản ôn tập tiếng Việt mở rộng theo bố cục 20 phần trước đây. Bộ [slide chính hiện tại](../reports/midterm_slides.pdf) đã gộp còn 15 trang; khi thuyết trình dưới 10 phút, dùng script tiếng Anh ngắn theo link trên. Mỗi số model lấy từ hai ZIP 08/09 equal20; không live train trong buổi thuyết trình. Tên/MSSV/phân công còn cần bổ sung.
+Đây là bản ôn tập tiếng Việt mở rộng theo bố cục 20 phần trước đây. Bộ [slide chính hiện tại](../../reports/midterm_slides.pdf) đã gộp còn 15 trang; khi thuyết trình dưới 10 phút, dùng script tiếng Anh ngắn theo link trên. Mỗi số model lấy từ hai ZIP 08/09 equal20; không live train trong buổi thuyết trình. Tên/MSSV/phân công còn cần bổ sung.
 
 ## Slide 1. ViGoEmotions | Midterm 20 epoch
 

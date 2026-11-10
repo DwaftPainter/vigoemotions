@@ -1,4 +1,4 @@
-"""Build Kaggle entry notebooks from the maintained Colab workflows."""
+"""Build historical Kaggle entry notebooks from archived Colab workflows."""
 import argparse
 import ast
 from copy import deepcopy
@@ -72,13 +72,13 @@ def replace(cell, source):
 
 
 def build(number, suffix):
-    source = ROOT / 'notebooks' / f'{number}_colab_{suffix}.ipynb'
+    source = ROOT / 'archive/notebooks' / f'{number}_colab_{suffix}.ipynb'
     notebook = deepcopy(json.loads(source.read_text(encoding='utf-8')))
     cells = notebook['cells']
     replace(cells[0], (
         f'# ViGoEmotions — Kaggle: {suffix.replace("_", " ")}\n'
         'Attach hai Dataset riêng tư: code và ba CSV. Bật GPU + Internet.\n'
-        'Chạy từng cell từ trên xuống; nếu lỗi thì dừng. Hướng dẫn: docs/kaggle_guide.md.\n'
+        'Chạy từng cell từ trên xuống; nếu lỗi thì dừng. Hướng dẫn: archive/docs/kaggle_guide.md.\n'
         'Cell đầu chỉ chạy một lần trong session mới. Kết quả lưu trong /kaggle/working.\n'
         'Đây là một lượt chạy mới; không dùng để resume sweep Colab khác môi trường.\n'
     ))
@@ -102,14 +102,14 @@ def build(number, suffix):
             # Validate Python syntax apart from notebook magics.
             ast.parse(''.join(line for line in lines if not line.startswith(('%', '!'))))
     notebook.get('metadata', {}).pop('colab', None)
-    target = ROOT / 'notebooks' / f'{number}_kaggle_{suffix}.ipynb'
+    target = ROOT / 'archive/notebooks' / f'{number}_kaggle_{suffix}.ipynb'
     target.write_text(json.dumps(notebook, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     print('Created:', target.name)
 
 
 def build_neutral28(target=None):
     """Adapt notebook 06 I/O while preserving its isolated study and training cells."""
-    source = ROOT / 'notebooks/06_colab_neutral_28_labels.ipynb'
+    source = ROOT / 'archive/notebooks/06_colab_neutral_28_labels.ipynb'
     notebook = json.loads(source.read_text(encoding='utf-8'))
     cells = notebook['cells']
     replace(cells[0], (
@@ -117,7 +117,7 @@ def build_neutral28(target=None):
         'So sánh TF-IDF + OvR LR, BiGRU và PhoBERT với baseline 27 nhãn.\n'
         'Attach hai Dataset Private: ZIP code 28 nhãn và ba CSV train/val/test.\n'
         'Trong Settings/Session options, bật GPU + Internet; không chọn TPU.\n'
-        'Chạy từng cell từ trên xuống; dừng khi có lỗi. Hướng dẫn: docs/neutral_28_labels.md.\n'
+        'Chạy từng cell từ trên xuống; dừng khi có lỗi. Hướng dẫn: archive/docs/neutral_28_labels.md.\n'
         'Artifact ở /kaggle/working/ViGoEmotions28/reports/neutral_28_labels/.\n'
         'Model hoàn tất được giữ; không hỗ trợ resume giữa epoch.\n'
     ))
@@ -155,7 +155,7 @@ def build_neutral28(target=None):
             cell['outputs'] = []
             cell['execution_count'] = None
     notebook.get('metadata', {}).pop('colab', None)
-    target = Path(target) if target is not None else ROOT / 'notebooks/06_kaggle_neutral_28_labels.ipynb'
+    target = Path(target) if target is not None else ROOT / 'archive/notebooks/06_kaggle_neutral_28_labels.ipynb'
     target.write_text(json.dumps(notebook, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     print('Created:', target.name)
     return target

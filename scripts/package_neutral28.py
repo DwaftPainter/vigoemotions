@@ -14,9 +14,9 @@ def package():
         'scripts/common.py', 'scripts/train_neural.py', 'scripts/evaluate.py',
         'scripts/neutral_28_labels.py', 'tests/test_neutral_28_labels.py',
         'scripts/submission_package.py', 'configs/midterm.json', 'configs/neutral28_12ep_base.json',
-        'notebooks/06_colab_neutral_28_labels.ipynb',
-        'notebooks/06_kaggle_neutral_28_labels.ipynb',
-        'docs/neutral_28_labels.md')]
+        'archive/notebooks/06_colab_neutral_28_labels.ipynb',
+        'archive/notebooks/06_kaggle_neutral_28_labels.ipynb',
+        'archive/docs/neutral_28_labels.md')]
     paths.extend((ROOT/'splits').glob('*.csv'))  # IDs only, not dataset CSVs.
     for name in ('tfidf_lr', 'gru', 'phobert'):
         for relative in (f'reports/{name}_run.json', f'reports/tables/{name}_metrics.csv',

@@ -1,4 +1,12 @@
-# ViGoEmotions — ATI Midterm 2026
+# ViGoEmotions — ATI Final 2026
+
+Midterm đã hoàn tất. Final tập trung RQ1 trên **PhoBERT 27 nhãn, checkpoint epoch 14**: fixed 0,5, global tuned và per-label tuned; chọn ngưỡng trên validation, khóa trước test. Protocol đã ghi, fitted thresholds và kết quả test Final chưa có.
+
+- [Protocol Final](docs/final_protocol.md), [config](configs/final_thresholds.json), [train-only tiers](docs/final_label_tiers.csv).
+- [Checklist việc cần làm](tasks/todo.md) và [kế hoạch Final/oral defence](tasks/plan.md).
+- [Mục lục archive](archive/README.md): notebook 03–06 và tài liệu chuẩn bị cũ đã được chuyển khỏi thư mục làm việc chính.
+
+## Baseline midterm dùng cho Final
 
 **Kết quả chính: hai lượt Kaggle 08/09 đã hoàn tất, BiGRU và PhoBERT đều 20 epoch cho cả 27/28 nhãn.** Báo cáo dùng duy nhất sáu kết quả này; các lượt ít epoch là lịch sử. Tất cả metric mô hình là validation tại ngưỡng 0,5, seed 42; test giữ cho Final.
 
@@ -14,10 +22,10 @@ Khi chiếu model 28 về cùng 27 cảm xúc, PhoBERT đạt **0,583580**, th�
 
 - [Báo cáo PDF](reports/midterm_report.pdf) / [Markdown](reports/midterm_report.md).
 - [PDF: 15 slide, bảng Q1–Q4 tại slide 10–11](reports/midterm_slides.pdf) / [nội dung và speaker notes](reports/midterm_slides.md).
-- [Script tiếng Anh 8–9 phút + Q&A](docs/midterm_presentation_en.md) / [PDF để luyện nói](docs/midterm_presentation_en.pdf). Bản giải thích tiếng Việt vẫn ở [lời dẫn ôn tập](docs/midterm_presentation_2026-11-05.md).
+- [Script tiếng Anh 8–9 phút + Q&A](docs/midterm_presentation_en.md) / [PDF để luyện nói](docs/midterm_presentation_en.pdf). Bản giải thích tiếng Việt vẫn ở [lời dẫn ôn tập](archive/docs/midterm_presentation_2026-11-05.md).
 - [Bảng sáu model, Q1–Q5 và evidence](reports/kaggle_equal20_2026-11-05/README.md).
 - [Cẩm nang giải thích ba mô hình](docs/VIGOEMOTIONS_3_MODELS_STUDY_GUIDE_VI.pdf) / [Markdown](docs/VIGOEMOTIONS_3_MODELS_STUDY_GUIDE_VI.md).
-- [Trạng thái trước nộp](docs/midterm_readiness_2026-11-05.md), [thông tin nhóm cần bổ sung](docs/team_information.md).
+- [Trạng thái trước nộp](archive/docs/midterm_readiness_2026-11-05.md), [thông tin nhóm cần bổ sung](docs/team_information.md).
 
 ## Nguồn chạy và kiểm chứng
 
@@ -56,4 +64,4 @@ Import cần hai ZIP, notebook executed và CSV nguồn. Evidence/tổng hợp m
 
 Điền tên/MSSV/phân công; xác nhận sáu ca đọc lỗi có hỗ trợ AI; làm rõ việc chấp nhận official split. Chưa có metric test hoặc sweep learning rate. Final giữ backbone neural cố định, so sánh fixed/global/per-label thresholds, chọn trên validation rồi khóa trước khi chấm test. Một seed và style heuristic còn hạn chế.
 
-Notebook 01/02/07 phục vụ kiểm tra dữ liệu, EDA và audit split; notebook 03–06 giữ cho workflow lịch sử. Các snapshot và tài liệu trình bày cũ đã gom vào [archive/](archive/README.md). Config/run JSON và bảng model cũ còn được script/test tham chiếu nên giữ nguyên vị trí; kết quả chính chỉ lấy từ thư mục Kaggle 20 epoch. [Mục lục reports](reports/README.md).
+Notebook 01/02/07 phục vụ kiểm tra dữ liệu, EDA và audit split; notebook 03–06 nằm trong [archive/notebooks](archive/notebooks/), config 25/20 cũ trong [archive/configs](archive/configs/). Các snapshot và tài liệu chuẩn bị cũ nằm trong [archive/](archive/README.md). Config/run JSON và bảng model cũ còn được script/test tham chiếu được giữ nguyên vị trí; kết quả chính chỉ lấy từ thư mục Kaggle 20 epoch. [Mục lục reports](reports/README.md).

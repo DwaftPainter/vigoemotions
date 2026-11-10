@@ -26,7 +26,7 @@ Mỗi lượt bắt đầu lại từ cùng pretrained revision và seed. Không
 ## Chạy trên Colab
 
 1. Tại project local, tạo ZIP bằng `.venv/bin/python scripts/package_colab.py --include-results`. ZIP chứa code, tài liệu và kết quả tổng hợp hiện có để build lại report; không chứa CSV nguồn, checkpoint hay vocabulary.
-2. Mở [notebook 05](../../notebooks/05_colab_phobert_tuning.ipynb) trên Colab, bật T4 GPU và chạy các cell theo thứ tự. Upload ZIP code, rồi upload riêng ba CSV được cấp quyền.
+2. Mở [notebook 05](../notebooks/05_colab_phobert_tuning.ipynb) trên Colab, bật T4 GPU và chạy các cell theo thứ tự. Upload ZIP code, rồi upload riêng ba CSV được cấp quyền.
 3. Notebook kiểm tra baseline artifacts, setup VnCoreNLP, chạy cả ba learning rate và kiểm chứng kết quả. Trên lượt baseline cũ, PhoBERT mất khoảng 51 phút/4 epoch; thời gian ba lượt mới phụ thuộc runtime, chưa được đo.
 4. Notebook build lại report/slide và tải ZIP kết quả. Giải nén ZIP vào project local để nhập kết quả. Checkpoint tốt nhất được tải riêng bằng cell cuối; lưu vào nơi riêng tư trước khi Colab hết hạn.
 5. Đọc các ca lỗi trong dữ liệu nội bộ, điền các cột review và bổ sung diễn giải vào report/slide. Không công khai comment gốc.

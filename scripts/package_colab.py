@@ -11,7 +11,8 @@ parser.add_argument('--include-results', action='store_true',
                     help='Include derived reports to compare tuning with existing baselines')
 args = parser.parse_args()
 files = []
-for folder in ('scripts', 'configs', 'tests', 'docs', 'notebooks', 'splits') + (('reports',) if args.include_results else ()):
+for folder in ('scripts', 'configs', 'tests', 'docs', 'notebooks', 'splits',
+               'archive/notebooks', 'archive/configs', 'archive/docs') + (('reports',) if args.include_results else ()):
     files.extend(p for p in (ROOT/folder).rglob('*') if p.is_file()
                  and '__pycache__' not in p.parts and '.ipynb_checkpoints' not in p.parts
                  and (folder not in ('reports', 'splits') or is_public_report(p, ROOT)))

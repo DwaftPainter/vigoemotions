@@ -4,7 +4,7 @@
 
 Bộ hiện tại đã cập nhật kết quả dự đoán thêm Neutral từ notebook 06 và ZIP riêng tư. Dùng tài liệu sau cho buổi midterm; các bộ có ngày 23/10 trong `reports/` là snapshot lịch sử.
 
-Đã hoàn tất audit split, tách config/lệnh tái lập, làm sạch notebook/gói chia sẻ, phụ lục per-label và đọc định tính chín ca PhoBERT. Xem [readiness](../docs/midterm_readiness_2026-11-05.md). Còn thiếu thông tin nhóm; cần xác nhận yêu cầu official split và các nhận xét hỗ trợ AI.
+Đã hoàn tất audit split, tách config/lệnh tái lập, làm sạch notebook/gói chia sẻ, phụ lục per-label và đọc định tính chín ca PhoBERT. Xem [readiness](docs/midterm_readiness_2026-11-05.md). Còn thiếu thông tin nhóm; cần xác nhận yêu cầu official split và các nhận xét hỗ trợ AI.
 
 ## Mở sẵn
 
@@ -31,7 +31,7 @@ Neutral support = **94**: 75 Neutral-only + 19 mixed. PhoBERT có **44 TP / 62 F
 | --- | --- | --- |
 | 1–6 | Bài toán đa nhãn; audit dữ liệu; EDA 27 cảm xúc; giữ split, chống leakage | [EDA và bảng](../reports/tables/README.md), [báo cáo](../reports/midterm_report.md) |
 | 7–12 | Ba baseline gốc 27 nhãn; Q1–Q5, ngưỡng, phong cách, lỗi biên | [Bảng baseline gốc](../reports/tables/model_comparison.csv) |
-| 13 | Thêm Neutral thành output riêng; giữ annotation mixed | [Thiết kế notebook 06](../docs/neutral_28_labels.md) |
+| 13 | Thêm Neutral thành output riêng; giữ annotation mixed | [Thiết kế notebook 06](docs/neutral_28_labels.md) |
 | 14–15 | Kết quả đủ 28 nhãn và chất lượng Neutral | [Evidence mới](reports/midterm_2026-11-04/evidence/README.md) |
 | 16–17 | Phép chiếu 27; khác số epoch; đường học; giới hạn thực thi | [Phân tích kết quả mới](reports/midterm_2026-11-04/neutral28_results.md) |
 | 18–20 | RQ Final, việc còn lại và nguồn | [Lời dẫn/Q&A](../docs/midterm_presentation_en.md) |

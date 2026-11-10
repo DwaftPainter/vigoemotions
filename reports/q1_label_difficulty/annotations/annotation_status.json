@@ -1,0 +1,12 @@
+{
+  "status": "pending",
+  "planned_n": 71,
+  "paired_completed": 0,
+  "resolved_n": 0,
+  "unresolved_n": 71,
+  "disagreement_n": 0,
+  "weighted_population_estimates_available": false,
+  "agreement_scope": "Paired completed review items in an outcome-balanced sample, not population agreement",
+  "recall_scope": "Original ground-truth positives only; FP cases never enter recall denominators",
+  "uncertainty": "Outcome-stratified bootstrap with fixed inverse-inclusion weights; no finite-population correction; no causal inference"
+}

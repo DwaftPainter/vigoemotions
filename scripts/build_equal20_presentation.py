@@ -176,11 +176,10 @@ def presentation_content():
         'Is one threshold suitable for every emotion?',
         'Freeze the best neural checkpoint and its weights.',
         'Compare 0.5, global tuned and per-label thresholds.',
-        'Tune on validation; lock choices; evaluate test once.',
-        'Review at least 20 false negatives and 20 false positives.'],
+        'Tune on validation; lock choices; evaluate test once.'],
         'For the final evaluation, we will test whether one threshold suits every emotion. '
         'We will freeze the best neural checkpoint and compare the default threshold, a tuned global threshold, and per-label thresholds. '
-        'We select thresholds on validation, lock all choices, then evaluate test once. We also plan a detailed review of at least twenty false negatives and twenty false positives.')
+        'We select thresholds on validation, lock all choices, then evaluate test once.')
 
     add('Conclusions and Evidence', [
         'PhoBERT leads within both label settings.',
@@ -296,7 +295,7 @@ def build_presentation():
         raise ValueError('Shorten the spoken script to fit the presentation time limit')
     SCRIPT.write_text(markdown + TABLE_NOTE)
     render_script(markdown + TABLE_NOTE)
-    print(f'Built {len(design)} slides; Q1–Q4 tables replace slides 10–11; {words} unchanged spoken words.')
+    print(f'Built {len(design)} slides; Q1–Q4 tables replace slides 10–11; {words} spoken words.')
     return design, boxes
 
 

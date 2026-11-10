@@ -1,6 +1,6 @@
 # ViGoEmotions — Các công việc từ bắt đầu đến midterm
 
-> **Phạm vi lịch sử:** Các run/điểm trước lượt Kaggle 20 epoch không còn là kết quả chính. Dùng [README hiện tại](../README.md) và report/slide equal20.
+> **Phạm vi lịch sử:** Các run/điểm trước lượt Kaggle 20 epoch không còn là kết quả chính. Dùng [README hiện tại](../../README.md) và report/slide equal20.
 
 Cập nhật mới nhất: **05/11/2026**, xem mục 12 về study 28 nhãn. Mục 1–11 giữ lịch sử baseline và thiết kế sweep từ 14–23/10. Tài liệu này tổng hợp công việc theo thứ tự thực hiện hợp lý,
 dựa trên mã, notebook và kết quả đang có trong project; không phải nhật ký có thời điểm của từng thao tác.
@@ -8,12 +8,12 @@ Mục đích là giúp thành viên mới hiểu **đã làm gì, vì sao làm, 
 
 Đã chạy đủ TF-IDF, BiGRU và PhoBERT; kết quả Colab đã được nhập và kiểm chứng ngày 14/10/2026.
 BiGRU: 10 epoch, 37,50 giây; PhoBERT: 4 epoch, khoảng 50 phút 47 giây trên Tesla T4.
-Xem [kiểm tra kết quả Colab](../archive/docs/colab_results_check.md). Mapping đã đối chiếu ảnh nguồn ngày 22/10; còn làm rõ stratification và audit lỗi neural trước khi nộp.
+Xem [kiểm tra kết quả Colab](colab_results_check.md). Mapping đã đối chiếu ảnh nguồn ngày 22/10; còn làm rõ stratification và audit lỗi neural trước khi nộp.
 
 ## 1. Đọc đề và xác định sản phẩm phải nộp
 
-Đọc [đề ViGoEmotions](02-vigoemotions-vietnamese-emotion.pdf) và
-[student guide](student-guide.pdf) để xác định bài toán, giới hạn dữ liệu và tiêu chí giữa kỳ.
+Đọc [đề ViGoEmotions](../../docs/02-vigoemotions-vietnamese-emotion.pdf) và
+[student guide](../../docs/student-guide.pdf) để xác định bài toán, giới hạn dữ liệu và tiêu chí giữa kỳ.
 Midterm là checkpoint thuyết trình, chiếm 30% điểm; cần có bằng chứng thực nghiệm tái lập được.
 
 Bài toán là **phân loại đa nhãn**: một bình luận có thể có nhiều cảm xúc cùng lúc. Nhóm cần khảo sát
@@ -23,7 +23,7 @@ metric, phân tích lỗi và đề xuất câu hỏi nghiên cứu cho Final.
 Sản phẩm cần chuẩn bị gồm báo cáo PDF, slide, code/notebook, README, bảng/hình EDA, kết quả baseline,
 cấu hình thực nghiệm và các file giúp tái lập. Không đưa bình luận nguồn bị hạn chế phân phối vào repo công khai.
 
-**Đã làm:** chuyển yêu cầu thành các phần trong [báo cáo](../reports/midterm_report.md).
+**Đã làm:** chuyển yêu cầu thành các phần trong [báo cáo](../../reports/midterm_report.md).
 Mục 8 của báo cáo đối chiếu từng nhóm yêu cầu với bằng chứng và trạng thái thực hiện.
 
 ## 2. Chuẩn bị dữ liệu và môi trường chạy
@@ -37,10 +37,10 @@ Dữ liệu hiện có gồm `data/train.csv`, `data/val.csv`, `data/test.csv`, 
 | `labels` | Danh sách ID cảm xúc được lưu dạng chuỗi |
 
 Dữ liệu nguồn nằm trong `data/`, được loại khỏi Git bằng `.gitignore`. Các báo cáo công khai chỉ dùng
-thống kê tổng hợp, ID và mô tả lỗi trừu tượng. Quy trình xin quyền dữ liệu nằm trong [README](../README.md).
+thống kê tổng hợp, ID và mô tả lỗi trừu tượng. Quy trình xin quyền dữ liệu nằm trong [README](../../README.md).
 
 Môi trường local của project là `ViGoEmotions/.venv`; các phiên bản thư viện được ghi ở
-[requirements.txt](../requirements.txt). Môi trường Colab có file dependency riêng vì cần chạy neural model trên GPU.
+[requirements.txt](../../requirements.txt). Môi trường Colab có file dependency riêng vì cần chạy neural model trên GPU.
 
 **Sự cố đã xử lý:** notebook từng chọn nhầm `ATI/.venv`, có NumPy 1.26.4 nhưng SciPy 1.18.1 yêu cầu
 NumPy từ 2.0, gây lỗi `numpy.long`. Đã đăng ký kernel **Python (ViGoEmotions)** và thêm cell kiểm tra
@@ -49,7 +49,7 @@ Khi mở notebook, chọn đúng kernel rồi **Restart Kernel → Run All**; ch
 
 ## 3. Kiểm tra chất lượng dữ liệu trước khi huấn luyện
 
-Chạy [notebook 01](../notebooks/01_dataset_validation.ipynb) để kiểm tra số mẫu, schema,
+Chạy [notebook 01](../../notebooks/01_dataset_validation.ipynb) để kiểm tra số mẫu, schema,
 giá trị thiếu, ID trùng, văn bản trùng và tính hợp lệ của nhãn. Nếu bỏ qua bước này, mô hình có thể
 được đánh giá trên mẫu đã xuất hiện trong train hoặc sử dụng vector nhãn sai.
 
@@ -63,10 +63,10 @@ giá trị thiếu, ID trùng, văn bản trùng và tính hợp lệ của nhã
 | 1 mẫu test lặp ID nhãn | Gộp nhãn lặp khi mã hóa |
 
 Đã sửa lỗi notebook cũ dùng `and print(labels)` khi đếm mixed-neutral, làm kết quả đếm sai thành 0.
-Quy ước xử lý chung nằm ở [common.py](../scripts/common.py), giải thích chi tiết ở
-[dataset_check.md](dataset_check.md).
+Quy ước xử lý chung nằm ở [common.py](../../scripts/common.py), giải thích chi tiết ở
+[dataset_check.md](../../docs/dataset_check.md).
 
-**Đã đối chiếu ngày 22/10:** mapping ID 0–26 khớp ảnh dataset card do người dùng cung cấp; ID 27 là neutral. Xem [bảng và nguồn](label_mapping.md). Không đổi thứ tự đầu ra.
+**Đã đối chiếu ngày 22/10:** mapping ID 0–26 khớp ảnh dataset card do người dùng cung cấp; ID 27 là neutral. Xem [bảng và nguồn](../../docs/label_mapping.md). Không đổi thứ tự đầu ra.
 
 ## 4. Thống nhất nhãn, split và tiền xử lý
 
@@ -77,7 +77,7 @@ ID 27 là neutral, không phải đầu ra thứ 28 trong giao thức project hi
 Pipeline chuẩn hóa Unicode NFC và gom khoảng trắng, giữ dấu tiếng Việt và thông tin cảm xúc ở bước chung.
 Sau khi loại train trùng held-out, còn **16.530 mẫu train**. Vocabulary và IDF chỉ được học trên train.
 
-Giữ ba split đã được cấp và lưu danh sách ID ở [splits](../splits). Vai trò từng tập:
+Giữ ba split đã được cấp và lưu danh sách ID ở [splits](../../splits). Vai trò từng tập:
 
 | Tập | Dùng để làm gì trong giao thức hiện tại? |
 | --- | --- |
@@ -91,8 +91,8 @@ Nếu bắt buộc tạo split mới, phải khóa split trước rồi chạy l
 
 ## 5. Phân tích khám phá dữ liệu — EDA
 
-Chạy [notebook 02](../notebooks/02_exploratory_analysis.ipynb) hoặc
-[analyze_data.py](../scripts/analyze_data.py). Mục đích là hiểu đặc điểm dữ liệu trước khi giải thích điểm mô hình.
+Chạy [notebook 02](../../notebooks/02_exploratory_analysis.ipynb) hoặc
+[analyze_data.py](../../scripts/analyze_data.py). Mục đích là hiểu đặc điểm dữ liệu trước khi giải thích điểm mô hình.
 
 | Phân tích | Câu hỏi cần trả lời | File kết quả trong `reports/tables/` |
 | --- | --- | --- |
@@ -103,7 +103,7 @@ Chạy [notebook 02](../notebooks/02_exploratory_analysis.ipynb) hoặc
 | Tương quan nhãn | Các biến nhãn liên hệ mạnh/yếu thế nào? | `train_correlation.csv` |
 | Phong cách | Có bao nhiêu mẫu ngắn, nhiều emoji, teencode theo heuristic? | `text_styles.csv` |
 
-Các hình nằm ở [reports/figures](../reports/figures). Ma trận đồng xuất hiện và tương quan chỉ dùng train.
+Các hình nằm ở [reports/figures](../../reports/figures). Ma trận đồng xuất hiện và tương quan chỉ dùng train.
 Chia head/mid/tail bằng thứ hạng tần suất train, mỗi nhóm 9 nhãn; nếu hòa thì xét ID.
 
 Một số phát hiện: train trung bình khoảng **1,859 cảm xúc/mẫu**, trung vị **11 token khoảng trắng**
@@ -115,10 +115,10 @@ với từ đã tách của tiếng Việt hoặc BPE token. Các nhóm phong c�
 ## 6. Chạy baseline đầu tiên: TF-IDF + OvR Logistic Regression
 
 Chạy [notebook 03](../notebooks/03_baseline_comparison.ipynb) hoặc
-[train_tfidf.py](../scripts/train_tfidf.py). TF-IDF biến văn bản thành đặc trưng từ vựng;
+[train_tfidf.py](../../scripts/train_tfidf.py). TF-IDF biến văn bản thành đặc trưng từ vựng;
 One-vs-Rest huấn luyện một bộ phân loại nhị phân cho mỗi cảm xúc.
 
-Cấu hình nằm ở [midterm.json](../configs/midterm.json): unigram/bigram, tối đa 40.000 features,
+Cấu hình nằm ở [midterm.json](../../configs/midterm.json): unigram/bigram, tối đa 40.000 features,
 min_df=2, sublinear TF, Logistic Regression C=1, solver liblinear, seed 42.
 Regex word-token của TF-IDF không biến emoji thành feature; đây là một hạn chế cần xét khi phân tích lỗi.
 
@@ -135,9 +135,9 @@ Kết quả validation tại ngưỡng 0,5:
 Macro-F1 coi các nhãn ngang nhau; Micro-F1 gộp các quyết định; Hamming đo tỷ lệ quyết định nhãn sai;
 LRAP đo thứ hạng xác suất. Vì bài toán đa nhãn, không dùng subset accuracy làm metric chính.
 
-**Bằng chứng:** [bảng metric](../reports/tables/tfidf_lr_metrics.csv),
-[per-label F1](../reports/tables/tfidf_lr_per_label.csv),
-[run metadata](../reports/tfidf_lr_run.json) và xác suất validation trong `reports/predictions/`.
+**Bằng chứng:** [bảng metric](../../reports/tables/tfidf_lr_metrics.csv),
+[per-label F1](../../reports/tables/tfidf_lr_per_label.csv),
+[run metadata](../../reports/tfidf_lr_run.json) và xác suất validation trong `reports/predictions/`.
 Run metadata ghi cấu hình, môi trường, checksum dữ liệu và thời gian đo thực tế.
 
 ## 7. Giải thích kết quả và phân tích lỗi
@@ -157,13 +157,13 @@ Hạ ngưỡng làm F1 tăng nhưng Hamming Loss cũng tăng. Đây là kết qu
 ngưỡng, không phải bằng chứng cải thiện trên test.
 
 Đã xuất **20 false negatives** (bỏ sót cảm xúc) và **20 false positives** (dự đoán thêm cảm xúc)
-trong [bảng ca lỗi](../reports/tables/tfidf_lr_error_cases_val.csv), chọn theo mức tự tin sai.
+trong [bảng ca lỗi](../../reports/tables/tfidf_lr_error_cases_val.csv), chọn theo mức tự tin sai.
 Đã đọc thủ công **10 bình luận khác nhau**, ghi diễn giải ở mục 6 của báo cáo. Việc xuất 40 cặp lỗi
 không có nghĩa đã đọc thủ công 40 mẫu; đây cũng không phải mẫu lỗi ngẫu nhiên.
 
 ## 8. Chuẩn bị BiGRU và PhoBERT trên Colab
 
-Đã viết [train_neural.py](../scripts/train_neural.py) và
+Đã viết [train_neural.py](../../scripts/train_neural.py) và
 [notebook 04](../notebooks/04_colab_neural_baselines.ipynb). Luồng chuẩn bị gồm nạp dữ liệu,
 huấn luyện, chọn checkpoint bằng validation Macro-F1, lưu xác suất, đánh giá và xuất lại báo cáo.
 
@@ -181,11 +181,11 @@ nạp CSV riêng và tải kết quả nằm trong README. Không điền số g
 
 ## 9. Viết báo cáo, slide và hướng nghiên cứu Final
 
-Đã tạo [báo cáo PDF](../reports/midterm_report.pdf),
-[slide PDF](../reports/midterm_slides.pdf), các bản Markdown có thể sửa và README hướng dẫn tái lập.
-[Nội dung slide](../reports/midterm_slides.md) có ghi chú thuyết trình cho từng trang.
+Đã tạo [báo cáo PDF](../../reports/midterm_report.pdf),
+[slide PDF](../../reports/midterm_slides.pdf), các bản Markdown có thể sửa và README hướng dẫn tái lập.
+[Nội dung slide](../../reports/midterm_slides.md) có ghi chú thuyết trình cho từng trang.
 
-[build_report.py](../scripts/build_report.py) đọc các kết quả hiện có để sinh báo cáo/slide.
+[build_report.py](../../scripts/build_report.py) đọc các kết quả hiện có để sinh báo cáo/slide.
 Khi đã có output neural, script bổ sung dòng so sánh và bảng chênh lệch theo phong cách; người thực hiện
 vẫn phải đọc các ca lỗi và chỉnh diễn giải, không coi việc tự sinh bảng là hoàn thành phân tích.
 
@@ -225,7 +225,7 @@ Macro-F1 tại threshold 0,5; baseline gốc được giữ riêng. Chưa chạy
 
 Report có mục 5.6 và slide được mở rộng thành 18 trang, trong giới hạn 20 theo hướng dẫn bổ sung.
 Phân biệt rõ fine-tune PhoBERT đã chạy với hyperparameter sweep còn chờ kết quả. Hướng dẫn chạy,
-nhập kết quả và viết insight tại [phobert_tuning.md](../archive/docs/phobert_tuning.md). Danh sách lỗi neural tự sinh
+nhập kết quả và viết insight tại [phobert_tuning.md](phobert_tuning.md). Danh sách lỗi neural tự sinh
 vẫn cần audit thủ công; chưa điền quan sát hoặc kết quả thí nghiệm chưa thực hiện.
 
 
@@ -237,7 +237,7 @@ Macro-F1 28 của TF-IDF / BiGRU / PhoBERT: **0,231040 / 0,399227 / 0,574653**; 
 
 Cell tìm ví dụ validation lỗi JVM sau huấn luyện/xuất metric; ZIP không có `validation_prediction_cases.csv`. Bảng đếm kiểu dự đoán trong evidence được tính thêm từ NPZ. `RUN_FINAL_TEST=False`, chưa chấm test. ZIP study mới đã có checkpoint, tokenizer và vocabulary; không còn là hạng mục thiếu của study 28.
 
-Đã cập nhật báo cáo mục 5.7, bộ 20 slide, [lời dẫn và Q&A](midterm_presentation_en.md), README và hướng dẫn study 28. [Evidence riêng](../archive/reports/midterm_2026-11-04/evidence/README.md) chỉ giữ tổng hợp và metadata, không copy output văn bản nguồn. Các bản pre-midterm theo ngày vẫn là lịch sử. Còn cần đọc lỗi neural, bổ sung thông tin nhóm, xác nhận split; sweep 05 chưa hoàn tất và chưa có thí nghiệm Final.
+Đã cập nhật báo cáo mục 5.7, bộ 20 slide, [lời dẫn và Q&A](../../docs/midterm_presentation_en.md), README và hướng dẫn study 28. [Evidence riêng](../reports/midterm_2026-11-04/evidence/README.md) chỉ giữ tổng hợp và metadata, không copy output văn bản nguồn. Các bản pre-midterm theo ngày vẫn là lịch sử. Còn cần đọc lỗi neural, bổ sung thông tin nhóm, xác nhận split; sweep 05 chưa hoàn tất và chưa có thí nghiệm Final.
 
 
 ## 13. Hoàn thiện trước khi chốt — 05/11

@@ -20,6 +20,10 @@ from import_equal20_results import OUT
 
 
 class LockedPresentationTests(unittest.TestCase):
+    def test_slide_14_omits_the_removed_review_commitment(self):
+        self.assertNotIn('Review at least 20 false negatives and 20 false positives.', self.main[13][1])
+        self.assertNotIn('twenty false negatives and twenty false positives', self.main[13][3])
+
     @classmethod
     def setUpClass(cls):
         cls.main = presentation_content()
@@ -27,6 +31,8 @@ class LockedPresentationTests(unittest.TestCase):
 
     def test_only_two_requested_slides_change_and_all_notes_are_preserved(self):
         expected = json.loads((OUT / 'slides.json').read_text())
+        expected[13][1].remove('Review at least 20 false negatives and 20 false positives.')
+        expected[13][3] = expected[13][3].removesuffix(' We also plan a detailed review of at least twenty false negatives and twenty false positives.')
         self.assertEqual(approved_content(self.main), expected)
         for i, (s, row) in enumerate(zip(self.design, expected), 1):
             self.assertEqual(s['notes'], row[3])

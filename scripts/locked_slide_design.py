@@ -1,4 +1,4 @@
-"""Keep the approved script; replace only slides 10–11 with verified Q1–Q4 tables."""
+"""Preserve approved content, with requested Q1–Q4 tables and slide-14 deletion."""
 import hashlib
 import json
 
@@ -10,7 +10,7 @@ APPROVED_SHA256 = 'b3f255f12caeb8c40c030f54cde755dfb8f8cc8f2b73f07a9be2a9baac133
 TABLE_NOTE = '''
 ## Q1–Q4 result tables — slides 10–11
 
-The presentation contains 15 slides. Slides 10–11 use the Q1–Q4 tables; the other 13 slides and all approved speaker notes remain unchanged. Keep the original timing and handovers above.
+The presentation contains 15 slides. Slides 10–11 use the Q1–Q4 tables. Slide 14 omits the review-count commitment at the user's request; all other approved content and speaker notes remain unchanged. Keep the original timing and handovers above.
 
 Slide 10 contains dedicated tables for Q1 (highest and lowest per-label F1) and Q2 (training-frequency versus F1 correlations). Slide 11 contains dedicated tables for Q3 (joint label recall) and Q4 (text-style Macro-F1). All tables use the 27-output validation study. Follow the existing script for these two slides and read the key PhoBERT results rather than every table entry.
 '''
@@ -22,6 +22,9 @@ def approved_content(slides):
     if hashlib.sha256(source.read_bytes()).hexdigest() != APPROVED_SHA256:
         raise ValueError('The approved slide-content snapshot changed')
     approved = json.loads(source.read_text())
+    # Explicitly authorized editorial deletion; preserve the evidence snapshot itself.
+    approved[13][1].remove('Review at least 20 false negatives and 20 false positives.')
+    approved[13][3] = approved[13][3].removesuffix(' We also plan a detailed review of at least twenty false negatives and twenty false positives.')
     if json.loads(json.dumps(slides)) != approved:
         raise ValueError('Titles, bullets, figures and speaker notes are locked for slides 1–15')
     return approved

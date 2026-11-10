@@ -1,6 +1,6 @@
 # Neutral trong kết quả chính Kaggle 20 epoch
 
-Dùng notebook 09 và profile configs/kaggle_equal_20ep.json; BiGRU/PhoBERT đều 20 epoch, best lần lượt 20 và 15. Nguồn là notebook executed 09 và ZIP vigoemotions_kaggle_equal20_28labels_private_results.zip. [Báo cáo](../reports/midterm_report.md), [bằng chứng](../reports/kaggle_equal20_2026-11-05/README.md), [cách chạy](kaggle_equal_epochs.md).
+Dùng notebook 09 và profile configs/kaggle_equal_20ep.json; BiGRU/PhoBERT đều 20 epoch, best lần lượt 20 và 15. Nguồn là notebook executed 09 và ZIP vigoemotions_kaggle_equal20_28labels_private_results.zip. [Báo cáo](../../reports/midterm_report.md), [bằng chứng](../../reports/kaggle_equal20_2026-11-05/README.md), [cách chạy](../../docs/kaggle_equal_epochs.md).
 
 27 cảm xúc giữ IDs 0–26; Neutral là output 27. [27] → chỉ Neutral dương, [2,27] giữ cả joy và Neutral. CSV nguồn có 725 Neutral-only và 306 mixed; validation có 94 Neutral dương. Giữ annotation mixed, không dùng softmax hoặc decoder ép loại trừ. Dự đoán rỗng không tự động là Neutral.
 

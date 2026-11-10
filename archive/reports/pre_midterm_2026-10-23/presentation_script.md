@@ -124,7 +124,7 @@ Notebook 04 mới đã hoàn tất; nhóm đã tải ZIP kết quả và ZIP che
 
 Sau đó, nhóm sẽ đọc lỗi BiGRU và PhoBERT, cập nhật insight, đồng thời làm rõ với thầy/cô việc sử dụng split được cấp có đáp ứng yêu cầu stratification trong đề hay cần protocol bổ sung.”
 
-**Thao tác:** Mở [notebook 05](../../../notebooks/05_colab_phobert_tuning.ipynb) hoặc [thiết kế tuning](../../docs/phobert_tuning.md). Không dùng kết quả study cũ cho lượt mới.
+**Thao tác:** Mở [notebook 05](../../notebooks/05_colab_phobert_tuning.ipynb) hoặc [thiết kế tuning](../../docs/phobert_tuning.md). Không dùng kết quả study cũ cho lượt mới.
 
 ## Slide 12 — Hướng Final và kết thúc · 35 giây
 

@@ -1,0 +1,5 @@
+label,probe,n,positive_support,all_train_positive
+gratitude,yes,510,483,765
+gratitude,no,16020,282,765
+disapproval,yes,8,3,969
+disapproval,no,16522,966,969

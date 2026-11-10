@@ -1,0 +1,88 @@
+{
+  "evidence": {
+    "study": "Kaggle equal20 / 27 outputs / PhoBERT",
+    "threshold": 0.5,
+    "seed": 42,
+    "label_order": [
+      "amusement",
+      "excitement",
+      "joy",
+      "love",
+      "desire",
+      "optimism",
+      "caring",
+      "pride",
+      "admiration",
+      "gratitude",
+      "relief",
+      "approval",
+      "realization",
+      "surprise",
+      "curiosity",
+      "confusion",
+      "fear",
+      "nervousness",
+      "remorse",
+      "embarrassment",
+      "disappointment",
+      "sadness",
+      "grief",
+      "disgust",
+      "anger",
+      "annoyance",
+      "disapproval"
+    ],
+    "validation_only": true,
+    "sources_sha256": {
+      "reports/kaggle_equal20_2026-11-05/evidence/27/manifest.json": "20aa3abdf585c548f9d94df2e197c0d4c6a1b6fae132ec401b8f8bf948a9cf94",
+      "reports/kaggle_equal20_2026-11-05/provenance.json": "fad942a3058a5f9c57e2ceb83bb5a23b246e6ae9a06453009853d44e6308fcc5",
+      "configs/kaggle_equal_20ep.json": "4ed223ffa8f7ed3dc6656fc975c2ed74f037491e21133a4c5b7f48f34c9c6244",
+      "scripts/common.py": "976a5ccb14b0582acf82d83e775fe3f2f09a0717997344f028653f732ec1dd99",
+      "scripts/train_neural.py": "5551c9be8d4b466c43ed155cc062c45e24317054d0cd53a22a3f1ad9153eeb8a",
+      "data/train.csv": "9abcb2b7d9fadd9da043a3af43e8ee569f7099d87d20daf39a69e7e1a76c5624",
+      "splits/train.csv": "f3aaeeda0733d2365c54da43a616d888847f3047466fd6801b01a22f00b53c1e",
+      "data/val.csv": "d3a473a65bf10d3d07423306a4324e94c9979d42d58f6a05cceb4cc1cc4fcab0",
+      "splits/val.csv": "35726b954109e9424efb980001865d709bc00412fb3ec59e8e0f467c5186fb5b",
+      "reports/kaggle_equal20_2026-11-05/evidence/27/phobert/val_predictions.npz": "c9c4cff2ff6839ff5140f3f48246b5316ee897fa810d0154955b947b996154aa",
+      "reports/kaggle_equal20_2026-11-05/evidence/27/phobert/run.json": "519d9d7efc3ccd1b961826c949e9ae36bb74d72261843980d4e18b81ab2db39b",
+      "reports/kaggle_equal20_2026-11-05/per_label_metrics.csv": "baecea083b84163d6f3bf5826c90599226c73441b49fe3dbfca0a73b4a647c41",
+      "reports/kaggle_equal20_2026-11-05/analysis/27_emotion27/phobert/tables/phobert_per_label.csv": "d2d7021f76e40b1a1d091b909c237fb52f4df34158ddfea47625ea3b6206ed1e"
+    },
+    "csv_variants": {
+      "train": "exact",
+      "val": "exact"
+    },
+    "checkpoint_epoch": 14,
+    "model": {
+      "checkpoint": "vinai/phobert-base-v2",
+      "max_length": 256,
+      "epochs": 20,
+      "batch_size": 16,
+      "learning_rate": 2e-05,
+      "weight_decay": 0.01,
+      "revision": "86cd7fd4c148980922ac11a2cf5e257f2ba639e1"
+    },
+    "implementation_sha256": {
+      "q1_difficulty_common.py": "233b19594679c69a63b7aa9f6bb20647a38eae01bdfaf015609eece50e758e51",
+      "analyze_q1_difficulty.py": "805dd1203d652e88bcc54dd2a19bde9d5ca24e38dd769e5de25b741700bebc5a",
+      "analyze_q1_annotations.py": "7e4c6612ce05d9be20c4a3f2f4061c6252f54bc4e3b338b2d9d5f93a5131967e",
+      "evaluate_q1_interventions.py": "e6df14e35764a139bf6c14acfbb44f6e366abcd36d9b3c158021e09708cc92a9"
+    },
+    "packages": {
+      "numpy": "2.5.4",
+      "pandas": "3.0.6",
+      "scipy": "1.18.1",
+      "scikit-learn": "1.9.1",
+      "matplotlib": "3.11.2"
+    }
+  },
+  "private_input_sha256": {
+    "annotation_key.csv": "9b14635d4e16193828f84194b7e298ac2f306a64d45be61a1834246edb2cae6e",
+    "annotator_1.csv": "bfbf5cc13069384719a80d59e0824f1312755dada17061237224430c6a1e73d6",
+    "annotator_2.csv": "bfbf5cc13069384719a80d59e0824f1312755dada17061237224430c6a1e73d6",
+    "adjudication.csv": "c4cd4d01742453e2d4f65a52093aed0ab0b7e84e35ad8b94bb8f2da71bc8c183",
+    "review_text_private.csv": "5a6a3907b047b237cb0ef8493cf0294e65948fad19be37a629fa802858c892a2"
+  },
+  "raw_text_exported": false,
+  "completed_annotations_generated": false
+}

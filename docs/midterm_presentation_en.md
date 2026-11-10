@@ -1,6 +1,6 @@
 # ViGoEmotions — English Midterm Presentation Script
 
-15 slides; 803 spoken words. Target: about 8–9 minutes, including short pauses and handovers. Finish before the 10-minute limit; leave any remaining time for questions.
+15 slides; 787 spoken words. Target: about 8–9 minutes, including short pauses and handovers. Finish before the 10-minute limit; leave any remaining time for questions.
 
 Use this script with reports/midterm_slides.pdf. The numerical results come from the verified Kaggle 20-epoch studies. The Vietnamese report and study guide remain available for preparation.
 
@@ -79,7 +79,7 @@ A preliminary, AI-assisted review examines three confident Neutral false positiv
 
 ### Slide 14 — Final Research Question and Next Steps
 
-For the final evaluation, we will test whether one threshold suits every emotion. We will freeze the best neural checkpoint and compare the default threshold, a tuned global threshold, and per-label thresholds. We select thresholds on validation, lock all choices, then evaluate test once. We also plan a detailed review of at least twenty false negatives and twenty false positives.
+For the final evaluation, we will test whether one threshold suits every emotion. We will freeze the best neural checkpoint and compare the default threshold, a tuned global threshold, and per-label thresholds. We select thresholds on validation, lock all choices, then evaluate test once.
 
 ### Slide 15 — Conclusions and Evidence
 
@@ -145,6 +145,6 @@ No. It is the best point in an exploratory validation grid for a fixed checkpoin
 
 ## Q1–Q4 result tables — slides 10–11
 
-The presentation contains 15 slides. Slides 10–11 use the Q1–Q4 tables; the other 13 slides and all approved speaker notes remain unchanged. Keep the original timing and handovers above.
+The presentation contains 15 slides. Slides 10–11 use the Q1–Q4 tables. Slide 14 omits the review-count commitment at the user's request; all other approved content and speaker notes remain unchanged. Keep the original timing and handovers above.
 
 Slide 10 contains dedicated tables for Q1 (highest and lowest per-label F1) and Q2 (training-frequency versus F1 correlations). Slide 11 contains dedicated tables for Q3 (joint label recall) and Q4 (text-style Macro-F1). All tables use the 27-output validation study. Follow the existing script for these two slides and read the key PhoBERT results rather than every table entry.

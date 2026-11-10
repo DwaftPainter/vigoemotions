@@ -1,0 +1,81 @@
+{
+  "scope": "Supplementary Q1; PhoBERT-27 validation at threshold 0.5; no retraining or test-performance evaluation",
+  "branch": "develop",
+  "base_commit": "cbe7b7870894822b1a1379fedea5f040ca8f8170",
+  "protected_artifacts": {
+    "files_compared": 219,
+    "changed": 0,
+    "tracked_files_modified": [],
+    "baseline_manifest_sha256": "4cbdab33e4ed9f8e45e64e2614a92fda490dadbcf9a120fc59ecb185ff77f76d",
+    "coverage": "All pre-existing reports, executed notebooks, pre-existing scripts and equal20 config"
+  },
+  "quantitative_reproduction": {
+    "command": ".venv/bin/python scripts/analyze_q1_difficulty.py --output-dir /private/tmp/vigo-q1-reproduction",
+    "compared_files": 10,
+    "byte_identical": true,
+    "output_sha256": {
+      "figures/probability_distributions.png": "eacb4a8b76784dc760a95079062dc9961b8bb1cee5c8bceb7f48230f16930410",
+      "figures/subgroup_f1.png": "0f4e3a1a13e79273e68a041e5a20a9a72e7cb080981eb4860b4201b3badc4999",
+      "provenance.json": "fba58c9f71299309e80143ac5c4a5aba26874d8538e25dd133f1661eb737dfe7",
+      "q1_analysis.md": "191dc9b59b2d271a6f9170bba68a81aea0a8bef8d77236e3d3b6ec86fc4db292",
+      "tables/metrics.csv": "fd8e5d7f43b8d0c284f3c6bd3bf61352c8120b148b9c450e447627848b7ec879",
+      "tables/outcome_features.csv": "2d75ce84e8b7fa62d94be383e4e8eb2970ce9be180766bb25d020c92cf5a76c7",
+      "tables/overlaps.csv": "296723e8fe4cb44918f67a61c6f8ac5366be5ed5090fd15a46d07ecfd5332cf4",
+      "tables/probabilities.csv": "bc541bc05259d40b2c5e4f5222a012edb5babb601b6ac2a2084b26a9d70d3a18",
+      "tables/subgroups.csv": "5e887adf5407d4bfcee86f4945405949e8ed3f7420c5a33451d3de0e2cda0e06",
+      "tables/train_lexical_probes.csv": "6248c5cc827d57ba07941194d7a1c7d9d1cc40fcb9e9918325a7efb576ef48ae"
+    }
+  },
+  "tests": {
+    "focused": {
+      "command": "PYTHONPATH=tests .venv/bin/python -m unittest test_q1_difficulty -v",
+      "passed": 17,
+      "failed": 0,
+      "log_sha256": "a354432ba7cdec0eaa4fd15b50a40d86cf5026b0b32c7c504d158516b0c48244"
+    },
+    "repository": {
+      "command": ".venv/bin/python -m unittest discover -s tests -v",
+      "run": 104,
+      "passed": 102,
+      "errors": 2,
+      "status": "incomplete: local optional neural dependency missing",
+      "error": "ModuleNotFoundError: No module named torch",
+      "affected_tests": [
+        "test_neutral_28_labels.Neutral28Tests.test_gru_real_backward_checkpoint_and_reload",
+        "test_neutral_28_labels.Neutral28Tests.test_phobert_tiny_offline_full_finetune_and_reload"
+      ],
+      "log_sha256": "c4b43f9166b700d6008ca7465ab2c230ecbcbb63671ce4a694017cbdf4104e69"
+    }
+  },
+  "privacy": {
+    "private_text_packets_git_ignored": true,
+    "private_artifacts_visible_to_git": 0,
+    "public_csv_raw_text_or_reviewer_fields": false,
+    "full_source_comment_matches_min_20_chars": 0,
+    "short_text_safeguard": "Manual schema/code review; public cue lists are hand-written probes, not extracted vocabulary",
+    "public_templates": "header-only"
+  },
+  "visual_review": {
+    "figures": [
+      "figures/probability_distributions.png",
+      "figures/subgroup_f1.png"
+    ],
+    "inspected": true,
+    "notes": "Legends avoid plotted peaks; undefined F1 marked N/A; subgroup n and positive support shown"
+  },
+  "annotation_study": {
+    "status": "pending",
+    "planned_items": 71,
+    "completed": 0,
+    "adjudicated": 0
+  },
+  "intervention_study": {
+    "status": "pending",
+    "proposed_pairs": 48,
+    "verified_pairs": 0,
+    "inference_attempted": false
+  },
+  "implemented_inference_limit": "Infrastructure unit-tested; actual frozen checkpoint inference remains unexecuted until genuine verified pairs and private assets are supplied",
+  "committed": false,
+  "pushed": false
+}
