@@ -1,0 +1,142 @@
+{
+  "protocol_id": "vigoemotions_final_rq1_v1",
+  "created_on": "2026-11-11",
+  "status": "protocol_specified_thresholds_not_fitted",
+  "seed": 42,
+  "research_question": "Does validation-tuned global or per-label thresholding improve held-out test Macro-F1 over 0.5 on the same frozen PhoBERT-27 checkpoint?",
+  "model": {
+    "architecture": "phobert",
+    "pretrained_checkpoint": "vinai/phobert-base-v2",
+    "revision": "86cd7fd4c148980922ac11a2cf5e257f2ba639e1",
+    "label_count": 27,
+    "training_epochs_completed": 20,
+    "selected_epoch": 14,
+    "checkpoint_selection": "Maximum validation emotion27 Macro-F1 at 0.5; ties keep earliest epoch",
+    "retraining": false,
+    "archive_path": "vigoemotions_kaggle_equal20_27labels_private_results.zip",
+    "archive_sha256": "24013c9c8194f6ee54dfe645ec1bdb8d8d4b77a141a3b2b853c9991efb2771d3",
+    "checkpoint_member": "labels27/phobert/best.pt",
+    "checkpoint_sha256": "41216d8245a7bd5b98db85054a326f291547effeac9e63addf9ad0ab5be4d178",
+    "source_profile": "configs/kaggle_equal_20ep.json",
+    "source_provenance": "reports/kaggle_equal20_2026-11-05/provenance.json"
+  },
+  "preprocessing": {
+    "normalization": "NFC; collapse whitespace; strip; preserve case, diacritics, punctuation and negation",
+    "segmentation": "VnCoreNLP RDRSegmenter; join segmented sentences with spaces",
+    "tokenizer": "PhoBERT BPE from the frozen pretrained revision; use_fast=False",
+    "padding": "max_length",
+    "max_length": 256,
+    "truncation": true,
+    "inference_batch_size": 16,
+    "inference_shuffle": false,
+    "model_mode": "eval",
+    "output_scores": "sigmoid of logits"
+  },
+  "labels": [
+    "amusement", "excitement", "joy", "love", "desire", "optimism",
+    "caring", "pride", "admiration", "gratitude", "relief", "approval",
+    "realization", "surprise", "curiosity", "confusion", "fear", "nervousness",
+    "remorse", "embarrassment", "disappointment", "sadness", "grief", "disgust",
+    "anger", "annoyance", "disapproval"
+  ],
+  "data": {
+    "policy": "Preserve equal20 ordered split IDs; use the retained train after overlap removal",
+    "split_ids_hash_definition": "SHA-256 of UTF-8 encoded newline-joined IDs, no header or trailing newline",
+    "splits": {
+      "train": {
+        "path": "splits/train.csv",
+        "n": 16530,
+        "ordered_ids_sha256": "91c3e07e6639043a4a2942f14423cd7c0c7611c5133979b5b41a998877e42fe7"
+      },
+      "val": {
+        "path": "splits/val.csv",
+        "n": 2066,
+        "ordered_ids_sha256": "740bea175b72c7c9e38bc50089065b83dfa72bc55d39cd4b4d06cbd1b720ab08"
+      },
+      "test": {
+        "path": "splits/test.csv",
+        "n": 2067,
+        "ordered_ids_sha256": "e96818d9e3ab134d3c72d1e629c072a9ea0bbe4d86d932427141531df003479a"
+      }
+    },
+    "neutral_policy": "ID 27 has no output; Neutral-only gives 27 zero targets; mixed annotations retain emotions; empty predictions do not imply Neutral",
+    "validation_predictions": "reports/kaggle_equal20_2026-11-05/evidence/27/phobert/val_predictions.npz",
+    "validation_predictions_sha256": "c9c4cff2ff6839ff5140f3f48246b5316ee897fa810d0154955b947b996154aa",
+    "validation_reference_macro_f1_at_0_5": 0.597409592448629
+  },
+  "decoding": {
+    "positive_comparison": ">=",
+    "fixed_threshold": 0.5,
+    "tuning_split": "val",
+    "candidate_thresholds": [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80],
+    "global_objective": "macro_f1_over_all_27_labels",
+    "per_label_objective": "binary_f1_for_each_label",
+    "f1_zero_division": 0,
+    "equal_objective_tie_break": "highest_threshold; exact computed F1 equality, no rounded comparison",
+    "no_validation_positive_fallback": 0.5,
+    "selected_global_threshold": null,
+    "selected_per_label_thresholds": null
+  },
+  "analysis": {
+    "primary_metric": "test_macro_f1",
+    "required_metrics": ["macro_f1", "micro_f1", "per_label_f1", "hamming_loss"],
+    "additional_metric": "lrap_from_unchanged_continuous_scores",
+    "zero_division": 0,
+    "delta": "strategy minus fixed within the same split and group",
+    "generalization_gap": "validation F1 minus test F1 for the same strategy and metric",
+    "frequency_tiers": {
+      "source": "retained_train_only",
+      "method": "descending positive-count rank; ties by ascending label ID",
+      "rank_ranges_inclusive": {"head": [1, 9], "mid": [10, 18], "tail": [19, 27]},
+      "membership_path": "docs/final_label_tiers.csv",
+      "tier_metrics": "subset label columns for every comment; macro averages all nine labels"
+    },
+    "cardinality": {
+      "source": "sum of 27 ground-truth emotion targets",
+      "groups": ["0", "1", "2", "3", ">=4"],
+      "subgroup_metrics": "all 27 label columns within selected comments",
+      "empty_group_policy": "report n=0 and metric=null, never invent a score"
+    },
+    "support_reporting": "include sample count, positive support and per-label support; macro always uses the declared label set",
+    "inferential_scope": "one frozen checkpoint and one split; no causal or statistical significance claim"
+  },
+  "error_audit": {
+    "split": "test_after_locked_evaluation",
+    "primary_decoder": "per_label",
+    "minimum_fn_pairs": 20,
+    "minimum_fp_pairs": 20,
+    "unit": "unique sample_id and label_id pair within each error type",
+    "selection_order": "ascending SHA-256 of UTF-8 text 42|FN_or_FP|sample_id|decimal_label_id; tie by sample_id then label_id",
+    "comment_diversity": "first select one pair per distinct comment in hash order; then fill remaining slots from unselected pairs in hash order",
+    "insufficient_errors": "audit every available pair and report the shortfall",
+    "additional_high_cardinality_examples": 5,
+    "high_cardinality_selection": "first five unique test comments with true cardinality >=4 ordered by SHA-256 of UTF-8 text 42|high_cardinality|sample_id; include all if fewer than five",
+    "cooccurrence_pairs": "top three train co-occurrence pairs, descending count; ties by ascending label ID pair",
+    "cooccurrence_case_selection": "for each train-selected pair, first five test comments with both true labels or both per-label predicted labels; hash order using 42|pair|label_id_a|label_id_b|sample_id; deduplicate comments across pairs and report available counts",
+    "comparison": "show fixed/global/per-label outputs for each audited case, including retained or newly introduced errors",
+    "human_review_required": true,
+    "raw_text_export": false
+  },
+  "test_gate": {
+    "status": "pending_validation_reproduction_and_threshold_fit",
+    "validation_reproduction": {"absolute_tolerance": 0.0001, "relative_tolerance": 0},
+    "required_before_test": [
+      "verify archive, checkpoint, split IDs, label order and source validation NPZ hashes",
+      "reproduce full validation probability matrix with the same checkpoint and preprocessing",
+      "fit and save global/per-label thresholds on validation only",
+      "record hashes of protocol, config, tier membership, checkpoint, implementation and fitted thresholds"
+    ],
+    "test_inference_runs": 1,
+    "probabilities_shared_across_decoders": true,
+    "test_based_tuning": false,
+    "technical_failure_policy": "retain failure evidence; resume only unchanged protocol/checkpoint/thresholds, never select using partial test scores"
+  },
+  "artifacts": {
+    "root": "reports/final",
+    "fitted_thresholds": "reports/final/thresholds.json",
+    "pre_test_lock": "reports/final/pre_test_lock.json",
+    "predictions": "reports/final/predictions",
+    "required_prediction_fields": ["sample_id", "true_label_vector", "probability_vector", "pred_fixed", "pred_global", "pred_per_label", "label_cardinality", "labels"],
+    "public_content": "IDs, label vectors, scores, configuration, hashes and aggregate analysis; no source text, vocabulary or private checkpoints"
+  }
+}

@@ -1,24 +1,33 @@
 {
-  "protocol_id": "vigoemotions_final_rq1_v1",
+  "protocol_id": "vigoemotions_final_rq1_28_v2",
   "created_on": "2026-11-11",
   "status": "protocol_specified_thresholds_not_fitted",
   "seed": 42,
-  "research_question": "Does validation-tuned global or per-label thresholding improve held-out test Macro-F1 over 0.5 on the same frozen PhoBERT-27 checkpoint?",
+  "research_question": "Does validation-tuned global or per-label thresholding improve held-out test Macro-F1 over 0.5 on the same frozen PhoBERT-28 checkpoint, including Neutral?",
   "model": {
     "architecture": "phobert",
     "pretrained_checkpoint": "vinai/phobert-base-v2",
     "revision": "86cd7fd4c148980922ac11a2cf5e257f2ba639e1",
-    "label_count": 27,
+    "label_count": 28,
     "training_epochs_completed": 20,
-    "selected_epoch": 14,
+    "selected_epoch": 15,
     "checkpoint_selection": "Maximum validation emotion27 Macro-F1 at 0.5; ties keep earliest epoch",
     "retraining": false,
-    "archive_path": "vigoemotions_kaggle_equal20_27labels_private_results.zip",
-    "archive_sha256": "24013c9c8194f6ee54dfe645ec1bdb8d8d4b77a141a3b2b853c9991efb2771d3",
-    "checkpoint_member": "labels27/phobert/best.pt",
-    "checkpoint_sha256": "41216d8245a7bd5b98db85054a326f291547effeac9e63addf9ad0ab5be4d178",
+    "archive_path": "vigoemotions_kaggle_equal20_28labels_private_results.zip",
+    "archive_sha256": "b753e1a764d87562334e46bbd8f91bbd8e4b5c8b176c5739d8239364ac724dd6",
+    "checkpoint_member": "labels28/models/phobert/pretrained/model.safetensors",
+    "checkpoint_sha256": "30e09d73bd474c6c1a9d2455519af7256ce96ed12576dde9aafcff45a301c835",
     "source_profile": "configs/kaggle_equal_20ep.json",
-    "source_provenance": "reports/kaggle_equal20_2026-11-05/provenance.json"
+    "source_provenance": "reports/kaggle_equal20_2026-11-05/provenance.json",
+    "checkpoint_format": "hf_safetensors",
+    "checkpoint_local_path": "pretrained/model.safetensors",
+    "checkpoint_config_sha256": "dad3694ef73daf94546de78ed0f3ce8da2e32469b75fbb266382fdb9941d5928",
+    "model_prefix": "labels28/models/phobert/pretrained/",
+    "tokenizer_prefix": "labels28/models/phobert/tokenizer/",
+    "source_run": "reports/kaggle_equal20_2026-11-05/evidence/28/phobert/run.json",
+    "source_manifest": "reports/kaggle_equal20_2026-11-05/evidence/28/manifest.json",
+    "run_member": "labels28/models/phobert/run.json",
+    "validation_member": "labels28/models/phobert/val_predictions.npz"
   },
   "preprocessing": {
     "normalization": "NFC; collapse whitespace; strip; preserve case, diacritics, punctuation and negation",
@@ -33,11 +42,34 @@
     "output_scores": "sigmoid of logits"
   },
   "labels": [
-    "amusement", "excitement", "joy", "love", "desire", "optimism",
-    "caring", "pride", "admiration", "gratitude", "relief", "approval",
-    "realization", "surprise", "curiosity", "confusion", "fear", "nervousness",
-    "remorse", "embarrassment", "disappointment", "sadness", "grief", "disgust",
-    "anger", "annoyance", "disapproval"
+    "amusement",
+    "excitement",
+    "joy",
+    "love",
+    "desire",
+    "optimism",
+    "caring",
+    "pride",
+    "admiration",
+    "gratitude",
+    "relief",
+    "approval",
+    "realization",
+    "surprise",
+    "curiosity",
+    "confusion",
+    "fear",
+    "nervousness",
+    "remorse",
+    "embarrassment",
+    "disappointment",
+    "sadness",
+    "grief",
+    "disgust",
+    "anger",
+    "annoyance",
+    "disapproval",
+    "neutral"
   ],
   "data": {
     "policy": "Preserve equal20 ordered split IDs; use the retained train after overlap removal",
@@ -59,17 +91,34 @@
         "ordered_ids_sha256": "e96818d9e3ab134d3c72d1e629c072a9ea0bbe4d86d932427141531df003479a"
       }
     },
-    "neutral_policy": "ID 27 has no output; Neutral-only gives 27 zero targets; mixed annotations retain emotions; empty predictions do not imply Neutral",
-    "validation_predictions": "reports/kaggle_equal20_2026-11-05/evidence/27/phobert/val_predictions.npz",
-    "validation_predictions_sha256": "c9c4cff2ff6839ff5140f3f48246b5316ee897fa810d0154955b947b996154aa",
-    "validation_reference_macro_f1_at_0_5": 0.597409592448629
+    "neutral_policy": "ID 27 is a learned positive output; preserve Neutral-only and mixed annotations; no exclusivity or empty-prediction-to-Neutral rule",
+    "validation_predictions": "reports/kaggle_equal20_2026-11-05/evidence/28/phobert/val_predictions.npz",
+    "validation_predictions_sha256": "3691497855f6447375cb8c91d05a636710cd0ce5684c1f76727414e1b119b467",
+    "validation_reference_macro_f1_at_0_5": 0.5783409798361765
   },
   "decoding": {
     "positive_comparison": ">=",
     "fixed_threshold": 0.5,
     "tuning_split": "val",
-    "candidate_thresholds": [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80],
-    "global_objective": "macro_f1_over_all_27_labels",
+    "candidate_thresholds": [
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8
+    ],
+    "global_objective": "macro_f1_over_all_28_labels",
     "per_label_objective": "binary_f1_for_each_label",
     "f1_zero_division": 0,
     "equal_objective_tie_break": "highest_threshold; exact computed F1 equality, no rounded comparison",
@@ -78,8 +127,13 @@
     "selected_per_label_thresholds": null
   },
   "analysis": {
-    "primary_metric": "test_macro_f1",
-    "required_metrics": ["macro_f1", "micro_f1", "per_label_f1", "hamming_loss"],
+    "primary_metric": "test_macro_f1_all28",
+    "required_metrics": [
+      "macro_f1",
+      "micro_f1",
+      "per_label_f1",
+      "hamming_loss"
+    ],
     "additional_metric": "lrap_from_unchanged_continuous_scores",
     "zero_division": 0,
     "delta": "strategy minus fixed within the same split and group",
@@ -87,18 +141,53 @@
     "frequency_tiers": {
       "source": "retained_train_only",
       "method": "descending positive-count rank; ties by ascending label ID",
-      "rank_ranges_inclusive": {"head": [1, 9], "mid": [10, 18], "tail": [19, 27]},
+      "rank_ranges_inclusive": {
+        "head": [
+          1,
+          9
+        ],
+        "mid": [
+          10,
+          18
+        ],
+        "tail": [
+          19,
+          27
+        ]
+      },
       "membership_path": "docs/final_label_tiers.csv",
-      "tier_metrics": "subset label columns for every comment; macro averages all nine labels"
+      "tier_metrics": "27 emotion labels only, nine per tier; Neutral is reported separately, not silently added to an emotion tier"
     },
     "cardinality": {
-      "source": "sum of 27 ground-truth emotion targets",
-      "groups": ["0", "1", "2", "3", ">=4"],
-      "subgroup_metrics": "all 27 label columns within selected comments",
+      "source": "sum of all 28 ground-truth labels, including Neutral",
+      "groups": [
+        "0",
+        "1",
+        "2",
+        "3",
+        ">=4"
+      ],
+      "subgroup_metrics": "all 28 columns within primary cardinality groups; additionally emotion27 columns within emotion-only cardinality groups",
       "empty_group_policy": "report n=0 and metric=null, never invent a score"
     },
     "support_reporting": "include sample count, positive support and per-label support; macro always uses the declared label set",
-    "inferential_scope": "one frozen checkpoint and one split; no causal or statistical significance claim"
+    "inferential_scope": "one frozen checkpoint and one split; no causal or statistical significance claim",
+    "scopes": [
+      "all28",
+      "emotion27"
+    ],
+    "neutral_metrics": "separate positive-class precision, recall, F1, TP, FP, FN and support for each decoder",
+    "emotion_cardinality": {
+      "source": "sum of ground-truth labels 0-26 excluding Neutral",
+      "groups": [
+        "0",
+        "1",
+        "2",
+        "3",
+        ">=4"
+      ],
+      "scope": "emotion27 supplementary analysis without re-tuning"
+    }
   },
   "error_audit": {
     "split": "test_after_locked_evaluation",
@@ -115,11 +204,15 @@
     "cooccurrence_case_selection": "for each train-selected pair, first five test comments with both true labels or both per-label predicted labels; hash order using 42|pair|label_id_a|label_id_b|sample_id; deduplicate comments across pairs and report available counts",
     "comparison": "show fixed/global/per-label outputs for each audited case, including retained or newly introduced errors",
     "human_review_required": true,
-    "raw_text_export": false
+    "raw_text_export": false,
+    "label_space": "all28 including Neutral; supplementary emotion-only cardinality view"
   },
   "test_gate": {
     "status": "pending_validation_reproduction_and_threshold_fit",
-    "validation_reproduction": {"absolute_tolerance": 0.0001, "relative_tolerance": 0},
+    "validation_reproduction": {
+      "absolute_tolerance": 0.0001,
+      "relative_tolerance": 0
+    },
     "required_before_test": [
       "verify archive, checkpoint, split IDs, label order and source validation NPZ hashes",
       "reproduce full validation probability matrix with the same checkpoint and preprocessing",
@@ -132,11 +225,22 @@
     "technical_failure_policy": "retain failure evidence; resume only unchanged protocol/checkpoint/thresholds, never select using partial test scores"
   },
   "artifacts": {
-    "root": "reports/final",
-    "fitted_thresholds": "reports/final/thresholds.json",
-    "pre_test_lock": "reports/final/pre_test_lock.json",
-    "predictions": "reports/final/predictions",
-    "required_prediction_fields": ["sample_id", "true_label_vector", "probability_vector", "pred_fixed", "pred_global", "pred_per_label", "label_cardinality", "labels"],
-    "public_content": "IDs, label vectors, scores, configuration, hashes and aggregate analysis; no source text, vocabulary or private checkpoints"
+    "root": "reports/final28",
+    "fitted_thresholds": "reports/final28/thresholds.json",
+    "pre_test_lock": "reports/final28/pre_test_lock.json",
+    "predictions": "reports/final28/predictions",
+    "required_prediction_fields": [
+      "sample_id",
+      "true_label_vector",
+      "probability_vector",
+      "pred_fixed",
+      "pred_global",
+      "pred_per_label",
+      "label_cardinality",
+      "labels",
+      "emotion_cardinality"
+    ],
+    "public_content": "IDs, label vectors, scores, configuration, hashes and aggregate analysis; no source text, vocabulary or private checkpoints",
+    "private_root": "data/final28"
   }
 }

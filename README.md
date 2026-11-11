@@ -1,8 +1,9 @@
 # ViGoEmotions — ATI Final 2026
 
-Midterm đã hoàn tất. Final tập trung RQ1 trên **PhoBERT 27 nhãn, checkpoint epoch 14**: fixed 0,5, global tuned và per-label tuned; chọn ngưỡng trên validation, khóa trước test. Protocol đã ghi, fitted thresholds và kết quả test Final chưa có.
+Midterm đã hoàn tất. Final theo quyết định nhóm dùng **PhoBERT 28 nhãn (gồm Neutral), checkpoint epoch 15**: fixed 0,5, global tuned và per-label tuned; tối ưu trên validation all28 Macro-F1, khóa trước test; báo thêm emotion27 projection và Neutral riêng. Protocol đã cập nhật v2, fitted thresholds và kết quả test Final chưa có.
 
 - [Protocol Final](docs/final_protocol.md), [config](configs/final_thresholds.json), [train-only tiers](docs/final_label_tiers.csv).
+- [Chạy pipeline Final](docs/final_execution.md), [notebook validation Kaggle 10](notebooks/10_kaggle_final_validation.ipynb). Tạo `vigoemotions_final28_code.zip` bằng `.venv/bin/python scripts/package_final.py`; notebook dừng sau validation/lock. Dùng ZIP weights **28 nhãn**, output ở `reports/final28/`.
 - [Checklist việc cần làm](tasks/todo.md) và [kế hoạch Final/oral defence](tasks/plan.md).
 - [Mục lục archive](archive/README.md): notebook 03–06 và tài liệu chuẩn bị cũ đã được chuyển khỏi thư mục làm việc chính.
 

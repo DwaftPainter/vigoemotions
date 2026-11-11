@@ -2,6 +2,10 @@
 
 Hướng Final nằm ở [protocol](../docs/final_protocol.md) và [checklist](../tasks/todo.md). Baseline đang dùng nằm ở [báo cáo midterm](../reports/midterm_report.md) và [Kaggle 20 epoch](../reports/kaggle_equal20_2026-11-05/README.md). Thư mục này gom workflow đã được thay thế và tài liệu chuẩn bị trước đây.
 
+## Prototype Final 27 trước quyết định chuyển 28 class
+
+[Snapshot 17 file](final27_prototype_2026-11-11/RETIREMENT.md) giữ protocol/config/code/tests/notebook và trạng thái kiểm chứng của prototype 27. [Manifest hashes](final27_prototype_2026-11-11/snapshot.json) ghi nguyên byte tại thời điểm chuyển. Prototype chưa có actual validation reproduction, fitted thresholds hoặc test evaluation; không dùng proof cũ cho pipeline 28.
+
 ## Dọn thư mục sau midterm — 11/11/2026
 
 Đã chuyển 13 file, không xóa nội dung nghiên cứu. [Manifest di chuyển](cleanup_2026-11-11.json) ghi đường dẫn cũ/mới, hash trước và sau để đối chiếu hoặc khôi phục.

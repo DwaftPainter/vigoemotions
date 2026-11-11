@@ -1,0 +1,74 @@
+{
+  "reason": "User chose 28-class Final; preserve the unfinished 27-output prototype",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "760c2f5addecda19412d9fe2ef85f8e304fefe92eb2a0c1128e7b433311d7043"
+    },
+    {
+      "path": "configs/final_thresholds.json",
+      "sha256": "01225c1c2d096cacbed4057ac8e77436d7e7e271bfbaa2c82048d9974f8c57df"
+    },
+    {
+      "path": "docs/final_protocol.md",
+      "sha256": "ee639c78541e1e5531ab706930497e129176d4af2381a974b7ea874055c61b5d"
+    },
+    {
+      "path": "docs/final_execution.md",
+      "sha256": "0edcf502a8c44476d93c652cd3b007007c60c62f89bd01966b4f04e5d1a0ec4e"
+    },
+    {
+      "path": "docs/final_label_tiers.csv",
+      "sha256": "99493d5e13d20ccb4c96e25a01b8465063e3ab66cd24ed086e575f1a97f7e56d"
+    },
+    {
+      "path": "scripts/final_threshold_core.py",
+      "sha256": "abd892db1cf338b8f5ded1744d2b26657f36ee8a461972ae18fbd617a0429cfe"
+    },
+    {
+      "path": "scripts/final_study.py",
+      "sha256": "17147c8a63a0f40e7f8f7b376d2a9676d07089d304bd181019ceae60ad8383cc"
+    },
+    {
+      "path": "scripts/final_inference.py",
+      "sha256": "05d6b6284f69d58496938bac53fb77327c973198763a2aa228434d7625a2ae77"
+    },
+    {
+      "path": "scripts/final_thresholds.py",
+      "sha256": "d3f5f2332c620aa6d380ad62c4861999fee8c6a0b4071d17e68d4adbfa0027c8"
+    },
+    {
+      "path": "scripts/package_final.py",
+      "sha256": "3927aac88623890e4833e755929239a021c7eebe9cd875381c0f8522d1a1e5b3"
+    },
+    {
+      "path": "tests/test_final_thresholds.py",
+      "sha256": "5a11fb92b351b26dc3729cbbe41a9a361dc4c0ac4233caec896d9071b12ad1cf"
+    },
+    {
+      "path": "notebooks/10_kaggle_final_validation.ipynb",
+      "sha256": "16cd8a940735ed77ec11d66ac6ca6d34fd9297eea8ad45fed7ea4dc534dc7ce2"
+    },
+    {
+      "path": "notebooks/README.md",
+      "sha256": "170803e639a9a235f6e9d96af8c3ec85c7d20c6ae9742e610133dfd9a2748643"
+    },
+    {
+      "path": "reports/final/README.md",
+      "sha256": "8ba596bb5ff3d7dc3870038138317406e047437e4eaab82348a11dbfde692b49"
+    },
+    {
+      "path": "reports/final/implementation_verification.json",
+      "sha256": "24a71cf4ac3748873a4ed3734f5e18196c11a8762bf7adb04ced46bdcc35182a"
+    },
+    {
+      "path": "tasks/plan.md",
+      "sha256": "5013ced97ffc5ec31d1581420295da73a7540abfba58ac955422635ebe37e216"
+    },
+    {
+      "path": "tasks/todo.md",
+      "sha256": "f88b0015c61a10d132ac29817c65cf3c1db02defb553785acedf7cff1a76dfca"
+    }
+  ],
+  "actual_test_evaluated": false
+}

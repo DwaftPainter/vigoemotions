@@ -1,6 +1,6 @@
 # Đọc kết quả ViGoEmotions
 
-Final đang ở bước protocol: [thiết kế](../docs/final_protocol.md), [checklist](../tasks/todo.md). Chưa có bảng test Final. Workflow notebook 03–06 và tài liệu chuẩn bị cũ nằm trong [archive](../archive/README.md).
+Final hiện theo **28 class gồm Neutral**, checkpoint PhoBERT epoch 15: [thiết kế v2](../docs/final_protocol.md), [checklist](../tasks/todo.md), [pipeline](../docs/final_execution.md). Output mới ở `reports/final28/`, báo đủ all28/emotion27/Neutral. Chưa có bảng test Final. Prototype 27 và workflow notebook 03–06 đã có [archive](../archive/README.md).
 
 **Nguồn chính hiện tại là Kaggle 20 epoch, notebook 08/09 executed.**
 

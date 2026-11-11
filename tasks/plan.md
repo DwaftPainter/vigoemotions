@@ -1,193 +1,108 @@
-# Kế hoạch Final và oral defence — ViGoEmotions
+# Kế hoạch Final và oral defence — hướng 28 class
 
-Cập nhật: 11/11/2026. Midterm đã hoàn tất theo xác nhận của người dùng. Deadline chưa chính thức; người dùng dự kiến cuối tháng 11. Mục tiêu nội bộ: sẵn sàng ngày 27/11, dự phòng 28–30/11; điều chỉnh khi có lịch chính thức.
+Cập nhật 11/11/2026 theo quyết định của nhóm: **28 outputs gồm Neutral**, checkpoint PhoBERT epoch 15. Deadline chính thức chưa rõ; dự kiến cuối tháng 11. Mục tiêu nội bộ: sẵn sàng 27/11, dự phòng 28–30/11.
 
-## Mục tiêu và căn cứ
+## Mục tiêu và các quyết định
 
-Hoàn thành RQ1: **ngưỡng chung 0,5 có tối ưu cho cả 27 cảm xúc hay không?** So sánh fixed, global tuned và per-label tuned trên cùng một checkpoint neural, tối ưu trên validation, khóa lựa chọn rồi đánh giá held-out test một lần. Kết quả không cần tăng mới có giá trị; phải trả lời được RQ bằng thí nghiệm có kiểm soát.
+Câu hỏi chính: global/per-label thresholds tối ưu trên validation có cải thiện test Macro-F1 **all28** so với fixed 0,5, khi weights không đổi? Báo thêm emotion27 projection và Neutral riêng. Phép chiếu dùng cùng thresholds đã chọn bằng all28 objective; không phải model/train/tuning 27 riêng.
 
-Nguồn yêu cầu:
+- [Protocol v2](../docs/final_protocol.md), [config](../configs/final_thresholds.json), [execution guide](../docs/final_execution.md).
+- [Đề](../docs/02-vigoemotions-vietnamese-emotion.pdf), trang 2–4 và [student guide](../docs/student-guide.pdf) là căn cứ yêu cầu; đề RQ1 viết cho 27 emotions, nhóm mở rộng thành 28 và phải trình bày rõ khác biệt.
+- [Prototype 27 đã lưu](../archive/final27_prototype_2026-11-11/snapshot.json); evidence equal20 và raw/private data không đổi.
+- Primary weights: saved model/tokenizer trong ZIP 28, epoch 15 sau 20 epoch. Tiêu chí chọn checkpoint gốc là emotion27 Macro-F1 tại 0,5; giữ nguyên lịch sử đó.
+- Fixed/global/per-label cùng scores 28; grid 0,05–0,80 bước 0,05, hòa chọn cao hơn, thiếu positive validation fallback 0,5. Giữ mixed Neutral annotations, không ép loại trừ.
+- Tiers giữ 27 emotions, 9 nhãn mỗi nhóm theo retained train; Neutral báo riêng. Cardinality all28 và emotion27 phải tách tên.
+- Validation dùng để chọn ngưỡng; khóa trước test; notebook 10 không tự chạy test.
 
-- [Đề ViGoEmotions](../docs/02-vigoemotions-vietnamese-emotion.pdf), trang 2–4: RQ1, phân tích bắt buộc, error audit, deliverables và extensions.
-- [Student guide](../docs/student-guide.pdf), trang 1–2: Final chiếm 60%, gồm paper-style report, viva và reproducibility. Slides nộp nếu được yêu cầu.
-- [Báo cáo midterm](../reports/midterm_report.md), [profile tái lập](../docs/reproducibility_profiles.md), [provenance](../reports/kaggle_equal20_2026-11-05/provenance.json).
+## Đầu việc và tiêu chí hoàn thành
 
-## Điểm xuất phát đã kiểm tra trong repo
+### T1 — Protocol và phân công
 
-| Hạng mục | Hiện trạng | Cách dùng cho Final |
-| --- | --- | --- |
-| Ba mô hình, hai bộ nhãn | Có kết quả validation của sáu model equal20 | Dùng làm baseline và lý do chọn backbone |
-| PhoBERT 27 | Macro-F1 0,597410 tại 0,5; checkpoint tốt nhất epoch 14 sau 20 epoch train | Chọn làm model chính cho RQ1 |
-| Dữ liệu/checkpoint | Có ba CSV local và ZIP private 27; provenance cũ ghi đã kiểm chứng checkpoint | Kiểm chứng lại checkpoint khi khôi phục; giữ private |
-| Xác suất validation | Có NPZ 2.066 × 27 cùng IDs, targets, labels | Tuning decoder dùng lại xác suất này |
-| Global sweep cũ | Lưới 0,05–0,80, bước 0,05; tốt nhất 0,35, Macro-F1 0,597843 | Bằng chứng thăm dò; chưa thay cho thí nghiệm Final đầy đủ |
-| Test | Provenance hiện ghi chưa chấm mô hình | Chỉ inference sau khi khóa protocol/ngưỡng |
-| Tier nhãn | Profile equal20 có head hạng 1–9, mid 10–18, tail 19–27 theo tần suất train; hòa theo ID nhãn | Tái sử dụng, xuất membership trước test |
-| Error audit | Sáu ca Neutral có hỗ trợ AI; có danh sách FP/FN tự sinh | Chưa đáp ứng audit Final ít nhất 20 FN + 20 FP |
-| Q1 Gratitude–Disapproval | A có báo cáo; B: 0/71 mục được giải quyết; C chưa có cặp được người xác minh | Nghiên cứu bổ sung, không thay thế RQ1 |
-| Thông tin nhóm | Tên/MSSV/phân công vẫn để trống trong tài liệu | Điền theo người dùng, không suy từ Git |
+**Đầu ra:** protocol/config v2, train-only tiers, phân công thật.
 
-Đây là kiểm kê tài liệu/artifact, không phải xác nhận đã chạy lại toàn bộ workflow hay đã có kết quả Final. Working tree đang có thay đổi midterm/Q1; kế hoạch này không chỉnh các phần đó.
+- [x] Ghi rõ 28-label objective, epoch 15, label order, Neutral policy, grid/ties/fallback và error audit.
+- [x] Tách báo cáo all28/emotion27/Neutral; ghi rõ liên hệ với RQ1 27 emotions trong đề.
+- [ ] Điền tên/MSSV/phân công và xác nhận lịch/thời lượng oral khi giảng viên thông báo.
 
-## Thiết kế đề xuất cần ghi rõ trước khi test
+**Xác minh:** đối chiếu đề và provenance; thành viên đọc được quyết định và giới hạn. **Phụ thuộc:** không. **Quy mô:** nhỏ, tài liệu/cấu hình.
 
-- Giữ PhoBERT 27 epoch 14, tokenizer/revision/segmentation/preprocessing, label order và split equal20. Không retrain khi thay decoder. Backbone và xác suất phải giống nhau cho ba chiến lược.
-- Fixed: mọi nhãn dùng 0,5. Global: một ngưỡng tối đa hóa validation Macro-F1. Per-label: mỗi nhãn tối đa hóa validation F1 riêng.
-- Đề xuất dùng lại lưới 0,05–0,80 bước 0,05 cho cả global và per-label để giữ nhất quán với sweep midterm. Đây là lựa chọn thiết kế, không phải yêu cầu bắt buộc của đề. Nếu đổi lưới, ghi lý do và khóa trước test.
-- Quy tắc đề xuất: dự đoán dương khi `p >= threshold`; cùng F1 chọn ngưỡng cao hơn như sweep cũ; nhãn không có positive trên validation dùng 0,5 và đánh dấu rõ. Lưu lưới, objective, tie-break và fallback trong config.
-- Head/mid/tail chỉ theo retained train (16.530 mẫu), không dùng test để chia tier. Cardinality chỉ tính 27 cảm xúc; báo cáo nhóm 1, 2, 3, ≥4 theo đề, thêm nhóm 0 cho Neutral-only để không bỏ mẫu.
-- Khóa config, checkpoint hash, label order, split IDs, 1 global threshold và 27 per-label thresholds trước inference test. Một lượt xác suất test dùng cho cả ba decoder; đọc lại xác suất đã lưu để tái tạo bảng không phải lượt tuning mới.
-- Không chọn lại decoder/checkpoint/ngưỡng theo test. Có thể đọc test sau đánh giá để phân tích lỗi, nhưng mọi đề xuất sửa tiếp phải nằm ở limitations/future work.
-- LRAP là kiểm tra phụ có thể giữ từ midterm; dùng cùng xác suất liên tục thì LRAP phải giống nhau giữa ba decoder. Threshold tuning không phải probability calibration.
-- Không mặc định thêm Neutral vào output hoặc suy empty prediction thành Neutral. Nếu trình bày study 28, tách rõ khỏi kết quả RQ1 trên 27 cảm xúc.
+### T2 — Khôi phục model 28 và tái tạo validation
 
-## Các đầu việc và tiêu chí hoàn thành
+**Đầu ra:** private local model/tokenizer/VnCoreNLP, actual validation reproduction report.
 
-### T1 — Chốt protocol và phân công
+- [x] Có code kiểm hash ZIP/config/safetensors/tokenizer, giữ canonical 28 outputs và saved preprocessing.
+- [x] Source NPZ 2.066 × 28, fixed Macro-F1 ≈0,578341, fixed IDs/targets và tiers đã kiểm chứng local.
+- [x] `restore` model 28 thật vào `data/final28/`, khớp hashes và saved 28-label mapping; giữ source weights 27 cũ riêng.
+- [ ] `reproduce-val` trên môi trường neural: toàn bộ scores lệch ≤1e-4, fixed decisions giống hệt, ghi runtime/asset hashes.
 
-**Đầu ra:** `docs/final_protocol.md`, `configs/final_thresholds.json`; cập nhật thông tin nhóm khi có dữ liệu thật.
+**Xác minh:** actual checkpoint phải chạy, mock tests không thay thế proof; không tự nới tolerance. **Phụ thuộc:** T1. **Quy mô:** module inference/study và evidence sinh tự động.
 
-**Tiến độ:** đã có [protocol v1](../docs/final_protocol.md), [config](../configs/final_thresholds.json) và [train-only tiers](../docs/final_label_tiers.csv). ZIP/checkpoint member hash và ordered split IDs đã đối chiếu nguồn. Inference validation, fitted thresholds và pre-test lock chưa hoàn tất; phần phân công/review nhóm vẫn cần thành viên thực hiện.
+### T3 — Fit và khóa ngưỡng validation
 
-- [ ] Ghi model/checkpoint, split, grid, objective, tie-break, fallback, tiers và các metrics sẽ báo cáo.
-- [ ] Có bảng nhãn → train count → tier, cùng lịch/phụ trách; ghi rõ deadline/thời lượng oral còn chờ xác nhận.
-- [ ] Ghi trước cách chọn mẫu audit: decoder chính nào, đếm theo cặp comment–label, cách xử lý comment trùng và nhóm cardinality cao.
+**Đầu ra:** global scalar + 28 cutoffs, bảng/projection/Neutral metrics, pre-test lock.
 
-**Xác minh:** đối chiếu đề trang 2–3 và config equal20; người phụ trách thí nghiệm cùng một thành viên đọc protocol. **Phụ thuộc:** không. **Quy mô:** nhỏ; 2–3 tài liệu cấu hình.
+- [x] Có thuật toán và test cho objective all28, ties/fallback/boundary/shape; gate chặn fit khi thiếu actual reproduction.
+- [ ] Chạy `fit` sau T2 PASS, lưu đủ 28 ngưỡng/support/train count/tier/fallback.
+- [ ] Review validation tables, chạy `lock` trước test; bind config/protocol/implementation/thresholds/source/reproduction.
 
-### T2 — Khôi phục đúng checkpoint và chứng minh inference khớp
+**Xác minh:** all28 và emotion27 có scope đúng, Neutral F1 tính positive label; thử thay nguồn/ngưỡng/runtime phải bị phát hiện. **Phụ thuộc:** T2. **Quy mô:** core/study/CLI cùng output.
 
-**Đầu ra dự kiến:** phần inference dùng lại code hiện có trong `scripts/final_thresholds.py`, kiểm thử liên quan và manifest mới tại `reports/final/`. Checkpoint/segmentation assets nằm private.
+**Checkpoint 1:** model 28 tái tạo đúng validation, ngưỡng 28 đã fit và khóa. Chưa đạt chỉ vì code/tests chạy được.
 
-- [ ] Checkpoint trích từ ZIP private khớp member/hash đã kiểm chứng; khóa revision và preprocessing.
-- [ ] Chạy lại validation bằng checkpoint đó; ID/label/target/order khớp NPZ nguồn và xác suất khớp sai số đã ghi trước, đề xuất absolute tolerance 1e-4 như study Q1 hiện có.
-- [ ] Nếu lệch, tìm khác biệt môi trường/tokenizer/segmentation trước khi tiếp tục; không âm thầm nới tolerance.
+### T4 — Held-out test một lượt
 
-**Xác minh:** so sánh toàn bộ ma trận validation và tái tính fixed Macro-F1 ≈0,597410; ghi môi trường thực chạy. **Phụ thuộc:** T1. **Quy mô:** vừa; khoảng 3 file nguồn/kiểm thử, chưa tính output sinh tự động.
+**Đầu ra:** continuous test scores trước decoding và ba pred matrices 28 cột.
 
-### T3 — Hoàn thiện ba decoder trên validation
+- [ ] Kiểm lock/assets/runtime trước đọc test text/targets; inference 2.067 mẫu đúng thứ tự.
+- [ ] Lưu IDs/true/probability vectors/labels, pred_fixed/global/per_label, label_cardinality (28), emotion_cardinality (27).
+- [ ] Cả hai scopes dùng cùng test scores; không re-tune, không lặp inference sau một lượt hoàn tất.
 
-**Đầu ra:** global scalar, vector 27 ngưỡng, bảng validation và file khóa ngưỡng trong `reports/final/`.
+**Xác minh:** tái tạo pred từ saved scores + thresholds; technical resume giữ cùng lựa chọn và dùng lại raw scores nếu có. **Phụ thuộc:** Checkpoint 1. **Quy mô:** đường inference/test gate đã có; actual execution còn chờ.
 
-- [ ] Fixed/global/per-label dùng cùng NPZ, tìm ngưỡng đúng objective và đúng tie-break/fallback đã định.
-- [ ] Lưu đủ nhãn/ngưỡng/train support/validation support; sinh bảng bốn metrics bắt buộc và per-label F1, có delta so với fixed.
-- [ ] Khóa thresholds/config/hash trước mọi inference test; không đọc test probabilities/metrics trong hàm tuning.
+### T5 — Bảng, hình và trả lời RQ
 
-**Xác minh:** kiểm thử trường hợp `p == threshold`, hòa F1, nhãn không positive, sai thứ tự nhãn; tái tạo fixed và sweep 0,35 cũ nếu dùng cùng grid. Với tối ưu độc lập đầy đủ trên grid chứa 0,5, validation Macro-F1 per-label không được thấp hơn global do cùng objective macro. **Phụ thuộc:** T1–T2. **Quy mô:** vừa; khoảng 3 file nguồn/kiểm thử.
+- [ ] Metric validation/test và delta theo decoder cho all28; emotion27 projection, Neutral riêng, tier và hai cardinality views.
+- [ ] Threshold profile đủ 28 nhãn, hình delta và generalization gap theo scope; support rõ, nhóm rỗng N/A.
+- [ ] Kết luận đúng kết quả dù tuned không cải thiện test; ghi giới hạn một seed và repeated validation selection.
 
-**Checkpoint 1:** protocol có thể đọc lại; inference validation khớp; ngưỡng đã lưu và khóa. Đây là điểm sẵn sàng chấm test.
+**Xác minh:** `report` tái sinh metric tables từ saved outputs; số liệu đối chiếu NPZ. **Phụ thuộc:** T3/T4. **Đầu ra:** CSV/figures/RQ analysis; code bảng đã có, hình/thảo luận còn làm.
 
-### T4 — Inference test một lần và lưu đầu ra đủ để tái lập
+### T6 — Human error audit
 
-**Đầu ra:** NPZ/CSV validation và test trong `reports/final/predictions/`, cùng inference/evaluation manifest.
+- [ ] Người thật đọc ≥20 FN + ≥20 FP trên 28-label per-label decoder; Neutral/mixed cases được xem và ghi rõ.
+- [ ] Có ca cardinality cao, các emotion pairs chọn từ train, so sánh lỗi giữa ba decoder.
+- [ ] Ghi reviewer, IDs/label/score/cutoff/cardinality, quan sát tách giả thuyết; raw text giữ private.
 
-- [ ] Chạy frozen checkpoint trên test sau Checkpoint 1, lưu xác suất liên tục trước binarization; không retrain/tune theo test.
-- [ ] Lưu `sample_id`, `true_label_vector`, `probability_vector`, `pred_fixed`, `pred_global`, `pred_per_label`, `label_cardinality`; kèm canonical label order và liên kết tới frozen thresholds.
-- [ ] Cả ba decoder dùng cùng test IDs/targets/probabilities; đủ 2.067 mẫu theo split hiện có, 27 cột, không raw text.
+**Xác minh:** lỗi khớp targets/predictions, không đếm trùng cặp để đủ quota. **Phụ thuộc:** T4/T5. **Đầu ra:** audit CSV và thảo luận do người xác nhận.
 
-**Xác minh:** kiểm tra shape/bounds/hash/order và tái tạo cả ba ma trận dự đoán từ probabilities + thresholds. Nếu job lỗi kỹ thuật, lưu lỗi và nguyên nhân; không dùng kết quả một phần để điều chỉnh thiết kế. **Phụ thuộc:** T3/Checkpoint 1. **Quy mô:** nhỏ; mở rộng script và kiểm thử của T2–T3.
+**Checkpoint 2:** đủ evidence/test/breakdowns/human audit. Không mở tuning theo test để thay đổi kết luận.
 
-### T5 — Sinh toàn bộ bảng và hình trả lời RQ1
+### T7 — Paper
 
-**Đầu ra:** `scripts/analyze_final.py`, kiểm thử và bảng/hình được sinh trong `reports/final/`.
+**Đầu ra:** report Markdown/PDF, figures và references. Có abstract/introduction/data/method/experiments/results/discussion/limitations/conclusion. Mô tả 28-label extension và baseline selection gốc; so điểm cùng scope/split. **Phụ thuộc:** outline từ T1, chốt sau T5/T6. **Xác minh:** mỗi số truy về artifact, đọc PDF thật.
 
-- [ ] Macro-F1, Micro-F1, Hamming Loss và F1 của cả 27 nhãn cho ba decoder trên validation/test; delta so với fixed và gap `F1_val − F1_test` theo từng decoder.
-- [ ] Phân tích head/mid/tail và cardinality 1/2/3/≥4, thêm 0; ghi rõ số nhãn/số mẫu/support và quy ước nhãn không support.
-- [ ] Hình threshold profile 27 nhãn, delta theo nhãn/tier/cardinality, bảng generalization gap; kết luận nêu cả cải thiện lẫn đánh đổi.
+### T8 — Gói tái lập
 
-**Xác minh:** tính lại metric trực tiếp từ NPZ; tiers phân hoạch đủ 27 nhãn, cardinality phân hoạch đủ từng split; nếu giữ LRAP thì ba decoder khớp nhau. Có thể thêm paired bootstrap mô tả nếu còn thời gian, không coi là đo biến thiên nhiều seed. **Phụ thuộc:** T4. **Quy mô:** vừa; 2 file nguồn/kiểm thử và output sinh tự động.
+**Đầu ra:** README/code/notebook/config/split IDs/probabilities/tables/figures/runtime metadata. Code ZIP hiện là `vigoemotions_final28_code.zip`; model/data riêng tư. **Phụ thuộc:** T5–T7. **Xác minh:** unit/regression tests và đường `report`; không ghi actual inference PASS nếu chưa chạy.
 
-### T6 — Audit lỗi do thành viên thực hiện
+### T9 — Oral defence
 
-**Đầu ra:** `reports/final/error_audit.csv` chỉ chứa IDs/nhãn/quan sát khái quát và `docs/final_error_analysis.md`; việc đọc raw text diễn ra private.
+**Đầu ra:** slide Final, notes/Q&A, hai lượt mock defence. Mỗi thành viên giải thích được sigmoid/BCE, vì sao 28 outputs, Neutral mixed, model epoch 15 được chọn bằng emotion27 trước đây, objective threshold all28 hiện tại, hai cardinality definitions và threshold overfitting. **Phụ thuộc:** ôn từ T1, chốt số sau T5–T7. **Xác minh:** nói đúng scope/metric/support, chỉ đúng evidence, bấm giờ và phản biện chéo.
 
-- [ ] Người thật đọc và xác nhận ít nhất 20 FN + 20 FP theo cách chọn đã chốt; ghi decoder, sample ID, label, score, threshold, cardinality, người review và nhận xét.
-- [ ] Có ca nhiều cảm xúc, nhãn hay đồng xuất hiện hoặc bị dự đoán nhầm; so sánh những FP/FN được sửa hoặc phát sinh khi đổi decoder.
-- [ ] Phân biệt quan sát với giả thuyết, ghi thiên lệch chọn mẫu; tránh đếm một cặp comment–label nhiều lần để đủ quota. Ưu tiên nhiều comment khác nhau khi khả thi, công khai số comment duy nhất.
+**Checkpoint 3:** report/package nhất quán, người thật đã audit và luyện bảo vệ, sẵn sàng nộp.
 
-**Xác minh:** đối chiếu từng FP/FN với targets và decoder output; thành viên xác nhận thật, không coi danh sách tự sinh/AI diễn giải là audit đã hoàn thành. **Phụ thuộc:** T4, dùng bảng T5 khi có. **Quy mô:** nhỏ về code, cần thời gian đọc thủ công.
+## Lịch đề xuất
 
-**Checkpoint 2:** đủ evidence RQ1, bảng/hình và audit lỗi; ghi kết luận dù per-label không cải thiện test. Không mở nghiên cứu mới để chạy theo điểm test.
-
-### T7 — Viết report theo dạng paper
-
-**Đầu ra:** `reports/final_report.md` và PDF; script build report nếu cần.
-
-- [ ] Có Abstract, Introduction/RQ, Related Work, Data, Method, Experimental Setup, Results, Discussion, Limitations, Conclusion và References.
-- [ ] Đưa baseline midterm làm bối cảnh; kết quả chính là so sánh decoder cùng checkpoint. Mọi số/bảng/hình truy về artifact và script tương ứng.
-- [ ] Nêu validation được dùng chọn checkpoint rồi chọn threshold, nguy cơ overfit, một seed, giới hạn split, heuristic/annotation và license; kết luận trả lời đúng RQ1.
-
-**Xác minh:** đối chiếu từng số quan trọng với T5, đối chiếu đủ mục B/C/D của đề; đọc PDF thật để kiểm tra font/bảng/hình/trích dẫn. **Phụ thuộc:** outline có thể làm từ T1, chốt sau T5–T6. **Quy mô:** vừa; khoảng 3 file nguồn/nội dung cùng PDF sinh ra.
-
-### T8 — Đóng gói tái lập và hồ sơ nộp
-
-**Đầu ra:** README Final, package/manifest kiểm chứng, cập nhật thông tin nhóm.
-
-- [ ] Có hướng dẫn setup → restore model → reproduce validation → tune/lock → test inference → regenerate report; tách rõ việc tái sinh bảng từ saved probabilities để tránh chạy lại test ngoài ý muốn.
-- [ ] Có report PDF, code/notebook chạy được, split IDs, configs, probabilities + ba decoder outputs, bảng/hình, hardware/versions/seeds/checkpoint revision. Slides bổ sung nếu yêu cầu.
-- [ ] Không kèm raw restricted text, vocabulary hoặc checkpoint private trong bản public; giải thích cách người có quyền truy cập dữ liệu tái lập.
-
-**Xác minh:** chạy lại đường sinh bảng/hình từ saved probabilities trong thư mục output mới; chạy các kiểm thử liên quan rồi regression suite; kiểm tra nội dung archive, link và thông tin nhóm. Không tuyên bố đã chạy các lệnh nếu chưa chạy thực tế. **Phụ thuộc:** T5–T7. **Quy mô:** vừa; khoảng 3–4 file nguồn/tài liệu.
-
-### T9 — Chuẩn bị oral defence
-
-**Đầu ra:** deck Final, `docs/final_defence_notes.md`, bảng Q&A và bằng chứng luyện thử.
-
-- [ ] Slide kể được mạch: bài toán → baseline → RQ1 → controlled protocol → ba decoder → test results → tier/cardinality → error cases → limitations → kết luận. Chuẩn bị phần trình bày chính gọn và appendix; điều chỉnh số slide/thời gian khi có quy định.
-- [ ] Mỗi thành viên giải thích được phần mình làm, pipeline chung và các câu hỏi dưới đây; có bảng/hình/artifact để chứng minh, không chỉ học thuộc số.
-- [ ] Ít nhất hai lượt mock defence: một lượt bấm giờ sửa mạch nói, một lượt thành viên khác hỏi phản biện/ngắt giữa chừng; sửa câu trả lời thiếu bằng chứng.
-
-**Xác minh:** tự trình bày không phụ thuộc notes; trả lời được metric/threshold/leakage/overfitting và chỉ đúng file evidence; mở được PDF và backup offline. **Phụ thuộc:** ôn nền tảng từ T1, chốt số và rehearsal sau T5–T7. **Quy mô:** tách buổi làm deck, notes và rehearsal; mỗi buổi 1–2 đầu ra.
-
-**Checkpoint 3:** report/package kiểm chứng, mọi người bảo vệ được quyết định và kết quả, sẵn sàng nộp trước 27/11 nếu deadline cuối tháng được giữ.
-
-## Những câu phải chuẩn bị cho oral
-
-1. **Vì sao multi-label, sigmoid+BCE, không softmax?** Một comment có nhiều cảm xúc; học từng output nhị phân, nhưng điều đó không khẳng định các cảm xúc độc lập trong dữ liệu.
-2. **Vì sao chọn PhoBERT 27 và epoch 14?** Dẫn baseline cùng 27 cảm xúc; checkpoint theo validation ở 0,5, không chọn bằng test hay bằng decoder đã tuned.
-3. **Global và per-label tối ưu gì?** Trình bày công thức/thuật toán, grid, tie-break, train/validation/test dùng cho bước nào.
-4. **Vì sao per-label có thể tăng validation nhưng giảm test?** Nhiều tham số hơn (27 so với 1), ít positive ở một số nhãn; đọc gap và support thực tế. Không bảo đảm tăng test.
-5. **Macro khác Micro thế nào?** Macro trung bình F1 của từng nhãn; Micro gộp TP/FP/FN. Đổi ngưỡng để tối đa Macro có thể đánh đổi Micro/Hamming.
-6. **Vì sao Hamming thấp vẫn có thể bỏ sót nhiều cảm xúc?** Có nhiều label-instance negatives; cần đọc cùng recall/F1 và FP/FN.
-7. **Đổi threshold có đổi LRAP không?** Không nếu vẫn đánh giá cùng continuous scores; ranking không đổi.
-8. **Threshold tuning có phải probability calibration không?** Không; đây là chọn cutoff theo objective, không chứng minh sigmoid score là xác suất đã calibrated.
-9. **Vì sao không retrain backbone?** Để giữ representation/model scores cố định và đo riêng tác động decoder theo đề.
-10. **Chia tier và cardinality ra sao?** Train-only tiers đã khóa, cardinality từ 27 emotion targets; giải thích nhóm 0 và phân biệt cardinality với số nhãn model dự đoán.
-11. **Neutral được xử lý thế nào?** Neutral-only → emotion vector zero ở model 27, mixed giữ emotion; không gán empty prediction = Neutral. Không so trực tiếp Macro-F1 27 với 28 như cùng không gian nhãn.
-12. **Có test leakage không?** Chỉ rõ split IDs, sample train overlap đã loại, train-only preprocessing/tier/co-occurrence và thời điểm khóa thresholds. Làm rõ official split chưa chứng minh thuật toán stratification.
-13. **Một FN/FP điển hình chứng minh được điều gì?** Đọc true/pred/score/threshold trước, sau đó nhận xét có giới hạn; ví dụ chọn có chủ đích không đại diện tỷ lệ toàn tập.
-14. **Nếu tuned không hơn 0,5 thì nghiên cứu có thất bại?** Không; câu trả lời là kết quả trên checkpoint/split này và mức generalization quan sát được, không nói 0,5 tối ưu cho mọi model/dataset.
-15. **Đóng góp từng người và tái lập thế nào?** Mở được README/config/probabilities/script; khai báo AI assistance và phần người đã xác nhận đúng thực tế.
-
-## Lịch dự kiến theo mốc cuối tháng
-
-| Mốc nội bộ | Công việc chính | Điều kiện chuyển bước |
-| --- | --- | --- |
-| 11–13/11 | T1, bắt đầu T2; bổ sung thông tin nhóm, ôn nền tảng | Protocol rõ, assets/môi trường khôi phục được |
-| 14–16/11 | T2–T3 | Checkpoint 1: validation khớp, thresholds khóa |
-| 17–20/11 | T4–T6 | Test đánh giá, đủ breakdown và audit người thật |
-| 21–24/11 | Chốt T7, làm T8 và deck T9 | Report và artifact thống nhất |
-| 25–27/11 | Chốt T8, hai lượt mock defence T9 | Checkpoint 3: sẵn sàng nộp và bảo vệ |
-| 28–30/11 | Dự phòng lỗi package/PDF, cập nhật format/lịch giảng viên | Giữ nguyên protocol đã chấm test |
-
-Đây là lịch đề xuất theo mốc chưa chính thức, không phải deadline của học phần. Có thể làm song song theo người phụ trách: kỹ thuật T2–T5, nội dung report từ T1, review dữ liệu T6 khi đã có predictions; mỗi thành viên vẫn cần hiểu pipeline chung. Không giả định số thành viên.
-
-## Phạm vi bổ sung sau phần bắt buộc
-
-- **Q1 Gratitude–Disapproval:** giữ A làm appendix nếu liên quan. B cần hai người annotation độc lập và adjudication thật cho 71 mục; C có 48 slot đề xuất nhưng chưa có paraphrase/verification/inference. Không ghi là kết quả hoàn tất. Việc này không đáp ứng thay cho audit 20 FN/20 FP của Final.
-- **Learning-rate sweep:** chưa có kết quả và không phải yêu cầu RQ1; không đưa vào đường găng hoặc retrain chỉ để đổi thresholds.
-- **Dependency models, Focal/Class-Balanced Loss, robustness:** extensions theo đề; chỉ làm sau khi RQ1 hoàn tất và được kiểm chứng.
-- **Ba seed:** bắt buộc với paper-track, không phải yêu cầu mặc định của RQ1. Nếu nhóm được chọn paper-track cần lập kế hoạch riêng; hiện ghi giới hạn một seed.
-
-## Rủi ro và thông tin còn chờ
-
-| Vấn đề | Cách xử lý |
+| Mốc | Công việc |
 | --- | --- |
-| Môi trường mới không tái tạo đúng scores | Ưu tiên T2 sớm; phục hồi môi trường/segmentation, giữ checkpoint và sai số cố định |
-| Validation đã dùng để chọn checkpoint và thăm dò threshold | Nêu rõ trong report; khóa trước test, không diễn giải validation gain là test gain |
-| Per-label overfit hoặc subgroup quá nhỏ | Báo support/gap và đánh đổi, không chọn lọc kết quả |
-| Audit người thật bị dồn cuối | Chốt người/cách chọn từ T1, làm ngay sau T4 |
-| Official split chưa xác minh stratification | Giữ split hiện tại, nêu lịch sử minh bạch; xác nhận với giảng viên trước test, không tự chia lại để có điểm tốt |
-| Chưa có deadline, thời lượng/ngôn ngữ oral, template và feedback giảng viên | Xác nhận khi có thông báo; lịch cuối tháng và deck tiếng Anh theo midterm chỉ là giả định làm việc |
+| 11–16/11 | T1–T3: migrate 28, actual validation reproduction, fit và lock |
+| 17–20/11 | T4–T6: test, breakdowns và human audit |
+| 21–24/11 | T7–T8, deck T9 |
+| 25–27/11 | Chốt package và hai mock defence |
+| 28–30/11 | Dự phòng kỹ thuật/format theo lịch giảng viên; giữ nguyên quyết định đã chấm test |
 
-Kế hoạch kết thúc khi RQ1 có kết quả test đúng protocol, report/package tái lập được và nhóm đã luyện defence. Không mở rộng thêm để thay đổi điểm sau khi xem test.
+## Rủi ro và phạm vi bổ sung
+
+Runtime không khớp phải xử lý trước test, không nới gate. V1 checkpoint/NPZ 27 phải bị từ chối bởi v2, không trộn artifact. Đề gốc RQ27 cần mô tả trung thực việc mở rộng28; projection không được gọi là tối ưu global27 độc lập.
+
+Q1 Gratitude–Disapproval hiện là nghiên cứu bổ sung từ **model27**, không được diễn giải thành chẩn đoán model28. B/C vẫn chờ người annotation/verification thật. Loss mới, dependency model, noise robustness và nhiều seed chỉ làm sau RQ chính; paper-track mới có yêu cầu ≥3 seed. Không tự suy tên/số thành viên hay deadline chính thức.
