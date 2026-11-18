@@ -1,0 +1,17 @@
+{
+  "builder": "scripts/build_final_figures.py",
+  "builder_sha256": "3e28af34d59c872d964ad4b9d9b67c5c07eb4ba8ac3210ad17e8b92651fffd3c",
+  "execution_verification_sha256": "8639fb11e8ac403bce415474d5fe11ff39729a8046bb865ed27ab55c1328701a",
+  "generated_sha256": {
+    "analysis/label_deltas.csv": "70abf2a55a5758ceb718edb97875fe2f3806fbfd4d7dbe0a1b5648e508625fd9",
+    "figures/validation_test.png": "a05c503f9eaf878d33a74e2720dd57a520acce160549edd23685a5b8c5b6bc08",
+    "figures/validation_test.pdf": "ae0ae860c15b20aad7b5980e5275a66ce9979f42b5935a1ba5cb617e82ed91ee",
+    "figures/threshold_profile.png": "622e84c0f8911cf9046e5fc7fff21022767022d01c4b340e6d9f05588271eac5",
+    "figures/threshold_profile.pdf": "fd3f2c96ecb1283429082ecab4f623a37bbd0e5ed99556efc4acec3c9b434718",
+    "figures/label_deltas.png": "c6afa9674b71ac8c72fc04db3e581080d44882ea6d3225fb6b7c4cb71184dbe1",
+    "figures/label_deltas.pdf": "956c9e145e36fae280e8ca7a5978c245792163bbdc09042d3ed9ee61afb3b447",
+    "figures/tier_cardinality_deltas.png": "1b22998d36b8e2ce113474755c261c9f477de54716ac59cf0a9baf29ceb98a90",
+    "figures/tier_cardinality_deltas.pdf": "29aa92b12d71eba8245baa0e4fc2fbbff4277ee841b20a259499818b8d39c859"
+  },
+  "inference_performed": false
+}

@@ -1,0 +1,25 @@
+{
+  "review_type": "AI-assisted; human worksheet preserved",
+  "cases_sha256": "32870e80551034b6c07754c5d530f690693f91ea1509e2822cbce9aa77248d7a",
+  "sampling_design_sha256": "10e6edac1e575bec960417aa3893f933cb8fa30c62c8a8e5c715f3939173a38c",
+  "private_notes_sha256": "379329412e86476f7da14d8cdd2c138beaf1fb1f740f949be6ae9e0829dc8744",
+  "public_review_sha256": "ddb49092ea4b774697620cc1216dcf672699f4ee33f53728851250dfbe338d8a",
+  "private_review_sha256": "28e384e5840ee34c946128b93a403d02ec9d677fb5760a8ae5829b52bd103e50",
+  "summary_sha256": "ac9e3c1a5ea3323ccf8d0128c206a5f336fb8407c5552f8ce9a70a51f91015b2",
+  "original_human_worksheet_sha256_before": "0c8895331c393e1b5620c62e6072792b7f70cfc03a8ed016b67b4a6c56f618e7",
+  "original_human_worksheet_sha256_after": "0c8895331c393e1b5620c62e6072792b7f70cfc03a8ed016b67b4a6c56f618e7",
+  "test_npz_sha256": "842ee969a876d85de9b1e4c0900f0138ec3de53114fdf68bed32fcbda7fc9547",
+  "thresholds_sha256": "d9fc977d5b7156e95bccfb52d24c3bba99d3d673ef0aadf8fa4414aec5ff5cb9",
+  "review_method": "Assistant read each of 62 private comments and compared original annotations and all three frozen decoders; notes composed per case, not inferred only from outcome masks",
+  "raw_text_exported_publicly": false,
+  "phobert_inference_performed": false,
+  "human_confirmation_completed": false,
+  "readable_summary_sha256": "61fcf591bb1487e8f8aba3bbbfd870de4500518f567d1d10071037e48409e8a3",
+  "verification": {
+    "all_62_case_ids_labels_predictions_and_notes_aligned": true,
+    "sample_effect_counts_and_category_counts_match": true,
+    "all_frozen_sources_and_21_imported_artifacts_unchanged": true,
+    "human_worksheet_byte_identical_and_zero_completed": true,
+    "private_files_gitignored_and_no_original_comments_copied_to_public_review": true
+  }
+}

@@ -1,98 +1,85 @@
-# Protocol Final RQ1 — PhoBERT 27, v1
+# Protocol Final RQ1 — PhoBERT 28, v2
 
-Ngày ghi quyết định: 11/11/2026. Mục tiêu là hoàn thiện Final theo [đề ViGoEmotions, trang 2–4](02-vigoemotions-vietnamese-emotion.pdf). Cấu hình chi tiết: [final_thresholds.json](../configs/final_thresholds.json).
+Quyết định của nhóm ngày 11/11/2026: **dùng 28 class, gồm 27 cảm xúc + Neutral**. Bản này thay thiết kế 27-output; [prototype cũ và hashes](../archive/final27_prototype_2026-11-11/snapshot.json) được giữ để đối chiếu. Cấu hình thực thi: [final_thresholds.json](../configs/final_thresholds.json); [cách chạy](final_execution.md).
 
-**Trạng thái:** đã xác định thiết kế; chưa chạy lại inference validation, chưa fit vector ngưỡng Final, chưa khóa fitted thresholds và chưa đánh giá test trong công việc này. Config mô tả contract cho bước triển khai tiếp theo; hiện chưa có chương trình Final thực thi các gate đó. Việc có protocol không đồng nghĩa đã đủ điều kiện chấm test.
+**Trạng thái:** pipeline 28 đã triển khai và source validation đã kiểm chứng. Inference PhoBERT thật, fitted thresholds và pre-test lock vẫn phải được tạo bằng đúng checkpoint; chưa có kết quả test Final. Unit tests synthetic không thay thế bằng chứng model thật.
 
-## 1. Câu hỏi và phép so sánh
+## 1. Câu hỏi và phạm vi
 
-Trên cùng một PhoBERT 27 nhãn đã cố định, global hoặc per-label thresholds chọn bằng validation có cải thiện test Macro-F1 so với ngưỡng 0,5 không? Tập trung mức thay đổi, nhóm nhãn được lợi/chịu thiệt và khả năng khái quát hóa.
+Global hoặc per-label thresholds chọn từ validation có cải thiện test Macro-F1 trên **đủ 28 nhãn** so với 0,5, khi giữ nguyên PhoBERT 28 không? Báo đủ ba decoder, kể cả khi tuned không cải thiện test.
 
-Biến thay đổi duy nhất là decoder. Cố định weights, tokenizer, preprocessing, split, label order và xác suất đầu vào. Báo cáo đủ ba decoder, kể cả khi kết quả tuned kém hơn fixed; không chọn lại thiết kế sau khi đọc test.
+[Đề học phần](02-vigoemotions-vietnamese-emotion.pdf), trang 2–4, viết RQ1 cho 27 cảm xúc. Nhóm quyết định mở rộng output và objective thành 28. Để đối chiếu, mọi decoder có thêm bảng **emotion27** và bảng **Neutral**. Phép chiếu emotion27 dùng cùng cutoff chọn theo objective all28; không gọi đó là một lượt tối ưu global riêng cho 27 hoặc là model train 27 nhãn.
 
-Kết luận chỉ áp dụng cho checkpoint/split và lưới ứng viên này, không chứng minh ngưỡng tối ưu trên mọi giá trị thực hay mọi model. Đây là threshold tuning theo F1, không phải probability calibration.
+[Paper gốc, mục 5.2](https://arxiv.org/pdf/2602.08371#page=7) cũng dùng 28 outputs. Nhóm kế thừa label space đó, dùng checkpoint midterm equal20 của mình; không gọi là tái lập nguyên cấu hình paper về epochs, loss weighting hoặc learning-rate schedule.
 
-**Đối chiếu paper gốc:** [ViGoEmotions, arXiv v2, mục 5.2](https://arxiv.org/pdf/2602.08371#page=7) dùng 28 outputs (27 cảm xúc + Neutral), 12 epoch, AdamW LR 5e-5, warmup/linear decay và BCEWithLogits có positive-class weights. Protocol này là nghiên cứu RQ1 theo đề học phần trên 27 outputs, kế thừa checkpoint midterm của nhóm; cần mô tả rõ các khác biệt khi báo cáo, không gọi là tái lập nguyên cấu hình paper. Điểm giữa hai nghiên cứu chỉ so trực tiếp khi thống nhất tập nhãn, split và cách đánh giá.
-
-## 2. Model, dữ liệu và inference giữ cố định
+## 2. Model và dữ liệu giữ cố định
 
 | Thành phần | Quyết định |
 | --- | --- |
-| Backbone | PhoBERT-base-v2, 27 emotion outputs, revision theo config equal20 |
-| Weights | `labels27/phobert/best.pt` trong ZIP private 27; epoch 14 được chọn từ đủ 20 epoch train |
-| Tiêu chí chọn checkpoint gốc | Validation Macro-F1 trên 27 cảm xúc tại 0,5; hòa giữ epoch sớm |
-| Training cho RQ1 | Giữ nguyên checkpoint hiện có; không train thêm khi đổi decoder |
-| Split | Retained train 16.530, validation 2.066, test 2.067; giữ IDs và thứ tự equal20 |
-| Preprocessing | NFC/chuẩn hóa khoảng trắng; giữ case/dấu/phủ định; VnCoreNLP word segmentation → PhoBERT BPE |
-| Tokenizer/inference | Revision cố định, slow tokenizer, padding/truncation 256, batch 16, không shuffle, eval mode, sigmoid |
-| Neutral | Bỏ ID 27 khỏi emotion targets; Neutral-only → 27 số 0; mixed giữ các emotion labels |
-| Seed | 42 như baseline; một seed, không đo được biến thiên training |
+| Backbone | PhoBERT-base-v2, 28 outputs; Neutral là ID 27, 27 emotions giữ IDs 0–26 |
+| Checkpoint | Epoch **15** từ đủ 20 epoch train của notebook 09 |
+| Selection gốc | Validation **emotion27 Macro-F1 tại 0,5**, hòa giữ epoch sớm; giữ nguyên lịch sử này dù objective tuning mới là all28 |
+| Storage | Saved Hugging Face model `pretrained/model.safetensors` + config và saved tokenizer trong ZIP 28 |
+| Training cho RQ1 | Giữ nguyên weights, không train thêm khi đổi decoder |
+| Split | Retained train 16.530 / validation 2.066 / test 2.067; fixed IDs/order equal20 |
+| Preprocessing | NFC/chuẩn hóa khoảng trắng, giữ case/dấu/phủ định; VnCoreNLP word segmentation → saved PhoBERT tokenizer |
+| Inference | Local model/tokenizer, slow tokenizer, padding/truncation 256, batch 16, không shuffle, eval mode, sigmoid |
+| Seed | 42; một seed, chưa đo biến thiên training |
 
-Checkpoint SHA-256: `41216d8245a7bd5b98db85054a326f291547effeac9e63addf9ad0ab5be4d178`. ZIP và ordered split ID hashes nằm trong config, khớp provenance/manifest equal20. Checkpoint được hash trực tiếp trong ZIP, chưa được load để inference trong công việc ghi protocol này.
+Checkpoint SHA-256: `30e09d73bd474c6c1a9d2455519af7256ce96ed12576dde9aafcff45a301c835`. Archive/model-config/NPZ/split hashes ghi trong config và provenance gốc. NPZ validation là **2.066 × 28**; Macro-F1 fixed 0,5 là **0,5783409798361765**, emotion27 projection **0,5835797863529424**. Đây là reference midterm, không phải test Final.
 
-Giữ split được cấp và lịch sử loại overlap; audit phân bố không chứng minh thuật toán stratification gốc. Nếu giảng viên yêu cầu split khác, cần sửa protocol trước test và xác định lại ảnh hưởng tới baseline, không âm thầm thay dữ liệu.
+Giữ annotation gốc: `[27]` chỉ Neutral dương; `[2,27]` giữ cả joy và Neutral. Không ép Neutral loại trừ cảm xúc, không dùng softmax, argmax, top-k hoặc gán empty prediction thành Neutral. Audit phân bố không chứng minh thuật toán stratification gốc; mô tả đúng nguồn split.
 
-## 3. Quy tắc tìm ngưỡng
+## 3. Decoder và objective đã chốt trước test
 
-Mọi quyết định dương dùng `p >= threshold`. Cùng lưới cho global và per-label:
+Mọi quyết định dương dùng `p >= threshold`. So sánh float64 để scalar/vector cutoff có cùng hành vi boundary; xác suất gốc vẫn được lưu nguyên trong NPZ.
 
-`G = {0,05; 0,10; 0,15; …; 0,75; 0,80}` — 16 ứng viên, có 0,5.
+`G = {0,05; 0,10; …; 0,75; 0,80}` — 16 ứng viên, có 0,5.
 
-| Decoder | Cách chọn | Dữ liệu để chọn |
-| --- | --- | --- |
-| Fixed | `tau = 0,5` cho cả 27 nhãn | Không tuning |
-| Global | Ngưỡng trong G tối đa hóa Macro-F1 của 27 nhãn | Chỉ validation |
-| Per-label | Với từng nhãn c, ngưỡng trong G tối đa hóa F1 của nhãn c | Chỉ validation |
+| Decoder | Quy tắc |
+| --- | --- |
+| Fixed | Ngưỡng 0,5 cho đủ 28 nhãn |
+| Global | Một ngưỡng trong G tối đa hóa **validation Macro-F1 all28**, có Neutral |
+| Per-label | **28 ngưỡng**, mỗi ngưỡng tối đa hóa positive-class F1 của nhãn tương ứng trên validation |
 
-- F1 dùng `2TP / (2TP + FP + FN)`; mẫu số 0 → 0 để nhất quán với baseline. Macro trung bình F1 của đúng tập nhãn đang đánh giá.
-- Nếu cùng objective F1, chọn ngưỡng **cao hơn** như sweep midterm; so trên giá trị tính đầy đủ, không dựa số làm tròn trong bảng.
-- Riêng nhãn không có positive validation: dùng **0,5**, đánh dấu fallback và support; không dùng test để tìm thay thế.
-- Grid giữ nguyên sweep midterm để có phép so sánh nhất quán, hạn chế tìm kiếm thêm trên validation đã dùng chọn checkpoint. Grid hữu hạn có thể bỏ lỡ cutoff tốt hơn ngoài các ứng viên.
-- Không dùng argmax, top-k, bắt buộc ít nhất một nhãn hay postprocessing Neutral; các quy tắc đó sẽ thay đổi decoder ngoài RQ1 đã chốt.
+Hòa F1 chọn cutoff cao hơn, so giá trị đầy đủ thay vì số làm tròn. Nhãn không có positive validation dùng 0,5, ghi support và fallback. F1 mẫu số 0 → 0. Giữ cùng grid/objective/weights khi chấm test; không chỉnh ngưỡng theo kết quả test. Threshold tuning không phải probability calibration.
 
-Global 0,35 và Macro-F1 khoảng 0,597843 hiện có là kết quả **thăm dò cũ**; vẫn cần tái tạo và ghi fitted artifact Final. Không điền trước ngưỡng tối ưu cho per-label. File config giữ giá trị fitted là `null` cho tới lúc chạy bước này.
+Không lấy lại global 0,35 của model 27. Phải tối ưu mới từ NPZ model 28 sau khi checkpoint 28 đã tái tạo validation thành công. Kết luận chỉ áp dụng cho checkpoint/split/grid này; không khẳng định cutoff tối ưu trên mọi số thực.
 
-## 4. Những bảng và hình phải sinh
+## 4. Bảng và phân tích bắt buộc
 
-Metric chính là test Macro-F1; đồng thời báo Micro-F1, F1 của đủ 27 nhãn và Hamming Loss trên validation/test cho từng decoder. Nếu giữ LRAP từ midterm, tính từ cùng continuous scores nên ba decoder phải có LRAP giống nhau.
+1. **all28, chính:** Macro-F1, Micro-F1, Hamming Loss, LRAP và F1 từng nhãn cho ba decoder, trên validation/test. Global chọn bằng all28 Macro-F1.
+2. **emotion27, bổ sung:** cùng ma trận scores/cutoffs bỏ cột Neutral, không re-tune. Scope và label count ghi rõ trong bảng và generalization gap.
+3. **Neutral riêng:** positive-class precision/recall/F1, TP/FP/FN, support và cutoff cho mỗi decoder. F1 này không tính trung bình thêm negative class.
+4. **Frequency tiers:** giữ membership train-only của 27 emotion labels, chín nhãn mỗi head/mid/tail theo rank giảm dần, hòa theo label ID. [Membership](final_label_tiers.csv) là partition **27 emotions**, không phải partition toàn bộ 28; Neutral có bảng riêng và ghi tier `neutral` trong threshold profile.
+5. **Cardinality chính:** `label_cardinality = sum(y[:, :28])`, gồm Neutral; nhóm 0/1/2/3/≥4, metrics trên 28 cột. Nhóm 0 thường rỗng và ghi n=0, metric N/A.
+6. **Cardinality bổ sung:** `emotion_cardinality = sum(y[:, :27])`, không gồm Neutral; nhóm 0/1/2/3/≥4, metrics trên 27 cột. Neutral-only có label cardinality 1 nhưng emotion cardinality 0; mixed không bị sửa annotation.
+7. **Threshold profile:** đủ 28 nhãn, gồm Neutral, train count, validation support, tier và fallback. Gap là `F1_val − F1_test` của cùng decoder và scope.
 
-1. **Overall:** ba decoder × validation/test; delta bằng strategy trừ fixed trong cùng split. Hamming Loss giảm là tốt, F1/LRAP tăng là tốt.
-2. **Frequency tiers:** lấy positive count chỉ từ 16.530 train IDs; sắp giảm dần, hòa theo ID nhãn tăng dần. Head hạng 1–9, mid 10–18, tail 19–27. [Bảng membership đã tính](final_label_tiers.csv) có đủ 27 nhãn. Đây là chia theo hạng tần suất, không tuyên bố các nhóm cách nhau bởi một ngưỡng hiếm phổ quát.
-3. **Tier metrics:** lấy chín cột nhãn của từng tier trên mọi comment; Macro-F1 trung bình đúng chín nhãn, Micro/Hamming trên cùng ma trận con.
-4. **Cardinality:** phân nhóm theo tổng 27 ground-truth emotions: 1, 2, 3, ≥4; thêm nhóm 0 để giữ Neutral-only. Mỗi nhóm tính metrics trên đủ 27 cột, `zero_division=0`; không tự bỏ các nhãn vắng support. Nhóm rỗng có n=0, metric N/A.
-5. **Threshold profile:** đủ 27 nhãn, ngưỡng, train count, validation support và tier.
-6. **Generalization gap:** Macro/Micro-F1 validation trừ test theo từng decoder, cùng support để đọc nguy cơ overfit. Không coi mọi gap là bằng chứng nguyên nhân do threshold.
+Delta bằng strategy trừ fixed trong cùng split/scope/group. Macro giữ nguyên tập nhãn đã khai báo, `zero_division=0`; subgroup ghi n và support. LRAP bất biến khi chỉ thay cutoffs trong cùng scope, nhưng all28 và emotion27 là hai ranking tasks khác nhau.
 
-Các bảng subgroup ghi n, positive support và tập nhãn dùng trong metric; phân tích per-label có TP/FP/FN để giải thích đánh đổi. Không so các Macro-F1 có tập nhãn khác nhau như cùng một đại lượng.
+## 5. Audit lỗi do người thực hiện
 
-## 5. Error audit do người thực hiện
+Audit chính: **per-label decoder trên đủ 28 nhãn**, dù nó thắng hay thua test. Người thật đọc ≥20 FN và ≥20 FP, đơn vị `(sample_id,label_id)`; cho xem cả ba decoder trên cùng ca. Neutral FP/FN và mixed annotation là các nhóm cần xem trong phần diễn giải.
 
-Chọn trước **per-label decoder** làm decoder chính để audit, không phụ thuộc nó thắng hay thua trên test. Mỗi ca vẫn trình bày outputs fixed/global/per-label để thấy lỗi được sửa, giữ lại hoặc phát sinh.
+Giữ quy tắc hash đã ghi trong config: sắp theo `42|FN_or_FP|sample_id|label_id`, ưu tiên comment khác nhau trước rồi bổ sung cặp chưa chọn. Không đủ lỗi thì audit tất cả và báo thiếu. Thêm năm ca true cardinality all28 ≥4; đối chiếu thêm emotion-only cardinality. Ba cặp emotion đồng xuất hiện chọn chỉ từ train 27 emotions, rồi lấy ca test theo quy tắc hash trong config.
 
-- Đọc tối thiểu **20 FN + 20 FP**, đơn vị là cặp `(sample_id, label_id)` của per-label trên test sau khi đã đánh giá bằng thresholds khóa.
-- Chọn theo hash ổn định của `42|FN_or_FP|sample_id|label_id`, sắp tăng dần, hòa theo sample ID/label ID. Duyệt trước một cặp mỗi comment, rồi bổ sung cặp chưa chọn nếu cần để đủ 20. Nếu tổng lỗi không đủ, đọc tất cả và báo số thiếu.
-- Bổ sung năm comment có true cardinality ≥4 theo hash `42|high_cardinality|sample_id`; ít hơn năm thì đọc toàn bộ. Không coi các ca này là FN/FP nếu chúng không có lỗi.
-- Chọn ba cặp nhãn đồng xuất hiện nhiều nhất **trong train**, hòa theo IDs tăng dần. Với mỗi cặp, lấy tối đa năm comment test có cả hai true labels hoặc cả hai per-label predicted labels, theo hash `42|pair|a|b|sample_id`; loại trùng comment giữa các cặp. Đây là ca để đọc về đồng xuất hiện/prediction mismatch, chưa tự nó chứng minh semantic confusion.
-- Thành viên thật đọc raw text private; ghi reviewer, nhãn thật, dự đoán, score, threshold, cardinality và nhận xét khái quát. Không public nguyên văn bình luận.
-- Báo số cặp và số comment duy nhất, phần trùng giữa các nhóm; không suy tỷ lệ lỗi dân số từ tập audit có chủ đích này. Giả thuyết về ngôn ngữ/annotation phải được gọi đúng là giả thuyết.
+Raw text chỉ đọc private. Ghi reviewer thật, true/pred/score/cutoff/cardinality và nhận xét trừu tượng; báo số cặp và comment duy nhất. Không coi danh sách tự sinh/AI là human audit hoàn tất, không suy tỷ lệ lỗi toàn tập từ mẫu chọn có chủ đích.
 
-## 6. Điều kiện khóa trước test và đầu ra
+## 6. Thứ tự thực thi và khóa trước test
 
-Thực hiện theo thứ tự:
+1. `verify`: source run 28, NPZ, hashes, IDs/targets và train-only tiers; không đọc CSV test.
+2. `restore`: kiểm ZIP 28 rồi trích model/config/tokenizer/VnCoreNLP vào **data/final28/**; không dùng checkpoint 27 cũ trong data/final/.
+3. `reproduce-val`: frozen model 28 inference đủ validation; absolute tolerance **1e-4**, relative 0 và fixed decisions giống hệt NPZ gốc. Lệch thì tìm lỗi môi trường/preprocessing, không tự nới tolerance.
+4. `fit`: sau reproduction PASS, chọn thresholds từ **NPZ nguồn 28**. Lưu global + 28 per-label thresholds, source hashes và evidence trong **reports/final28/**.
+5. `lock`: bind protocol/config/implementation, checkpoint, NPZ nguồn, thresholds, reproduction và split IDs. Code/protocol thay đổi làm lock stale.
+6. `infer-test`: kiểm lock/assets/runtime trước đọc held-out text/targets; lưu continuous scores trước decoding. Một lượt scores dùng cho cả ba decoder và cả hai scopes.
+7. `report`: tái đọc saved predictions để tái sinh metric tables, không inference lại. Lỗi kỹ thuật giữ attempt record; chỉ resume cùng lựa chọn và dùng lại scores đã lưu nếu có.
 
-1. Kiểm hash ZIP/checkpoint/NPZ, source config và ordered split IDs; giữ canonical 27-label order.
-2. Khôi phục checkpoint, inference toàn bộ validation; so với NPZ nguồn trong absolute tolerance **1e-4**, relative tolerance 0. Kiểm ID/targets/labels/shape và fixed Macro-F1 ≈0,597410. Nếu lệch, tìm nguyên nhân môi trường/preprocessing; không tự nới tolerance.
-3. Fit ngưỡng từ **NPZ nguồn đã lưu**, sau khi đã chứng minh checkpoint khớp, để tuning có cùng nguồn xác suất tái lập. Lưu `reports/final/thresholds.json` gồm một global scalar, 27 ngưỡng theo label order, objective/grid/tie-break/fallback và source hashes.
-4. Tạo `reports/final/pre_test_lock.json` ghi hash của protocol, config, tiers, implementation, checkpoint, validation NPZ, thresholds và split IDs. Kiểm thử decoder trước test.
-5. Inference test đúng một lượt bằng checkpoint đó, lưu continuous probabilities trước binarization; dùng lại một ma trận scores cho cả ba decoder.
-6. Sinh bảng/hình/audit. Có thể tái đọc saved probabilities để tái tạo kết quả; không đổi thresholds sau khi xem test. Job lỗi kỹ thuật phải giữ evidence và chỉ tiếp tục với thiết kế không đổi.
+Prediction NPZ có IDs, labels, true/probability vectors, ba pred matrices, `label_cardinality` và `emotion_cardinality`. Không public raw comments, weights hoặc vocabulary. Notebook 10 dừng sau validation/lock, không tự chấm test.
 
-NPZ/CSV validation và test phải có `sample_id`, `true_label_vector`, `probability_vector`, `pred_fixed`, `pred_global`, `pred_per_label`, `label_cardinality`, cùng label order và liên kết tới frozen thresholds. Giữ checkpoint/vocabulary/raw text private.
+## 7. Giới hạn và oral defence
 
-## 7. Giới hạn và câu trả lời khi bảo vệ
+Validation đã dùng chọn checkpoint và có phân tích midterm, nên đây không phải preregistration trước mọi quan sát. Một seed chưa đủ kết luận ổn định/có ý nghĩa thống kê; group nhỏ cần đọc support. Chuyển 28 là quyết định thiết kế của nhóm trước test, không phải bằng chứng thêm Neutral làm tốt hơn mọi model 27.
 
-Validation đã dùng để chọn epoch và thăm dò global threshold trước khi ghi protocol này; đây không phải preregistration trước mọi quan sát dữ liệu. Protocol ghi các quyết định trước test và hạn chế lựa chọn hậu nghiệm. Một seed không đủ khẳng định tính ổn định qua training; tail ở đây là nhóm hạng thấp hơn và có thể vẫn còn hàng trăm mẫu train.
-
-Nếu per-label tăng validation nhưng giảm test, báo đúng đánh đổi và gap. Nếu fixed tốt nhất test, kết luận chỉ rằng tuning theo protocol này chưa cho thấy cải thiện trên held-out split này. Không dùng test để điều chỉnh rồi gọi đó là cùng thí nghiệm RQ1.
-
-Câu trình bày ngắn: “Chúng em giữ nguyên PhoBERT 27 và checkpoint epoch 14, chỉ thay decoder. Ngưỡng được tối ưu trên validation, khóa trước test; cùng xác suất test được dùng cho cả ba chiến lược. Chúng em phân tích kết quả theo tần suất nhãn, cardinality và lỗi thực tế.”
+Câu trình bày: “Chúng em dùng 28 independent sigmoid outputs, gồm Neutral và giữ mixed labels. Chúng em cố định checkpoint epoch 15, tối ưu cutoffs trên validation Macro-F1 của đủ 28 nhãn, khóa trước test và báo thêm emotion27 projection cùng Neutral riêng.”

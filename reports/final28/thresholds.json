@@ -1,0 +1,186 @@
+{
+  "protocol_id": "vigoemotions_final_rq1_28_v2",
+  "labels": [
+    "amusement",
+    "excitement",
+    "joy",
+    "love",
+    "desire",
+    "optimism",
+    "caring",
+    "pride",
+    "admiration",
+    "gratitude",
+    "relief",
+    "approval",
+    "realization",
+    "surprise",
+    "curiosity",
+    "confusion",
+    "fear",
+    "nervousness",
+    "remorse",
+    "embarrassment",
+    "disappointment",
+    "sadness",
+    "grief",
+    "disgust",
+    "anger",
+    "annoyance",
+    "disapproval",
+    "neutral"
+  ],
+  "global_threshold": 0.4,
+  "per_label_thresholds": [
+    0.65,
+    0.7,
+    0.55,
+    0.2,
+    0.35,
+    0.55,
+    0.5,
+    0.65,
+    0.5,
+    0.45,
+    0.8,
+    0.4,
+    0.35,
+    0.25,
+    0.55,
+    0.3,
+    0.35,
+    0.1,
+    0.1,
+    0.5,
+    0.45,
+    0.55,
+    0.4,
+    0.5,
+    0.2,
+    0.05,
+    0.45,
+    0.75
+  ],
+  "fallback_label_indices": [],
+  "validation_support": [
+    327,
+    91,
+    168,
+    148,
+    102,
+    122,
+    131,
+    87,
+    107,
+    96,
+    58,
+    119,
+    96,
+    87,
+    112,
+    89,
+    117,
+    109,
+    96,
+    137,
+    211,
+    354,
+    97,
+    164,
+    185,
+    331,
+    123,
+    94
+  ],
+  "global_sweep": [
+    {
+      "threshold": 0.8,
+      "macro_f1": 0.5568885514189151
+    },
+    {
+      "threshold": 0.75,
+      "macro_f1": 0.5623706290922708
+    },
+    {
+      "threshold": 0.7,
+      "macro_f1": 0.5669492587260254
+    },
+    {
+      "threshold": 0.65,
+      "macro_f1": 0.5707510068880065
+    },
+    {
+      "threshold": 0.6,
+      "macro_f1": 0.5742928608014447
+    },
+    {
+      "threshold": 0.55,
+      "macro_f1": 0.5760473474853081
+    },
+    {
+      "threshold": 0.5,
+      "macro_f1": 0.5783409798361765
+    },
+    {
+      "threshold": 0.45,
+      "macro_f1": 0.5808733808914582
+    },
+    {
+      "threshold": 0.4,
+      "macro_f1": 0.5829413573475265
+    },
+    {
+      "threshold": 0.35,
+      "macro_f1": 0.5822919015399234
+    },
+    {
+      "threshold": 0.3,
+      "macro_f1": 0.5784563654831727
+    },
+    {
+      "threshold": 0.25,
+      "macro_f1": 0.571472812065986
+    },
+    {
+      "threshold": 0.2,
+      "macro_f1": 0.5643250984650602
+    },
+    {
+      "threshold": 0.15,
+      "macro_f1": 0.5565928677637408
+    },
+    {
+      "threshold": 0.1,
+      "macro_f1": 0.544414715563771
+    },
+    {
+      "threshold": 0.05,
+      "macro_f1": 0.5130323425466607
+    }
+  ],
+  "sources_sha256": {
+    "docs/final_protocol.md": "b64ff58ebb41bb81426f83284ad8483cf2b2367afa9323a36c121b422984151f",
+    "docs/final_label_tiers.csv": "99493d5e13d20ccb4c96e25a01b8465063e3ab66cd24ed086e575f1a97f7e56d",
+    "configs/kaggle_equal_20ep.json": "4ed223ffa8f7ed3dc6656fc975c2ed74f037491e21133a4c5b7f48f34c9c6244",
+    "reports/kaggle_equal20_2026-11-05/provenance.json": "fad942a3058a5f9c57e2ceb83bb5a23b246e6ae9a06453009853d44e6308fcc5",
+    "reports/kaggle_equal20_2026-11-05/evidence/28/phobert/val_predictions.npz": "3691497855f6447375cb8c91d05a636710cd0ce5684c1f76727414e1b119b467",
+    "reports/kaggle_equal20_2026-11-05/evidence/28/manifest.json": "f64c46532399d473d291f81c152e7e15a6af4c3bb050f1ec7f5d9dfb1781a1af",
+    "reports/kaggle_equal20_2026-11-05/evidence/28/phobert/run.json": "cdad3d8c0e98ef1481f4e9617c5c65279f3e5b232da500e9a199c28d87bd3422",
+    "scripts/common.py": "976a5ccb14b0582acf82d83e775fe3f2f09a0717997344f028653f732ec1dd99",
+    "scripts/train_neural.py": "5551c9be8d4b466c43ed155cc062c45e24317054d0cd53a22a3f1ad9153eeb8a",
+    "scripts/neutral_28_labels.py": "495551e41a3aeb4a761afa8f542501cd791df8741c6145f68a8f18d62d2492c1",
+    "scripts/import_equal20_results.py": "44b6ba218aef648b71d90d393db8ed9939c875938825c0b06ebf386132c09ed9",
+    "scripts/q1_difficulty_common.py": "233b19594679c69a63b7aa9f6bb20647a38eae01bdfaf015609eece50e758e51",
+    "scripts/final_threshold_core.py": "8e1bd5431952517e80cd79889a9e2d231031a90f6d85757583f62532fb5d44ea",
+    "scripts/final_study.py": "548a4b251d17283b90c46b95199b82992190cac45dcf64f01f3cd6d19758d5a1",
+    "scripts/final_inference.py": "3e20bf25b489f4d0d2709bf7fade01a7acc144d20791c97600cae4fc39ac800a",
+    "scripts/final_thresholds.py": "a2839725fdbf4162f978b4e2a0a7dd593133b1bb8aecea778135edd9478063ed",
+    "splits/train.csv": "f3aaeeda0733d2365c54da43a616d888847f3047466fd6801b01a22f00b53c1e",
+    "splits/val.csv": "35726b954109e9424efb980001865d709bc00412fb3ec59e8e0f467c5186fb5b",
+    "splits/test.csv": "325758a8edc65457cb966fed2557e3c7b02db1965992df651cf5d2e50186e842",
+    "final_config": "9147fc246fb72c914e2cfd370215a3e767cf4f598e07538c2cdab00f04f56a16",
+    "private_source/train.csv": "9abcb2b7d9fadd9da043a3af43e8ee569f7099d87d20daf39a69e7e1a76c5624",
+    "private_source/val.csv": "d3a473a65bf10d3d07423306a4324e94c9979d42d58f6a05cceb4cc1cc4fcab0"
+  },
+  "reproduction_sha256": "dbfa5804766c82fb40fe710adcb3de4ae331cc210d4fd226cbd3e178c1868c6e"
+}

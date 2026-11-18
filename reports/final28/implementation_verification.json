@@ -1,0 +1,66 @@
+{
+  "protocol_id": "vigoemotions_final_rq1_28_v2",
+  "label_count": 28,
+  "selected_epoch": 15,
+  "branch": "feature/final-threshold-pipeline",
+  "base_commit": "3dee33e87921c216d530ba339be6b2f6d9117e25",
+  "validation_source_verified": {
+    "shape": [
+      2066,
+      28
+    ],
+    "fixed_macro_f1": 0.5783409798361765,
+    "emotion27_projection_macro_f1": 0.5835797863529424,
+    "split_ids_targets_tiers": "PASS",
+    "standalone_code_bundle_without_test_csv": "PASS",
+    "sklearn_decoder_crosscheck": "PASS, development-only; no formal fitted artifact"
+  },
+  "private_assets": {
+    "path": "data/final28",
+    "archive_sha256": "b753e1a764d87562334e46bbd8f91bbd8e4b5c8b176c5739d8239364ac724dd6",
+    "checkpoint_sha256": "30e09d73bd474c6c1a9d2455519af7256ce96ed12576dde9aafcff45a301c835",
+    "model_config_sha256": "dad3694ef73daf94546de78ed0f3ce8da2e32469b75fbb266382fdb9941d5928",
+    "status": "restored and verified"
+  },
+  "pipeline_synthetic_tests": {
+    "total": 29,
+    "passed": 29
+  },
+  "full_suite": {
+    "total": 134,
+    "passed": 132,
+    "errors": 2,
+    "reason": "Two pre-existing torch-dependent tests cannot run locally"
+  },
+  "actual_validation_reproduction": "pending; CLI stops clearly on missing neural dependencies",
+  "actual_fitted_thresholds": "not generated",
+  "actual_pre_test_lock": "not generated",
+  "actual_test_inference_performed": false,
+  "neural_packages_missing_locally": [
+    "torch",
+    "transformers",
+    "py_vncorenlp"
+  ],
+  "retired_prototype": {
+    "snapshot": "archive/final27_prototype_2026-11-11/snapshot.json",
+    "original_files": 17,
+    "hashes": "all verified; no old reproduction/lock reused"
+  },
+  "protected_canonical_evidence_files_byte_identical": 134,
+  "implementation_sha256": {
+    "configs/final_thresholds.json": "9147fc246fb72c914e2cfd370215a3e767cf4f598e07538c2cdab00f04f56a16",
+    "scripts/final_threshold_core.py": "8e1bd5431952517e80cd79889a9e2d231031a90f6d85757583f62532fb5d44ea",
+    "scripts/final_study.py": "548a4b251d17283b90c46b95199b82992190cac45dcf64f01f3cd6d19758d5a1",
+    "scripts/final_inference.py": "3e20bf25b489f4d0d2709bf7fade01a7acc144d20791c97600cae4fc39ac800a",
+    "scripts/final_thresholds.py": "a2839725fdbf4162f978b4e2a0a7dd593133b1bb8aecea778135edd9478063ed",
+    "scripts/package_final.py": "c7f9d54f87bb31a1db28fdcd0a76523ba68e8e6e0184233879f1f06cddf06e01",
+    "tests/test_final_thresholds.py": "1d246b43ebee26c16228a43449f42925525c7d422ea0910dd03cd5e4b0d0692b",
+    "notebooks/10_kaggle_final_validation.ipynb": "80bb259d423e7a8d6dc1a5f207cbba144d99e478fde8e2ec214d8dfc1412372e",
+    "docs/final_execution.md": "a89af47bf7cb82e70c053968dc10f2365bb626d2273370be03a470dc976c6222",
+    "docs/final_protocol.md": "b64ff58ebb41bb81426f83284ad8483cf2b2367afa9323a36c121b422984151f"
+  },
+  "code_bundle": {
+    "path": "vigoemotions_final28_code.zip",
+    "sha256": "553694f648cc59b1ba2efa11e5327acc5abf09a370cdf81a1d9b5aba059ca0ab"
+  }
+}

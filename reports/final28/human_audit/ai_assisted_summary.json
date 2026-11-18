@@ -1,0 +1,71 @@
+{
+  "review_type": "AI-assisted qualitative review; not completed human audit",
+  "reviewed_on": "2026-11-17",
+  "ai_reviewer": "Codex (AI assistant)",
+  "selected_rows": 62,
+  "unique_comments": 62,
+  "ai_reviewed_rows": 62,
+  "human_reviewed_rows": 0,
+  "human_confirmation_pending_rows": 62,
+  "assessment_scope": "Target label on FN/FP rows; whole-case qualitative assessment on context rows",
+  "reference_assessment_meaning": "AI judgment about plausibility/completeness, not an annotation correction or measured annotation error rate",
+  "categories": {
+    "label_overlap": 24,
+    "slang_emoji": 8,
+    "implicit_emotion": 7,
+    "sarcasm": 7,
+    "missing_context": 6,
+    "threshold_tradeoff": 4,
+    "negation": 3,
+    "other": 3
+  },
+  "reference_assessments": {
+    "consistent": 32,
+    "questionable": 16,
+    "insufficient_context": 14
+  },
+  "core_reference_assessments": {
+    "FN": {
+      "consistent": 11,
+      "insufficient_context": 5,
+      "questionable": 4
+    },
+    "FP": {
+      "consistent": 9,
+      "questionable": 8,
+      "insufficient_context": 3
+    }
+  },
+  "core_decoder_effects": {
+    "FN": {
+      "retained_error": 20
+    },
+    "FP": {
+      "retained_error": 15,
+      "introduced_error": 5
+    }
+  },
+  "pair_case_eligibility": {
+    "disappointment;sadness": {
+      "true_and_pred": 4,
+      "pred_only": 1
+    },
+    "anger;annoyance": {
+      "true_only": 3,
+      "pred_only": 2
+    },
+    "sadness;grief": {
+      "true_and_pred": 3,
+      "true_only": 1,
+      "pred_only": 1
+    }
+  },
+  "sample_limitations": [
+    "Mixed target/context assessment units",
+    "Hash-selected qualitative sample, not an error-rate estimate",
+    "No independent human adjudication",
+    "Hypotheses have not been causally tested"
+  ],
+  "phobert_inference_performed": false,
+  "thresholds_changed": false
+}

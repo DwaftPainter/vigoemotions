@@ -1,0 +1,49 @@
+{
+  "branch": "feature/final-threshold-pipeline",
+  "base_commit": "3dee33e87921c216d530ba339be6b2f6d9117e25",
+  "validation_source_verified": {
+    "shape": [
+      2066,
+      27
+    ],
+    "split_ids_and_train_only_tiers": "PASS",
+    "standalone_code_bundle_verify_without_test_csv": "PASS",
+    "global_sweep_agreement_with_archived_evidence": "PASS"
+  },
+  "private_checkpoint_restoration": "PASS; exact SHA-256 and original segmentation assets restored under ignored data/final",
+  "new_synthetic_tests": {
+    "total": 23,
+    "passed": 23
+  },
+  "full_suite": {
+    "total": 128,
+    "passed": 126,
+    "errors": 2,
+    "preexisting_dependency_errors": "Two neural tests require unavailable torch"
+  },
+  "neural_packages_missing_locally": [
+    "torch",
+    "transformers",
+    "py_vncorenlp"
+  ],
+  "actual_validation_reproduction": "pending; CLI fails clearly on missing neural dependencies",
+  "actual_fitted_thresholds": "not generated",
+  "actual_pre_test_lock": "not generated",
+  "actual_test_inference_performed": false,
+  "historical_evidence_and_canonical_sources_byte_identical": 133,
+  "implementation_sha256": {
+    "scripts/final_threshold_core.py": "abd892db1cf338b8f5ded1744d2b26657f36ee8a461972ae18fbd617a0429cfe",
+    "scripts/final_study.py": "17147c8a63a0f40e7f8f7b376d2a9676d07089d304bd181019ceae60ad8383cc",
+    "scripts/final_inference.py": "05d6b6284f69d58496938bac53fb77327c973198763a2aa228434d7625a2ae77",
+    "scripts/final_thresholds.py": "d3f5f2332c620aa6d380ad62c4861999fee8c6a0b4071d17e68d4adbfa0027c8",
+    "scripts/package_final.py": "3927aac88623890e4833e755929239a021c7eebe9cd875381c0f8522d1a1e5b3",
+    "tests/test_final_thresholds.py": "5a11fb92b351b26dc3729cbbe41a9a361dc4c0ac4233caec896d9071b12ad1cf",
+    "notebooks/10_kaggle_final_validation.ipynb": "16cd8a940735ed77ec11d66ac6ca6d34fd9297eea8ad45fed7ea4dc534dc7ce2",
+    "docs/final_execution.md": "0edcf502a8c44476d93c652cd3b007007c60c62f89bd01966b4f04e5d1a0ec4e",
+    "docs/final_protocol.md": "ee639c78541e1e5531ab706930497e129176d4af2381a974b7ea874055c61b5d"
+  },
+  "code_bundle": {
+    "path": "vigoemotions_final_code.zip",
+    "sha256": "878f9ff4b341ff42f1d4994919c16f22b2567724358afd9e46d500ef267fd9ca"
+  }
+}
