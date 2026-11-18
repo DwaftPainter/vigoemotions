@@ -1,6 +1,8 @@
 # ViGoEmotions — ATI Final 2026
 
-Midterm đã hoàn tất. Final theo quyết định nhóm dùng **PhoBERT 28 nhãn (gồm Neutral), checkpoint epoch 15**: fixed 0,5, global tuned và per-label tuned; tối ưu trên validation all28 Macro-F1, khóa trước test; báo thêm emotion27 projection và Neutral riêng. Protocol đã cập nhật v2, fitted thresholds và kết quả test Final chưa có.
+Midterm đã hoàn tất. Final theo quyết định nhóm dùng **PhoBERT 28 nhãn (gồm Neutral), checkpoint epoch 15**: fixed 0,5, global tuned và per-label tuned; tối ưu trên validation all28 Macro-F1, khóa trước test; báo thêm emotion27 projection và Neutral riêng. **Validation reproduction và test Final đã hoàn tất**, artifacts Kaggle được nhập và kiểm chứng ngày 16/11.
+
+Test all28 Macro-F1: fixed **0,589964**, global 0,4 **0,591254**, per-label **0,585415**. Lợi ích per-label trên validation không giữ được trên test; fixed có Hamming Loss thấp nhất. **Paper tiếng Anh đã hoàn thiện:** [PDF 11 trang](reports/final_report.pdf) / [Markdown](reports/final_report.md). [Kết quả và provenance](reports/final28/README.md), [phân tích tiếng Việt](reports/final28/results_discussion.md). Audit 62 ca được ghi rõ AI-assisted theo lựa chọn của nhóm; còn bổ sung thông tin định danh, gói nộp và oral defence.
 
 - [Protocol Final](docs/final_protocol.md), [config](configs/final_thresholds.json), [train-only tiers](docs/final_label_tiers.csv).
 - [Chạy pipeline Final](docs/final_execution.md), [notebook validation Kaggle 10](notebooks/10_kaggle_final_validation.ipynb). Tạo `vigoemotions_final28_code.zip` bằng `.venv/bin/python scripts/package_final.py`; notebook dừng sau validation/lock. Dùng ZIP weights **28 nhãn**, output ở `reports/final28/`.
@@ -9,7 +11,7 @@ Midterm đã hoàn tất. Final theo quyết định nhóm dùng **PhoBERT 28 nh
 
 ## Baseline midterm dùng cho Final
 
-**Kết quả chính: hai lượt Kaggle 08/09 đã hoàn tất, BiGRU và PhoBERT đều 20 epoch cho cả 27/28 nhãn.** Báo cáo dùng duy nhất sáu kết quả này; các lượt ít epoch là lịch sử. Tất cả metric mô hình là validation tại ngưỡng 0,5, seed 42; test giữ cho Final.
+**Baseline midterm: hai lượt Kaggle 08/09 đã hoàn tất, BiGRU và PhoBERT đều 20 epoch cho cả 27/28 nhãn.** Báo cáo midterm dùng duy nhất sáu kết quả này; các lượt ít epoch là lịch sử. Các metric trong bảng dưới là validation tại ngưỡng 0,5, seed 42; kết quả test Final được báo riêng ở trên.
 
 | Mô hình | Macro-F1 27 nhãn | Macro-F1 28 nhãn |
 | --- | --- | --- |
@@ -55,6 +57,8 @@ Trong môi trường local có dependencies theo `requirements.txt`:
 
 Tạo riêng slide/script tiếng Anh từ evidence đã kiểm chứng: `.venv/bin/python scripts/build_equal20_presentation.py`. Lệnh build report đầy đủ cũng giữ slide bằng tiếng Anh.
 
+Tạo riêng **paper Final tiếng Anh** từ artifacts đã khóa: `.venv/bin/python scripts/build_final_paper.py`. Chỉnh nội dung ở [template](docs/final_paper_template.md), thông tin tác giả ở [metadata](docs/final_paper_metadata.json), references ở [BibTeX](docs/final_references.bib). Builder xuất Markdown/PDF cùng [verification](reports/final_report_verification.json), kiểm source hashes và không chạy model. Lệnh `build_report.py` phía trên phục vụ báo cáo midterm lịch sử.
+
 Bản thiết kế hiện tại thay slide 10 bằng bảng Q1/Q2 và slide 11 bằng bảng Q3/Q4 theo yêu cầu; 13 slide còn lại và toàn bộ lời nói đã chốt được giữ nguyên. Snapshot nội dung gốc là `reports/kaggle_equal20_2026-11-05/slides.json`. Deck có 15 slide, không có trang bảng lặp ở cuối; vị trí bảng được ghi chú trong script. Renderer không ghi lại evidence; layout tự sinh ở `reports/midterm_slide_design.json` và kiểm chứng ở `reports/midterm_presentation_verification.json`.
 
 Import cần hai ZIP, notebook executed và CSV nguồn. Evidence/tổng hợp mới nằm riêng tại `reports/kaggle_equal20_2026-11-05/`; không ghi đè bảng model các lượt cũ. Build report thiếu evidence mới sẽ dừng, không tự quay về số cũ. Cẩm nang kiểm tra nguyên văn các đoạn trích source trước khi render.
@@ -63,6 +67,6 @@ Import cần hai ZIP, notebook executed và CSV nguồn. Evidence/tổng hợp m
 
 ## Giới hạn và việc còn lại
 
-Điền tên/MSSV/phân công; xác nhận sáu ca đọc lỗi có hỗ trợ AI; làm rõ việc chấp nhận official split. Chưa có metric test hoặc sweep learning rate. Final giữ backbone neural cố định, so sánh fixed/global/per-label thresholds, chọn trên validation rồi khóa trước khi chấm test. Một seed và style heuristic còn hạn chế.
+Điền tên/MSSV/phân công và thông tin lớp trước khi nộp; làm rõ việc chấp nhận supplied split. Final đã có metric test, paper/PDF và AI-assisted audit đủ 62 ca; không có independent human adjudication và giới hạn này được công bố trong paper. Oral defence và gói nộp còn làm. Weights và thresholds giữ nguyên sau đánh giá; không có sweep learning rate. Một seed và style heuristic còn hạn chế.
 
 Notebook 01/02/07 phục vụ kiểm tra dữ liệu, EDA và audit split; notebook 03–06 nằm trong [archive/notebooks](archive/notebooks/), config 25/20 cũ trong [archive/configs](archive/configs/). Các snapshot và tài liệu chuẩn bị cũ nằm trong [archive/](archive/README.md). Config/run JSON và bảng model cũ còn được script/test tham chiếu được giữ nguyên vị trí; kết quả chính chỉ lấy từ thư mục Kaggle 20 epoch. [Mục lục reports](reports/README.md).

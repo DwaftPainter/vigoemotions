@@ -1,6 +1,6 @@
 # Kế hoạch Final và oral defence — hướng 28 class
 
-Cập nhật 11/11/2026 theo quyết định của nhóm: **28 outputs gồm Neutral**, checkpoint PhoBERT epoch 15. Deadline chính thức chưa rõ; dự kiến cuối tháng 11. Mục tiêu nội bộ: sẵn sàng 27/11, dự phòng 28–30/11.
+Cập nhật 18/11/2026: **28 outputs gồm Neutral**, checkpoint PhoBERT epoch 15. Validation/test, AI-assisted audit và [paper tiếng Anh PDF](../reports/final_report.pdf) / [Markdown](../reports/final_report.md) đã hoàn tất. Nhóm chốt dùng AI-assisted audit và công bố giới hạn chưa có independent human adjudication. Deadline chính thức chưa rõ; dự kiến cuối tháng 11. Mục tiêu nội bộ: sẵn sàng 27/11, dự phòng 28–30/11.
 
 ## Mục tiêu và các quyết định
 
@@ -33,7 +33,7 @@ Câu hỏi chính: global/per-label thresholds tối ưu trên validation có c�
 - [x] Có code kiểm hash ZIP/config/safetensors/tokenizer, giữ canonical 28 outputs và saved preprocessing.
 - [x] Source NPZ 2.066 × 28, fixed Macro-F1 ≈0,578341, fixed IDs/targets và tiers đã kiểm chứng local.
 - [x] `restore` model 28 thật vào `data/final28/`, khớp hashes và saved 28-label mapping; giữ source weights 27 cũ riêng.
-- [ ] `reproduce-val` trên môi trường neural: toàn bộ scores lệch ≤1e-4, fixed decisions giống hệt, ghi runtime/asset hashes.
+- [x] Actual Kaggle `reproduce-val`: sai lệch xác suất tối đa 0, fixed decisions giống hệt, ghi runtime/asset hashes.
 
 **Xác minh:** actual checkpoint phải chạy, mock tests không thay thế proof; không tự nới tolerance. **Phụ thuộc:** T1. **Quy mô:** module inference/study và evidence sinh tự động.
 
@@ -42,44 +42,47 @@ Câu hỏi chính: global/per-label thresholds tối ưu trên validation có c�
 **Đầu ra:** global scalar + 28 cutoffs, bảng/projection/Neutral metrics, pre-test lock.
 
 - [x] Có thuật toán và test cho objective all28, ties/fallback/boundary/shape; gate chặn fit khi thiếu actual reproduction.
-- [ ] Chạy `fit` sau T2 PASS, lưu đủ 28 ngưỡng/support/train count/tier/fallback.
-- [ ] Review validation tables, chạy `lock` trước test; bind config/protocol/implementation/thresholds/source/reproduction.
+- [x] `fit` sau T2 PASS, lưu global 0,4 và đủ 28 ngưỡng/support/train count/tier/fallback.
+- [x] Review validation, có lock bind config/protocol/implementation/thresholds/source/reproduction; test liên kết đúng lock hiện tại.
 
 **Xác minh:** all28 và emotion27 có scope đúng, Neutral F1 tính positive label; thử thay nguồn/ngưỡng/runtime phải bị phát hiện. **Phụ thuộc:** T2. **Quy mô:** core/study/CLI cùng output.
 
-**Checkpoint 1:** model 28 tái tạo đúng validation, ngưỡng 28 đã fit và khóa. Chưa đạt chỉ vì code/tests chạy được.
+**Checkpoint 1 — hoàn tất:** model 28 tái tạo đúng validation, ngưỡng 28 đã fit và khóa; có actual execution evidence.
 
 ### T4 — Held-out test một lượt
 
 **Đầu ra:** continuous test scores trước decoding và ba pred matrices 28 cột.
 
-- [ ] Kiểm lock/assets/runtime trước đọc test text/targets; inference 2.067 mẫu đúng thứ tự.
-- [ ] Lưu IDs/true/probability vectors/labels, pred_fixed/global/per_label, label_cardinality (28), emotion_cardinality (27).
-- [ ] Cả hai scopes dùng cùng test scores; không re-tune, không lặp inference sau một lượt hoàn tất.
+- [x] Test artifact ghi `completed`; 2.067 mẫu đúng IDs/targets/checksum nguồn, cùng assets/runtime với validation và bind lock hiện tại.
+- [x] Lưu IDs/true/probability vectors/labels, pred_fixed/global/per_label, label_cardinality (28), emotion_cardinality (27).
+- [x] Cả hai scopes dùng cùng test scores; không re-tune hoặc inference thêm khi import/review/report.
 
-**Xác minh:** tái tạo pred từ saved scores + thresholds; technical resume giữ cùng lựa chọn và dùng lại raw scores nếu có. **Phụ thuộc:** Checkpoint 1. **Quy mô:** đường inference/test gate đã có; actual execution còn chờ.
+**Xác minh:** pred tái tạo từ saved scores + thresholds; NPZ/lock/runtime/CSV nguồn đã đối chiếu. ZIP ghi một completed attempt, không độc lập chứng minh mọi hoạt động session trước đó. **Phụ thuộc:** Checkpoint 1. **Trạng thái:** actual execution và local artifact audit hoàn tất; giữ nguyên completed-test gate.
 
 ### T5 — Bảng, hình và trả lời RQ
 
-- [ ] Metric validation/test và delta theo decoder cho all28; emotion27 projection, Neutral riêng, tier và hai cardinality views.
-- [ ] Threshold profile đủ 28 nhãn, hình delta và generalization gap theo scope; support rõ, nhóm rỗng N/A.
-- [ ] Kết luận đúng kết quả dù tuned không cải thiện test; ghi giới hạn một seed và repeated validation selection.
+- [x] Metric validation/test và delta theo decoder cho all28; emotion27 projection, Neutral riêng, tier và hai cardinality views; 11 bảng đã tính lại và kiểm chứng.
+- [x] Threshold profile đủ 28 nhãn, bốn hình PNG/PDF và generalization gap theo scope; support rõ, nhóm rỗng N/A.
+- [x] Results/Discussion ghi global +0,1289 pp test Macro-F1, per-label −0,4549 pp, Hamming tốt nhất ở fixed; giới hạn một seed/repeated validation selection.
 
-**Xác minh:** `report` tái sinh metric tables từ saved outputs; số liệu đối chiếu NPZ. **Phụ thuộc:** T3/T4. **Đầu ra:** CSV/figures/RQ analysis; code bảng đã có, hình/thảo luận còn làm.
+**Xác minh:** metric tables được tái sinh từ saved outputs và đối chiếu NPZ; `build_final_figures.py` kiểm imported hashes/completed-test bindings trước khi vẽ. **Phụ thuộc:** T3/T4. **Đầu ra:** CSV/figures/RQ analysis đã có trong `reports/final28/`; chưa thay thế T6 human audit.
 
-### T6 — Human error audit
+### T6 — Qualitative audit, dùng AI-assisted theo quyết định nhóm 17/11
 
-- [ ] Người thật đọc ≥20 FN + ≥20 FP trên 28-label per-label decoder; Neutral/mixed cases được xem và ghi rõ.
-- [ ] Có ca cardinality cao, các emotion pairs chọn từ train, so sánh lỗi giữa ba decoder.
-- [ ] Ghi reviewer, IDs/label/score/cutoff/cardinality, quan sát tách giả thuyết; raw text giữ private.
+- [x] Chuẩn bị packet theo hash: 20 core FN + 20 core FP, 2 Neutral errors, 5 high-cardinality, 15 cases cho ba cặp chọn từ train; tổng 62 bình luận. [Hướng dẫn](../reports/final28/human_audit/README.md), worksheet private và validator đã có; không tự điền nhận xét/reviewer.
+- [x] AI-assisted review 17/11 theo yêu cầu: đọc nội dung 62 ca, ghi quan sát và giả thuyết riêng, phân biệt lỗi giữ nguyên/mới do threshold, đánh dấu ca cần adjudication. [Kết quả](../reports/final28/human_audit/ai_assisted_review.md) không thay thế human confirmation.
+- [x] AI-assisted audit đã bao phủ 20 core FN + 20 core FP, Neutral/mixed, high-cardinality và train-selected pairs; so sánh ba decoder trên cùng ca.
+- [x] Ghi nguồn nhận xét là AI assistant, IDs/labels/scores/cutoffs/cardinality, quan sát tách giả thuyết; raw text giữ private và human worksheet không đổi.
 
-**Xác minh:** lỗi khớp targets/predictions, không đếm trùng cặp để đủ quota. **Phụ thuộc:** T4/T5. **Đầu ra:** audit CSV và thảo luận do người xác nhận.
+**Xác minh:** lỗi khớp targets/predictions, không đếm trùng cặp để đủ quota, ghi rõ chưa có independent human adjudication. Human confirmation thực tế 0/62; không được trình bày nhận xét AI thành xác nhận của thành viên. **Phụ thuộc:** T4/T5. **Đầu ra:** AI-assisted audit CSV và thảo luận, được nhóm chốt dùng cho paper.
 
-**Checkpoint 2:** đủ evidence/test/breakdowns/human audit. Không mở tuning theo test để thay đổi kết luận.
+**Checkpoint 2 — hoàn tất ở phạm vi nhóm đã chốt:** đủ evidence/test/breakdowns/AI-assisted audit và công bố giới hạn; không mở tuning theo test để thay đổi kết luận.
 
 ### T7 — Paper
 
 **Đầu ra:** report Markdown/PDF, figures và references. Có abstract/introduction/data/method/experiments/results/discussion/limitations/conclusion. Mô tả 28-label extension và baseline selection gốc; so điểm cùng scope/split. **Phụ thuộc:** outline từ T1, chốt sau T5/T6. **Xác minh:** mỗi số truy về artifact, đọc PDF thật.
+
+**Hoàn tất 18/11:** paper tiếng Anh 11 trang, 10 bảng sinh từ evidence, ba hình, sáu references và hai phụ lục. `scripts/build_final_paper.py` tạo Markdown/PDF/verification từ nguồn đã kiểm hash; thông tin tác giả/nhóm/lớp còn chờ điền trong `docs/final_paper_metadata.json`.
 
 ### T8 — Gói tái lập
 
@@ -89,7 +92,7 @@ Câu hỏi chính: global/per-label thresholds tối ưu trên validation có c�
 
 **Đầu ra:** slide Final, notes/Q&A, hai lượt mock defence. Mỗi thành viên giải thích được sigmoid/BCE, vì sao 28 outputs, Neutral mixed, model epoch 15 được chọn bằng emotion27 trước đây, objective threshold all28 hiện tại, hai cardinality definitions và threshold overfitting. **Phụ thuộc:** ôn từ T1, chốt số sau T5–T7. **Xác minh:** nói đúng scope/metric/support, chỉ đúng evidence, bấm giờ và phản biện chéo.
 
-**Checkpoint 3:** report/package nhất quán, người thật đã audit và luyện bảo vệ, sẵn sàng nộp.
+**Checkpoint 3:** report/package nhất quán, công bố đúng AI-assisted audit, metadata nhóm đầy đủ và đã luyện bảo vệ, sẵn sàng nộp.
 
 ## Lịch đề xuất
 
