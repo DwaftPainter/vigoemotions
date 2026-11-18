@@ -10,6 +10,7 @@
   "rendering_packages": {
     "reportlab": "5.0.1",
     "pypdf": "6.20.1",
+    "python-docx": "1.2.0",
     "matplotlib": "3.11.2",
     "numpy": "2.5.4",
     "pandas": "3.0.6"
@@ -80,15 +81,16 @@
     "reports/final28/human_audit/sampling_design.json": "10e6edac1e575bec960417aa3893f933cb8fa30c62c8a8e5c715f3939173a38c",
     "reports/final28/human_audit/ai_assisted_provenance.json": "85a2cee4e581fe52be2519603f61435e5b6509131de2f7f0d58a338c12704e65",
     "reports/final28/human_audit/summary.json": "1ecf4cc9c170187d5b37ac310860f5c6e4f7f676cef10bf19cd898b04cf6bd48",
-    "docs/final_paper_template.md": "da340bc7e6ba508b87bbb1afb1a0ad1d79e663f2936396965e10289c495a4e56",
+    "docs/final_paper_template.md": "4851054f3566ce512e936933885b5e58253eb9935c3a2e766742ec83af05efa6",
     "docs/final_paper_metadata.json": "be651b4042aae242752d8facf5d50e2fb14a08f377d0432665ace7cfb59a42c3",
     "docs/final_references.bib": "bcc4807ee81f95c0c9260c6e8f24eda09d11afe68713a7c76228c88537d17714",
     "scripts/build_report.py": "0d93e4cba25f5202a59bfbc6e0fd98bcf9c8243ac619fc254856c0753accdfba",
-    "requirements.txt": "a827a229b6babcfda64ad2a5c5ba2abca2004d390b8b3046031a867187cae7f9",
-    "scripts/build_final_paper.py": "c0d6136e3e3abcec1e81b23d6af938fa64589db5fc46321e636d8328adce35c6"
+    "requirements.txt": "cee5c3c169786c9a5ae95a2371293849ea6c70c0f25bd35e675e41efaa9aefd1",
+    "scripts/build_final_paper.py": "1954db7714c03d8498bad5bb1561e3ec6f48437c379b594510ac263040f466da"
   },
   "generated_sha256": {
-    "final_report.md": "544e1dd0f32d355a71ca086d5378f99995a6ddf08165b3447e8ad39eac656144",
-    "final_report.pdf": "da720510fa059c68e17eeafbdb27b9f373e5283b31dde11084d916009269cf21"
+    "final_report.md": "912aa1766d670eb8e7e2be5f818a377f54e8c504d65f382edbc32e8b584dce0e",
+    "final_report.pdf": "55d325a43ca01d19b18c73801637ef0772f6d865f3cc8d73324cf6c841f75c29",
+    "final_report.docx": "ad68fe9b96a447be52c5e70b74b89e106a94104aa987417d952b1405462e0b8b"
   }
 }

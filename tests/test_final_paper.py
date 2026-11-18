@@ -4,13 +4,15 @@ import hashlib
 import sys
 import tempfile
 import unittest
+import zipfile
+from xml.etree import ElementTree as ET
 
 import numpy as np
 import pandas as pd
 from pypdf import PdfReader
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-from build_final_paper import comparison_table, markdown_table, fill_template, render_pdf, build
+from build_final_paper import comparison_table, markdown_table, fill_template, render_pdf, render_docx, build
 
 
 class FinalPaperTests(unittest.TestCase):
@@ -69,7 +71,40 @@ class FinalPaperTests(unittest.TestCase):
                          'Discussion', 'Limitations', 'Conclusion', 'References'):
                 self.assertIn(name, manuscript)
             self.assertGreater(len(PdfReader(Path(tmp) / 'final_report.pdf').pages), 1)
+            with zipfile.ZipFile(Path(tmp) / 'final_report.docx') as archive:
+                ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+                document = ET.fromstring(archive.read('word/document.xml'))
+                word_text = '\n'.join(document.itertext())
+                for value in ('Qualitative Error Analysis', '0.591254', '0.585415', 'Appendix B.'):
+                    self.assertIn(value, word_text)
+                self.assertEqual(len(document.findall('.//w:tbl', ns)), 10)
+                self.assertEqual(len(document.findall('.//w:drawing', ns)), 3)
+                self.assertNotIn('AI-assisted', word_text)
+            self.assertEqual(result['generated_sha256']['final_report.docx'],
+                             hashlib.sha256((Path(tmp) / 'final_report.docx').read_bytes()).hexdigest())
         self.assertEqual(before, {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in protected})
+
+    def test_docx_keeps_editable_tables_links_images_and_page_breaks(self):
+        from docx import Document
+        root = Path(__file__).resolve().parents[1]
+        source = ('# Threshold transfer\n\n## Abstract\n\n**Macro-F1** uses τ ≥ 0.5. '
+                  '[Source](https://example.org/paper).\n\n| Metric | Value |\n| --- | --- |\n'
+                  '| Test | 0.591254 |\n\n![Figure 1. Comparison](final28/figures/validation_test.png)'
+                  '\n\n<!-- pagebreak -->\n\n## Appendix\n\n`report`\n')
+        with tempfile.TemporaryDirectory() as tmp:
+            destination = Path(tmp) / 'paper.docx'
+            render_docx(source, destination, root / 'reports')
+            document = Document(destination)
+            self.assertEqual(document.tables[0].cell(1, 1).text, '0.591254')
+            self.assertEqual(len(document.inline_shapes), 1)
+            self.assertLessEqual(document.inline_shapes[0].width,
+                                 document.sections[0].page_width - document.sections[0].left_margin - document.sections[0].right_margin)
+            self.assertTrue(any(run.bold for p in document.paragraphs for run in p.runs if run.text == 'Macro-F1'))
+            with zipfile.ZipFile(destination) as archive:
+                self.assertIn('https://example.org/paper', archive.read('word/_rels/document.xml.rels').decode())
+                xml = archive.read('word/document.xml').decode()
+                self.assertIn('w:type="page"', xml)
+                self.assertIn('w:tblHeader', xml)
 
 
 if __name__ == '__main__':

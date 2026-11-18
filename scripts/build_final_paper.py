@@ -8,6 +8,12 @@ from xml.sax.saxutils import escape, quoteattr
 
 import numpy as np
 import pandas as pd
+from docx import Document
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
+from docx.opc.constants import RELATIONSHIP_TYPE
+from docx.shared import Mm, Pt, RGBColor
 from pypdf import PdfReader
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
@@ -286,6 +292,133 @@ def render_pdf(markdown, destination, image_base):
     doc.build(story, onFirstPage=footer, onLaterPages=footer)
 
 
+def docx_inline(paragraph, text):
+    """Preserve the manuscript's emphasis, code and reference hyperlinks."""
+    for token in re.split(r'(\*\*.+?\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\))', text):
+        link = re.fullmatch(r'\[([^\]]+)\]\(([^)]+)\)', token)
+        if link:
+            label, url = link.groups()
+            hyperlink = OxmlElement('w:hyperlink')
+            hyperlink.set(qn('r:id'), paragraph.part.relate_to(url, RELATIONSHIP_TYPE.HYPERLINK, is_external=True))
+            run, properties = OxmlElement('w:r'), OxmlElement('w:rPr')
+            color = OxmlElement('w:color'); color.set(qn('w:val'), '20566B')
+            underline = OxmlElement('w:u'); underline.set(qn('w:val'), 'single')
+            properties.extend([color, underline]); run.append(properties)
+            content = OxmlElement('w:t'); content.text = f'[{label}]' if label.isdigit() else label
+            run.append(content); hyperlink.append(run); paragraph._p.append(hyperlink)
+        else:
+            bold, code = token.startswith('**'), token.startswith('`')
+            run = paragraph.add_run(token[2:-2] if bold else token[1:-1] if code else token)
+            if bold:
+                run.bold = True
+            if code:
+                run.font.name = 'Consolas'; run.font.size = Pt(8)
+
+
+def render_docx(markdown, destination, image_base):
+    """Export editable Word text/tables and embedded figures from the same paper."""
+    document = Document()
+    section = document.sections[0]
+    section.page_width, section.page_height = Mm(210), Mm(297)
+    section.left_margin = section.right_margin = Pt(48)
+    section.top_margin, section.bottom_margin, section.footer_distance = Pt(42), Pt(49), Pt(20)
+    body = document.styles['Normal']
+    body.font.name, body.font.size = 'Arial', Pt(9.5)
+    body.paragraph_format.line_spacing = Pt(13.5)
+    body.paragraph_format.space_after = Pt(6)
+    body.paragraph_format.widow_control = True
+    for name, size in [('Title', 18), ('Heading 1', 12), ('Heading 2', 10.2)]:
+        style = document.styles[name]
+        style.font.name, style.font.size = 'Arial', Pt(size)
+        style.font.color.rgb = RGBColor.from_string('17232D')
+        style.paragraph_format.keep_with_next = True
+    document.core_properties.title = markdown.splitlines()[0].lstrip('# ')
+    document.core_properties.author = ''
+    document.core_properties.subject = 'ViGoEmotions final report: threshold transfer'
+    footer = section.footer.paragraphs[0]
+    footer.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = footer.add_run('ViGoEmotions | Threshold transfer | ATI Final 2026 | ')
+    run.font.size = Pt(7.5)
+    field = OxmlElement('w:fldSimple'); field.set(qn('w:instr'), 'PAGE')
+    footer._p.append(field)
+    width = section.page_width - section.left_margin - section.right_margin
+    lines, i, after_title = markdown.splitlines(), 0, False
+    while i < len(lines):
+        line = lines[i].strip()
+        if not line:
+            i += 1; continue
+        if line == '<!-- pagebreak -->':
+            document.add_page_break(); i += 1; continue
+        if line.startswith('```'):
+            block = []; i += 1
+            while i < len(lines) and not lines[i].startswith('```'):
+                block.append(lines[i]); i += 1
+            p = document.add_paragraph()
+            run = p.add_run('\n'.join(block)); run.font.name = 'Consolas'; run.font.size = Pt(8)
+            i += 1; continue
+        if line.startswith('|'):
+            rows = []
+            while i < len(lines) and lines[i].strip().startswith('|'):
+                cells = [c.strip() for c in lines[i].strip().strip('|').split('|')]
+                if not all(re.fullmatch(r'[-: ]+', c) for c in cells):
+                    rows.append(cells)
+                i += 1
+            table = document.add_table(rows=0, cols=len(rows[0]))
+            table.style = 'Light Shading Accent 1'; table.autofit = False
+            weights = [1.65] + [1] * (len(rows[0])-1) if len(rows[0]) > 2 else [1, 2]
+            widths = [int(width*w/sum(weights)) for w in weights]
+            for column, column_width in zip(table.columns, widths):
+                column.width = column_width
+            for row_index, values in enumerate(rows):
+                row = table.add_row()
+                row._tr.get_or_add_trPr().append(OxmlElement('w:cantSplit'))
+                if row_index == 0:
+                    row._tr.get_or_add_trPr().append(OxmlElement('w:tblHeader'))
+                for cell, value, column_width in zip(row.cells, values, widths):
+                    cell.width = column_width
+                    p = cell.paragraphs[0]; p.paragraph_format.space_after = Pt(2)
+                    p.paragraph_format.space_before = Pt(2); p.paragraph_format.line_spacing = Pt(10)
+                    docx_inline(p, value)
+                    for run in p.runs:
+                        run.font.size = Pt(7.3)
+                        if row_index == 0:
+                            run.bold = True
+            continue
+        image = re.fullmatch(r'!\[(.*?)\]\((.*?)\)', line)
+        if image:
+            caption, relative = image.groups()
+            path = Path(image_base) / relative
+            w, h = ImageReader(str(path)).getSize()
+            scale = min(width / 12700 / w, 420/h)
+            p = document.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            p.paragraph_format.keep_with_next = True
+            p.add_run().add_picture(str(path), width=Pt(w*scale), height=Pt(h*scale))
+            p = document.add_paragraph(style='Caption'); docx_inline(p, caption)
+            i += 1; continue
+        level = len(line) - len(line.lstrip('#'))
+        if level:
+            p = document.add_paragraph(style='Title' if level == 1 else f'Heading {min(level-1, 2)}')
+            docx_inline(p, line[level:].strip())
+            if level == 1:
+                p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            after_title = level == 1
+            i += 1; continue
+        paragraph = [line]; i += 1
+        while i < len(lines) and lines[i].strip() and not lines[i].lstrip().startswith(('#', '|', '![', '```', '<!--', '- ')):
+            paragraph.append(lines[i].strip()); i += 1
+        text = ' '.join(paragraph)
+        p = document.add_paragraph(style='List Bullet' if text.startswith('- ') else 'Normal')
+        docx_inline(p, text[2:] if text.startswith('- ') else text)
+        if after_title:
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        elif text.startswith('**Table'):
+            p.paragraph_format.keep_with_next = True
+        elif not text.startswith('- '):
+            p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        after_title = False
+    document.save(destination)
+
+
 def build(destination=ROOT / 'reports'):
     destination = Path(destination); destination.mkdir(parents=True, exist_ok=True)
     inputs, audit_summary = evidence()
@@ -297,6 +430,8 @@ def build(destination=ROOT / 'reports'):
     md, pdf = destination / 'final_report.md', destination / 'final_report.pdf'
     md.write_text(markdown, encoding='utf-8')
     render_pdf(markdown, pdf, ROOT / 'reports')
+    docx = destination / 'final_report.docx'
+    render_docx(markdown, docx, ROOT / 'reports')
     reader = PdfReader(pdf)
     text = '\n'.join(page.extract_text() or '' for page in reader.pages)
     sections = ('Abstract', 'Introduction', 'Data', 'Method', 'Experiments', 'Results',
@@ -315,11 +450,12 @@ def build(destination=ROOT / 'reports'):
                   phobert_inference_performed=False, private_text_read=False,
                   audit_type='AI-assisted; no independent human adjudication',
                   ai_reviewed_comments=audit_summary['ai_reviewed_rows'], human_confirmed_comments=0,
-                  rendering_packages={name: importlib.metadata.version(name) for name in ('reportlab', 'pypdf', 'matplotlib', 'numpy', 'pandas')},
+                  rendering_packages={name: importlib.metadata.version(name) for name in ('reportlab', 'pypdf', 'python-docx', 'matplotlib', 'numpy', 'pandas')},
                   author_metadata_complete=bool(metadata['authors']) and all(a.get('name') and a.get('student_id') for a in metadata['authors']),
                   missing_identity_fields=[key for key in ('authors', 'group_name', 'course_section') if not metadata[key]],
                   input_sha256={str(Path(p).relative_to(ROOT)): sha for p, sha in inputs.items()},
-                  generated_sha256={'final_report.md': checksum(md), 'final_report.pdf': checksum(pdf)})
+                  generated_sha256={'final_report.md': checksum(md), 'final_report.pdf': checksum(pdf),
+                                    'final_report.docx': checksum(docx)})
     (destination / 'final_report_verification.json').write_text(json.dumps(result, ensure_ascii=False, indent=2)+'\n')
     return result
 
