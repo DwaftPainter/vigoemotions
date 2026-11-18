@@ -23,7 +23,7 @@ Khi chiếu model 28 về cùng 27 cảm xúc, PhoBERT đạt **0,583580**, th�
 
 ## Mở nội dung để thuyết trình
 
-- [Báo cáo PDF](reports/midterm_report.pdf) / [Markdown](reports/midterm_report.md).
+- Báo cáo Midterm tiếng Anh: [PDF](reports/midterm_report.pdf) / [Word DOCX](reports/midterm_report.docx) / [Markdown](reports/midterm_report.md). Bản tiếng Việt gốc: [PDF](reports/midterm_report_vi.pdf) / [Markdown](reports/midterm_report_vi.md).
 - [PDF: 15 slide, bảng Q1–Q4 tại slide 10–11](reports/midterm_slides.pdf) / [nội dung và speaker notes](reports/midterm_slides.md).
 - [Script tiếng Anh 8–9 phút + Q&A](docs/midterm_presentation_en.md) / [PDF để luyện nói](docs/midterm_presentation_en.pdf). Bản giải thích tiếng Việt vẫn ở [lời dẫn ôn tập](archive/docs/midterm_presentation_2026-11-05.md).
 - [Bảng sáu model, Q1–Q5 và evidence](reports/kaggle_equal20_2026-11-05/README.md).

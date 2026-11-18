@@ -14,7 +14,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image, KeepTogether
 from reportlab.pdfgen import canvas
 
 from common import ROOT, LABELS
@@ -49,12 +49,18 @@ def register_fonts():
     pdfmetrics.registerFontFamily('Vigo',normal='Vigo',bold='Vigo-Bold',italic='Vigo',boldItalic='Vigo-Bold')
 
 
-def render_report(markdown):
+def render_report(markdown, destination=None, title='ViGoEmotions — Báo cáo giữa kỳ', compact=False):
     styles = getSampleStyleSheet()
     for key in ['Normal','Title','Heading1','Heading2','Heading3']:
         styles[key].fontName = 'Vigo-Bold' if key != 'Normal' else 'Vigo'
     styles['Normal'].fontSize=9;styles['Normal'].leading=14
     styles['Normal'].spaceAfter=7
+    if compact:
+        styles['Normal'].leading=13;styles['Normal'].spaceAfter=6
+        for name,size,leading in [('Heading1',13,17),('Heading2',10.5,14),('Heading3',10,13)]:
+            styles[name].fontSize=size;styles[name].leading=leading
+            styles[name].spaceBefore=9;styles[name].spaceAfter=5
+            styles[name].keepWithNext=True
     small = ParagraphStyle('TableVigo',parent=styles['Normal'],fontSize=7,leading=10,spaceAfter=0)
     story=[]; lines=markdown.splitlines();i=0
     while i<len(lines):
@@ -66,20 +72,21 @@ def render_report(markdown):
             while i<len(lines) and lines[i].strip().startswith('|'):
                 cells=[v.strip() for v in lines[i].strip().strip('|').split('|')]
                 if not all(re.fullmatch(r'[-: ]+',v) for v in cells):
-                    rows.append([Paragraph(rich(v),small) for v in cells])
+                    rows.append([Paragraph(rich(v.replace('_',' ') if compact and not rows else v),small) for v in cells])
                 i+=1
             t=Table(rows,colWidths=[495/len(rows[0])]*len(rows[0]),repeatRows=1,hAlign='LEFT')
             t.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#e4f0f4')),
                 ('VALIGN',(0,0),(-1,-1),'TOP'),('LINEBELOW',(0,0),(-1,0),.5,colors.HexColor('#185d78')),
                 ('ROWBACKGROUNDS',(0,1),(-1,-1),[colors.white,colors.HexColor('#f6f8fa')]),
                 ('LEFTPADDING',(0,0),(-1,-1),5),('RIGHTPADDING',(0,0),(-1,-1),5),
-                ('TOPPADDING',(0,0),(-1,-1),5),('BOTTOMPADDING',(0,0),(-1,-1),5)]))
+                ('TOPPADDING',(0,0),(-1,-1),3 if compact else 5),('BOTTOMPADDING',(0,0),(-1,-1),3 if compact else 5)]))
             story.extend([t,Spacer(1,10)]);continue
         image_match=re.fullmatch(r'!\[(.*?)\]\((.*?)\)',line)
         if image_match:
             caption,file=image_match.groups();p=REPORTS/file
             width,height=ImageReader(str(p)).getSize();scale=min(495/width,340/height)
-            story.extend([Image(str(p),width*scale,height*scale),Paragraph(rich(caption),small),Spacer(1,10)])
+            group=[Image(str(p),width*scale,height*scale),Paragraph(rich(caption),small),Spacer(1,10)]
+            story.extend([KeepTogether(group)] if compact else group)
         else:
             level=len(line)-len(line.lstrip('#'))
             key={1:'Title',2:'Heading1',3:'Heading2'}.get(level,'Normal')
@@ -95,9 +102,9 @@ def render_report(markdown):
         c.drawString(50,28,'ViGoEmotions • ATI 2026 • Midterm | validation results')
         c.drawRightString(545,28,str(doc.page))
         c.restoreState()
-    doc=SimpleDocTemplate(str(REPORTS/'midterm_report.pdf'),pagesize=(595,842),
+    doc=SimpleDocTemplate(str(destination or REPORTS/'midterm_report.pdf'),pagesize=(595,842),
                           leftMargin=50,rightMargin=50,topMargin=45,bottomMargin=48,
-                          title='ViGoEmotions — Báo cáo giữa kỳ')
+                          title=title)
     doc.build(story,onFirstPage=footer,onLaterPages=footer)
 
 

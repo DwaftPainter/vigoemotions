@@ -4,7 +4,7 @@ Final hiện theo **28 class gồm Neutral**, checkpoint PhoBERT epoch 15: [thi�
 
 **Nguồn chính hiện tại là Kaggle 20 epoch, notebook 08/09 executed.**
 
-1. [Báo cáo](midterm_report.pdf) / [Markdown](midterm_report.md).
+1. Báo cáo Midterm tiếng Anh: [PDF](midterm_report.pdf) / [Word DOCX](midterm_report.docx) / [Markdown](midterm_report.md). Bản tiếng Việt gốc: [PDF](midterm_report_vi.pdf) / [Markdown](midterm_report_vi.md).
 2. [15 slide tiếng Anh, bảng Q1–Q4 tại slide 10–11](midterm_slides.pdf) / [speaker notes](midterm_slides.md).
 3. [Kết quả, Q1–Q5 và evidence mới](kaggle_equal20_2026-11-05/README.md).
 4. [Script tiếng Anh + Q&A](../docs/midterm_presentation_en.md) / [PDF](../docs/midterm_presentation_en.pdf).
@@ -16,5 +16,7 @@ Các bảng EDA trong `tables/label_frequency.csv`, `dataset_summary.csv`, `text
 Snapshot `midterm_2026-11-04/`, `pre_midterm*`, lượt local và các tài liệu theo ngày trước đây đã chuyển vào [archive/reports/](../archive/README.md). Các bảng **model** trong tables/ và run JSON ở reports root vẫn phục vụ script/test lịch sử. Không dùng điểm trong các nguồn đó cho báo cáo hiện tại. EDA dùng chung vẫn giữ nguyên; toàn bộ phân tích model hiện tại ở kaggle_equal20_2026-11-05/.
 
 Lệnh build chính: `python scripts/import_equal20_results.py`, sau đó `python scripts/build_report.py`. Không train lại, không chấm test và không ghi đè artifact lịch sử.
+
+Để dựng riêng bản dịch Midterm tiếng Anh từ `midterm_report_vi.md` và các hình hiện có, chạy `python scripts/build_midterm_english.py`. Lệnh xuất Markdown/PDF/DOCX, đối chiếu 12 bảng số liệu, 6 case IDs và 5 hình với bản tiếng Việt; [verification](midterm_report_verification.json) ghi hashes nguồn và đầu ra. Chỉnh phần tiếng Anh ở [template](../docs/midterm_report_en_template.md). Các kế hoạch và việc chờ xử lý trong bản dịch mô tả thời điểm Midterm, tách khỏi kết quả Final.
 
 Slide 10–11 đã được thay bằng bốn bảng Q1–Q4 theo yêu cầu, không còn hai trang bảng riêng ở cuối. Các slide khác và toàn bộ speaker notes đối chiếu nguyên văn với snapshot `kaggle_equal20_2026-11-05/slides.json`. Ghi chú vị trí bảng nằm trong script. Build riêng presentation bằng `python scripts/build_equal20_presentation.py`; bố cục ở [midterm_slide_design.json](midterm_slide_design.json), kiểm chứng ở [midterm_presentation_verification.json](midterm_presentation_verification.json).

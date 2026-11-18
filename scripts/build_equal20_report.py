@@ -305,8 +305,10 @@ Lệnh tái tạo: python scripts/import_equal20_results.py; python scripts/buil
 
 [4] scikit-learn, PyTorch, Hugging Face Transformers và VnCoreNLP; phiên bản, revision và cấu hình theo manifest/run JSON trong evidence của study này.
 '''
-    (ROOT/'reports/midterm_report.md').write_text(text)
-    register_fonts(); render_report(text)
+    (ROOT/'reports/midterm_report_vi.md').write_text(text)
+    register_fonts(); render_report(text, destination=ROOT/'reports/midterm_report_vi.pdf')
+    from build_midterm_english import build as build_english
+    build_english()
     from build_equal20_presentation import build_presentation
     build_presentation()
     evidence_readme = '''# Evidence Kaggle 20 epoch — kết quả chính midterm
@@ -327,7 +329,7 @@ Mọi model được chấm lại trên validation. Tham số/thời gian lấy 
 - `analysis/27_emotion27/` và `analysis/28_emotion27/`: evaluator chung trên 27 cột, đúng nguồn NPZ từng study; không ghi đè bảng lịch sử.
 - `phobert28_error_review.csv`: sáu ca mới, AI hỗ trợ đọc; nhóm cần xác nhận.
 - `evidence/`, `provenance.json`: dữ liệu dự đoán ID-only và kiểm chứng nguồn.
-- Báo cáo chính ở `../midterm_report.md`; `figures/`, `slides.json` giữ hình và dữ liệu slide, không tạo thêm bản báo cáo trùng.
+- Báo cáo tiếng Anh ở `../midterm_report.md`, bản tiếng Việt ở `../midterm_report_vi.md`; `figures/`, `slides.json` giữ hình và dữ liệu slide.
 
 Build: `python scripts/import_equal20_results.py`, sau đó `python scripts/build_report.py`. Không train, không chấm test và không dùng metric các lượt ít epoch. Hai ZIP riêng tư gốc không được commit.
 ''')
