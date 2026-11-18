@@ -1,0 +1,21 @@
+{
+  "selected_rows": 62,
+  "unique_comments": 62,
+  "completed_rows": 0,
+  "pending_rows": 62,
+  "reviewer_count": 0,
+  "audit_complete": false,
+  "completion_basis": "Human-declared fields; the validator does not independently verify human identity or reading",
+  "completed_categories": {},
+  "selected_core_fn": 20,
+  "completed_core_fn": 0,
+  "fn_population_shortfall": 0,
+  "selected_core_fp": 20,
+  "completed_core_fp": 0,
+  "fp_population_shortfall": 0,
+  "status": "prepared_pending_human_reviews",
+  "worksheet_sha256": "0c8895331c393e1b5620c62e6072792b7f70cfc03a8ed016b67b4a6c56f618e7",
+  "cases_sha256": "32870e80551034b6c07754c5d530f690693f91ea1509e2822cbce9aa77248d7a",
+  "sampling_design_sha256": "10e6edac1e575bec960417aa3893f933cb8fa30c62c8a8e5c715f3939173a38c",
+  "inference_performed": false
+}

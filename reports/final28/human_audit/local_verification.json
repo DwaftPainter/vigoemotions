@@ -1,0 +1,30 @@
+{
+  "checked_on": "2026-11-16T04:25:07.640270+00:00",
+  "status": "prepared_pending_human_reviews",
+  "selected_rows": 62,
+  "unique_comments": 62,
+  "core_fn_pairs": 20,
+  "core_fp_pairs": 20,
+  "supplemental_rows": 22,
+  "completed_human_reviews": 0,
+  "selection": "Frozen protocol hash ordering; top three co-occurrence pairs selected from retained train only",
+  "selected_targets_scores_and_cardinalities_match_saved_test_npz": true,
+  "raw_text_private_and_gitignored": true,
+  "public_cases_have_no_raw_text_or_review_notes": true,
+  "worksheet": "data/final28/human_audit/review_private.csv",
+  "worksheet_sha256": "0c8895331c393e1b5620c62e6072792b7f70cfc03a8ed016b67b4a6c56f618e7",
+  "readonly_imported_artifacts_unchanged": 21,
+  "protected_existing_source_evidence_files_unchanged": 141,
+  "audit_tests": {
+    "total": 14,
+    "passed": 14
+  },
+  "full_suite": {
+    "total": 152,
+    "passed": 150,
+    "errors": 2,
+    "skipped": 0,
+    "reason": "Two pre-existing local neural tests require torch, which is not installed"
+  },
+  "actual_prepare_and_check_commands": "PASS; no reviews were fabricated and no inference performed"
+}

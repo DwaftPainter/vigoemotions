@@ -1,0 +1,66 @@
+{
+  "seed": 42,
+  "primary_decoder": "per_label",
+  "cooccurrence_pairs": [
+    {
+      "label_id_a": 20,
+      "label_id_b": 21,
+      "label_a": "disappointment",
+      "label_b": "sadness",
+      "train_count": 904,
+      "eligible_test_comments": 219,
+      "available_after_cross_pair_dedup": 219,
+      "selected_comments": 5
+    },
+    {
+      "label_id_a": 24,
+      "label_id_b": 25,
+      "label_a": "anger",
+      "label_b": "annoyance",
+      "train_count": 699,
+      "eligible_test_comments": 174,
+      "available_after_cross_pair_dedup": 174,
+      "selected_comments": 5
+    },
+    {
+      "label_id_a": 21,
+      "label_id_b": 22,
+      "label_a": "sadness",
+      "label_b": "grief",
+      "train_count": 620,
+      "eligible_test_comments": 139,
+      "available_after_cross_pair_dedup": 138,
+      "selected_comments": 5
+    }
+  ],
+  "core": {
+    "FN": {
+      "available_pairs": 1467,
+      "selected_pairs": 20,
+      "selected_unique_comments": 20,
+      "population_shortfall": 0
+    },
+    "FP": {
+      "available_pairs": 1907,
+      "selected_pairs": 20,
+      "selected_unique_comments": 20,
+      "population_shortfall": 0
+    }
+  },
+  "high_cardinality": {
+    "available_comments": 66,
+    "selected_comments": 5
+  },
+  "selected_rows": 62,
+  "unique_comments": 62,
+  "mixed_neutral_rows": 3,
+  "neutral_target_rows": 2,
+  "supplemental_selection": "Neutral FN/FP: first same-kind hash-ranked case if absent from core; mixed: first 42|mixed_neutral|ID case only if absent overall",
+  "protocol_id": "vigoemotions_final_rq1_28_v2",
+  "preparation_script_sha256": "52c348a2e59f659108b6b22bf7d6acbf4c392b6e0e665700ff83edc2860b690a",
+  "config_sha256": "9147fc246fb72c914e2cfd370215a3e767cf4f598e07538c2cdab00f04f56a16",
+  "test_predictions_sha256": "842ee969a876d85de9b1e4c0900f0138ec3de53114fdf68bed32fcbda7fc9547",
+  "pre_test_lock_sha256": "3e3cd31f61a77db654abd96aeeee6af020d6e6b282d0ca71a7ee699e81a893a9",
+  "private_worksheet": "data/final28/human_audit/review_private.csv",
+  "raw_text_in_public_outputs": false
+}
