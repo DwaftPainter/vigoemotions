@@ -1,12 +1,10 @@
-# Kết quả chính — Kaggle 20 epoch, 05/11/2026
+# Baseline Midterm dùng khi ôn Final
 
-- `model_comparison.csv`: sáu model, metric đủ tập nhãn, epoch, tham số, thời gian.
-- `emotion27_comparison.csv`, `paired_emotion27_delta.csv`: đối chiếu cùng 27 cảm xúc.
-- `per_label_metrics.csv`, `neutral_metrics.csv`: mọi nhãn và Neutral riêng.
-- `label_extremes.csv`, `frequency_f1.csv`, `pair_preservation.csv`, `neural_style_comparison.csv`, `threshold_sensitivity.csv`: Q1–Q5 tính lại trên study 27 mới.
-- `analysis/27_emotion27/` và `analysis/28_emotion27/`: evaluator chung trên 27 cột, đúng nguồn NPZ từng study; không ghi đè bảng lịch sử.
-- `phobert28_error_review.csv`: sáu ca mới, AI hỗ trợ đọc; nhóm cần xác nhận.
-- `evidence/`, `provenance.json`: dữ liệu dự đoán ID-only và kiểm chứng nguồn.
-- Báo cáo tiếng Anh ở `../midterm_report.md`, bản tiếng Việt ở `../midterm_report_vi.md`; `figures/`, `slides.json` giữ hình và dữ liệu slide.
+Nguồn là hai Kaggle study 27/28, notebook08/09, seed42; neural đều đủ20 epoch. Tất cả model metrics ở đây là validation tại0.5, không phải test Final. [Report Midterm](../midterm_report.pdf) và [bộ ôn](../../docs/oral_defence/02_protocol_results_vi.md) giải thích ý nghĩa.
 
-Build: `python scripts/import_equal20_results.py`, sau đó `python scripts/build_report.py`. Không train, không chấm test và không dùng metric các lượt ít epoch. Hai ZIP riêng tư gốc không được commit.
+- [Model comparison](model_comparison.csv): sáu model, scope, epoch, tham số và thời gian.
+- [Cùng27 emotions](paired_emotion27_delta.csv), [Neutral riêng](neutral_metrics.csv), [per-label](per_label_metrics.csv).
+- [Q1](label_extremes.csv), [Q2](frequency_f1.csv), [Q3](pair_preservation.csv), [Q4](neural_style_comparison.csv), [Q5](threshold_sensitivity.csv).
+- [Evidence](evidence/README.md), [provenance](provenance.json), [verification](verification.json), [figures](figures/).
+
+Phần analysis chi tiết lặp lại và slide snapshot được bỏ trên nhánh ôn. Full source/notebooks và builders ở nhánh `feature/final28-report`, commit `289f2fb`. Giữ CSV/NPZ/run metadata gốc để không trộn với các run ít epoch.

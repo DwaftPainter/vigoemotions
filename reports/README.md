@@ -1,22 +1,9 @@
-# Đọc kết quả ViGoEmotions
+# Bằng chứng dùng để ôn oral defence
 
-Final hiện theo **28 class gồm Neutral**, checkpoint PhoBERT epoch 15: [thiết kế v2](../docs/final_protocol.md), [checklist](../tasks/todo.md), [pipeline](../docs/final_execution.md). **Paper tiếng Anh hoàn chỉnh:** [PDF](final_report.pdf), [Word DOCX](final_report.docx), [Markdown](final_report.md), [verification](final_report_verification.json). [Artifacts validation/test](final28/README.md), [phân tích tiếng Việt](final28/results_discussion.md), bảng và hình nằm trong `final28/`; báo đủ all28/emotion27/Neutral. Audit 62 ca là AI-assisted, không có independent human adjudication; thông tin nhóm và oral defence còn bổ sung. Prototype 27 và workflow notebook 03–06 đã có [archive](../archive/README.md).
+- [Paper Final PDF](final_report.pdf) / [Markdown](final_report.md): kết luận và phân tích đã hoàn thành.
+- [Report Midterm PDF](midterm_report.pdf) / [Markdown](midterm_report.md): baseline validation 27/28; là snapshot trước Final.
+- [Final28](final28/README.md): test scores, thresholds, bảng, hình và case notes.
+- [Kaggle equal20](kaggle_equal20_2026-11-05/README.md): nguồn Midterm để giải thích checkpoint và ba mô hình.
+- [Bộ ôn mới](../README.md): thứ tự đọc và PDF.
 
-**Nguồn chính hiện tại là Kaggle 20 epoch, notebook 08/09 executed.**
-
-1. Báo cáo Midterm tiếng Anh: [PDF](midterm_report.pdf) / [Word DOCX](midterm_report.docx) / [Markdown](midterm_report.md). Bản tiếng Việt gốc: [PDF](midterm_report_vi.pdf) / [Markdown](midterm_report_vi.md).
-2. [15 slide tiếng Anh, bảng Q1–Q4 tại slide 10–11](midterm_slides.pdf) / [speaker notes](midterm_slides.md).
-3. [Kết quả, Q1–Q5 và evidence mới](kaggle_equal20_2026-11-05/README.md).
-4. [Script tiếng Anh + Q&A](../docs/midterm_presentation_en.md) / [PDF](../docs/midterm_presentation_en.pdf).
-
-`kaggle_equal20_2026-11-05/model_comparison.csv` có đủ sáu model và metric đúng tập nhãn; `paired_emotion27_delta.csv` dùng cùng 27 cảm xúc; `neutral_metrics.csv` chỉ Neutral. `provenance.json` ghi checksum, môi trường và đối chiếu LF/CRLF. Evidence chỉ chứa ID/nhãn/xác suất/metadata, không có raw text hoặc trọng số.
-
-Các bảng EDA trong `tables/label_frequency.csv`, `dataset_summary.csv`, `text_lengths.csv`, train co-occurrence/correlation và hình EDA vẫn hợp lệ cho cùng dữ liệu. `split_audit/` là bằng chứng phân bố/toàn vẹn, không chứng nhận thuật toán stratification gốc.
-
-Snapshot `midterm_2026-11-04/`, `pre_midterm*`, lượt local và các tài liệu theo ngày trước đây đã chuyển vào [archive/reports/](../archive/README.md). Các bảng **model** trong tables/ và run JSON ở reports root vẫn phục vụ script/test lịch sử. Không dùng điểm trong các nguồn đó cho báo cáo hiện tại. EDA dùng chung vẫn giữ nguyên; toàn bộ phân tích model hiện tại ở kaggle_equal20_2026-11-05/.
-
-Lệnh build chính: `python scripts/import_equal20_results.py`, sau đó `python scripts/build_report.py`. Không train lại, không chấm test và không ghi đè artifact lịch sử.
-
-Để dựng riêng bản dịch Midterm tiếng Anh từ `midterm_report_vi.md` và các hình hiện có, chạy `python scripts/build_midterm_english.py`. Lệnh xuất Markdown/PDF/DOCX, đối chiếu 12 bảng số liệu, 6 case IDs và 5 hình với bản tiếng Việt; [verification](midterm_report_verification.json) ghi hashes nguồn và đầu ra. Chỉnh phần tiếng Anh ở [template](../docs/midterm_report_en_template.md). Các kế hoạch và việc chờ xử lý trong bản dịch mô tả thời điểm Midterm, tách khỏi kết quả Final.
-
-Slide 10–11 đã được thay bằng bốn bảng Q1–Q4 theo yêu cầu, không còn hai trang bảng riêng ở cuối. Các slide khác và toàn bộ speaker notes đối chiếu nguyên văn với snapshot `kaggle_equal20_2026-11-05/slides.json`. Ghi chú vị trí bảng nằm trong script. Build riêng presentation bằng `python scripts/build_equal20_presentation.py`; bố cục ở [midterm_slide_design.json](midterm_slide_design.json), kiểm chứng ở [midterm_presentation_verification.json](midterm_presentation_verification.json).
+Nhánh ôn bỏ các output lịch sử và công cụ dựng report/nộp; dùng nhánh `feature/final28-report` tại `289f2fb` để truy lại bản đầy đủ. Các file bảng, scores, protocol, config và code còn giữ không đổi giá trị.

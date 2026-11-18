@@ -1,72 +1,50 @@
-# ViGoEmotions — ATI Final 2026
+# ViGoEmotions — Ôn Final oral defence
 
-Midterm đã hoàn tất. Final theo quyết định nhóm dùng **PhoBERT 28 nhãn (gồm Neutral), checkpoint epoch 15**: fixed 0,5, global tuned và per-label tuned; tối ưu trên validation all28 Macro-F1, khóa trước test; báo thêm emotion27 projection và Neutral riêng. **Validation reproduction và test Final đã hoàn tất**, artifacts Kaggle được nhập và kiểm chứng ngày 16/11.
+Nhánh **`study/final-oral-defence`** dành cho ôn kiến thức và luyện bảo vệ Final RQ1 trên PhoBERT 28 outputs. Bản nghiên cứu đầy đủ ở nhánh **`feature/final28-report`**, commit **`289f2fb`**. Nhánh nộp bài sẽ tạo sau từ nguồn đầy đủ, không từ bản đã dọn này.
 
-Test all28 Macro-F1: fixed **0,589964**, global 0,4 **0,591254**, per-label **0,585415**. Lợi ích per-label trên validation không giữ được trên test; fixed có Hamming Loss thấp nhất. **Paper tiếng Anh đã hoàn thiện:** [PDF 11 trang](reports/final_report.pdf) / [Word DOCX](reports/final_report.docx) / [Markdown](reports/final_report.md). [Kết quả và provenance](reports/final28/README.md), [phân tích tiếng Việt](reports/final28/results_discussion.md). Audit 62 ca được ghi rõ AI-assisted theo lựa chọn của nhóm; còn bổ sung thông tin định danh, gói nộp và oral defence.
+## Bắt đầu ôn
 
-- [Protocol Final](docs/final_protocol.md), [config](configs/final_thresholds.json), [train-only tiers](docs/final_label_tiers.csv).
-- [Chạy pipeline Final](docs/final_execution.md), [notebook validation Kaggle 10](notebooks/10_kaggle_final_validation.ipynb). Tạo `vigoemotions_final28_code.zip` bằng `.venv/bin/python scripts/package_final.py`; notebook dừng sau validation/lock. Dùng ZIP weights **28 nhãn**, output ở `reports/final28/`.
-- [Checklist việc cần làm](tasks/todo.md) và [kế hoạch Final/oral defence](tasks/plan.md).
-- [Mục lục archive](archive/README.md): notebook 03–06 và tài liệu chuẩn bị cũ đã được chuyển khỏi thư mục làm việc chính.
+| Thứ tự | Nội dung | Markdown | PDF |
+| --- | --- | --- | --- |
+| 00 | Tra cứu nhanh: kết luận, số cần nhớ, lỗi dễ nhầm | [Đọc](docs/oral_defence/00_quick_revision_vi.md) | [PDF](docs/oral_defence/00_quick_revision_vi.pdf) |
+| 01 | ML/NLP, ba mô hình, sigmoid/BCE và metrics | [Đọc](docs/oral_defence/01_foundations_vi.md) | [PDF](docs/oral_defence/01_foundations_vi.pdf) |
+| 02 | Protocol, kết quả, Neutral, tiers/cardinality và code map | [Đọc](docs/oral_defence/02_protocol_results_vi.md) | [PDF](docs/oral_defence/02_protocol_results_vi.pdf) |
+| 03 | 30 câu Q&A và câu trả lời ngắn tiếng Anh | [Đọc](docs/oral_defence/03_questions_answers_vi.md) | [PDF](docs/oral_defence/03_questions_answers_vi.pdf) |
+| 04 | Tính tay, trace decoder và hai buổi mock defence | [Đọc](docs/oral_defence/04_practice_vi.md) | [PDF](docs/oral_defence/04_practice_vi.pdf) |
 
-## Baseline midterm dùng cho Final
+**Có 30 phút:** đọc 00, tự nói opening, trả lời Q11/Q20/Q21/Q26 và làm bài metric trong 04. **Có 2 giờ:** đọc 01–02, chọn 10 câu Q&A và mở code theo map. **Có hai buổi:** luyện theo 04, đổi vai và ghi những chỗ chưa giải thích được. Đây là lịch ôn gợi ý; thời lượng và quy định oral chính thức chưa được xác nhận.
 
-**Baseline midterm: hai lượt Kaggle 08/09 đã hoàn tất, BiGRU và PhoBERT đều 20 epoch cho cả 27/28 nhãn.** Báo cáo midterm dùng duy nhất sáu kết quả này; các lượt ít epoch là lịch sử. Các metric trong bảng dưới là validation tại ngưỡng 0,5, seed 42; kết quả test Final được báo riêng ở trên.
+## Kết quả cần nhớ
 
-| Mô hình | Macro-F1 27 nhãn | Macro-F1 28 nhãn |
-| --- | --- | --- |
-| TF-IDF + OvR LR | 0.2388 | 0.2310 |
-| BiGRU | 0.4220 | 0.4086 |
-| PhoBERT | 0.5974 | 0.5783 |
+Final test **all28** Macro-F1: fixed **0.589964**, global 0.4 **0.591254**, per-label **0.585415**. Global tăng **0.1289 pp**, per-label giảm **0.4549 pp** so với fixed. Fixed có Hamming Loss thấp nhất. Checkpoint là epoch15 từ training đủ 20 epoch, seed42; checkpoint criterion gốc emotion27 khác objective threshold all28.
 
-Khi chiếu model 28 về cùng 27 cảm xúc, PhoBERT đạt **0,583580**, thấp hơn model 27 (**0,597410**) khoảng **1,383 điểm phần trăm**. Lượt đo này chưa cho thấy thêm Neutral cải thiện 27 cảm xúc. Neutral F1 của PhoBERT là **0,4369** (45 TP, 67 FP, 49 FN). Một seed chưa đủ kết luận nhân quả hoặc ý nghĩa thống kê.
+Đọc [paper Final](reports/final_report.pdf) / [Markdown](reports/final_report.md) khi cần lập luận đầy đủ. [Report Midterm tiếng Anh](reports/midterm_report.pdf) / [Markdown](reports/midterm_report.md) chỉ cung cấp bối cảnh baseline; các kế hoạch pending trong đó mô tả thời điểm Midterm. [Đề ViGoEmotions](docs/02-vigoemotions-vietnamese-emotion.pdf) và [student guide](docs/student-guide.pdf) là nguồn yêu cầu.
 
-## Mở nội dung để thuyết trình
+## Cấu trúc nhánh đã dọn
 
-- Báo cáo Midterm tiếng Anh: [PDF](reports/midterm_report.pdf) / [Word DOCX](reports/midterm_report.docx) / [Markdown](reports/midterm_report.md). Bản tiếng Việt gốc: [PDF](reports/midterm_report_vi.pdf) / [Markdown](reports/midterm_report_vi.md).
-- [PDF: 15 slide, bảng Q1–Q4 tại slide 10–11](reports/midterm_slides.pdf) / [nội dung và speaker notes](reports/midterm_slides.md).
-- [Script tiếng Anh 8–9 phút + Q&A](docs/midterm_presentation_en.md) / [PDF để luyện nói](docs/midterm_presentation_en.pdf). Bản giải thích tiếng Việt vẫn ở [lời dẫn ôn tập](archive/docs/midterm_presentation_2026-11-05.md).
-- [Bảng sáu model, Q1–Q5 và evidence](reports/kaggle_equal20_2026-11-05/README.md).
-- [Cẩm nang giải thích ba mô hình](docs/VIGOEMOTIONS_3_MODELS_STUDY_GUIDE_VI.pdf) / [Markdown](docs/VIGOEMOTIONS_3_MODELS_STUDY_GUIDE_VI.md).
-- [Trạng thái trước nộp](archive/docs/midterm_readiness_2026-11-05.md), [thông tin nhóm cần bổ sung](docs/team_information.md).
+- `docs/oral_defence/`: năm bộ ôn Markdown/PDF, templates để sửa và verification.
+- `reports/final28/`: scores, bảng, hình, ngưỡng/lock và case notes đã hoàn thành; đọc qua [index](reports/final28/README.md).
+- `reports/kaggle_equal20_2026-11-05/`: evidence baseline Midterm cần để giải thích model/checkpoint; [index](reports/kaggle_equal20_2026-11-05/README.md).
+- `scripts/`: source cần đọc khi bảo vệ và builder tài liệu ôn. `configs/`, `splits/` giữ protocol và IDs gốc.
+- `tests/`: checks dùng cho nội dung/PDF ôn và decoder được giữ nguyên. Đây là phạm vi riêng, không phải full suite của nhánh nghiên cứu.
 
-## Nguồn chạy và kiểm chứng
+Archive, extensions chưa hoàn tất, output model cũ, DOCX và công cụ dựng/nộp không dùng để ôn đã bỏ khỏi nhánh này. Một file snapshot hashes của prototype27 được giữ vì protocol frozen có link tới nó. [Cleanup manifest](docs/oral_defence/cleanup_manifest.json) ghi từng file đã bỏ; [source manifest](docs/oral_defence/source_manifest.json) ghi hash file gốc được giữ. File private đang Git ignore không bị xóa và không thuộc nội dung nhánh chia sẻ.
 
-- [Notebook 08 template](notebooks/08_kaggle_equal_20ep_27_labels.ipynb) / [08 executed, giữ output](notebooks/08_kaggle_equal_20ep_27_labels_executed.ipynb).
-- [Notebook 09 template](notebooks/09_kaggle_equal_20ep_28_labels.ipynb) / [09 executed, giữ output](notebooks/09_kaggle_equal_20ep_28_labels_executed.ipynb).
-- Hai ZIP private ở project root: `vigoemotions_kaggle_equal20_27labels_private_results.zip` và bản `28labels`; không commit checkpoint/vocabulary.
-- [Giao thức Kaggle](docs/kaggle_equal_epochs.md), [profile và lệnh tái lập](docs/reproducibility_profiles.md), [provenance](reports/kaggle_equal20_2026-11-05/provenance.json).
+## Dựng lại PDF ôn
 
-Đã tính lại metric từ cả sáu NPZ, xác minh cùng ID/targets/label order, đủ history 20 epoch, checkpoint selection và file trọng số trong ZIP. Hai notebook đều chạy đủ 12 cell code, không có error output. Source/config/CSV của lượt 28 có một số checksum khác do CRLF; từng hash đã được chứng minh khớp biến thể LF/CRLF chính xác của cùng nội dung local. Manifest gốc được giữ nguyên.
-
-## Dữ liệu và preprocessing
-
-20.664 bình luận nguồn; split 16.531/2.066/2.067. Loại một mẫu train trùng test → 16.530 mẫu train thực dùng. Xin quyền dữ liệu từ dataset ViGoEmotions và đặt CSV `id,text,labels` tại `data/train.csv`, `val.csv`, `test.csv`. Không công khai CSV/bình luận gốc, vocabulary hoặc checkpoint. Git ignore data và ZIP riêng tư.
-
-Giữ split được cấp, chỉ fit vocabulary/IDF trên train. Chuẩn hóa NFC/khoảng trắng, giữ dấu và phủ định. 27 output bỏ Neutral; 28 output giữ ID 27 và mixed annotation. [Mapping](docs/label_mapping.md), [EDA](docs/dataset_check.md) và [audit split 07](notebooks/07_split_distribution_audit.ipynb) vẫn dùng cùng dữ liệu. Audit phân bố không chứng minh thuật toán stratification gốc; còn xác nhận yêu cầu split với giảng viên.
-
-## Tái tạo nội dung, không train lại
-
-Trong môi trường local có dependencies theo `requirements.txt`:
+Cài các dependency dựng tài liệu trong `requirements-study.txt`, rồi chạy từ project root:
 
 ```bash
-.venv/bin/python scripts/import_equal20_results.py
-.venv/bin/python scripts/build_report.py
-.venv/bin/python scripts/build_study_guide.py
+.venv/bin/python scripts/build_oral_defence.py
+.venv/bin/python -m unittest discover -s tests -p test_oral_defence.py -v
 ```
 
-Tạo riêng slide/script tiếng Anh từ evidence đã kiểm chứng: `.venv/bin/python scripts/build_equal20_presentation.py`. Lệnh build report đầy đủ cũng giữ slide bằng tiếng Anh.
+Sửa nội dung tại `docs/oral_defence/templates/`, không sửa trực tiếp các bảng số liệu sinh ra. Builder dùng CSV/JSON đã lưu, kiểm source hashes và xuất năm cặp Markdown/PDF cùng [verification](docs/oral_defence/verification.json). Không cần torch, GPU, raw CSV hoặc private weights để dựng tài liệu; builder không train hay inference. `requirements.txt` / `requirements-colab.txt` giữ từ nguồn đầy đủ để tra môi trường nghiên cứu, không phải yêu cầu tối thiểu của notes.
 
-Tạo riêng **paper Final tiếng Anh** từ artifacts đã khóa: `.venv/bin/python scripts/build_final_paper.py`. Chỉnh nội dung ở [template](docs/final_paper_template.md), thông tin tác giả ở [metadata](docs/final_paper_metadata.json), references ở [BibTeX](docs/final_references.bib). Builder xuất Markdown/PDF/DOCX cùng [verification](reports/final_report_verification.json), kiểm source hashes và không chạy model. Lệnh `build_report.py` phía trên phục vụ báo cáo midterm lịch sử.
+Protocol/config frozen có status trước execution; trạng thái hoàn thành xem artifacts Final. Không chỉnh ngưỡng, rerun inference hoặc tự suy thông tin nhóm từ tên Git author khi ôn.
 
-Bản thiết kế hiện tại thay slide 10 bằng bảng Q1/Q2 và slide 11 bằng bảng Q3/Q4 theo yêu cầu; 13 slide còn lại và toàn bộ lời nói đã chốt được giữ nguyên. Snapshot nội dung gốc là `reports/kaggle_equal20_2026-11-05/slides.json`. Deck có 15 slide, không có trang bảng lặp ở cuối; vị trí bảng được ghi chú trong script. Renderer không ghi lại evidence; layout tự sinh ở `reports/midterm_slide_design.json` và kiểm chứng ở `reports/midterm_presentation_verification.json`.
+Với môi trường nghiên cứu đã có numpy/pandas/scikit-learn theo `requirements.txt`, chạy `.venv/bin/python -m unittest discover -s tests -v` để kiểm cả decoder tests được giữ và ba notes tests. Đây là 32 tests áp dụng cho nhánh ôn, không phải bộ đầy đủ của nhánh nguồn.
 
-Import cần hai ZIP, notebook executed và CSV nguồn. Evidence/tổng hợp mới nằm riêng tại `reports/kaggle_equal20_2026-11-05/`; không ghi đè bảng model các lượt cũ. Build report thiếu evidence mới sẽ dừng, không tự quay về số cũ. Cẩm nang kiểm tra nguyên văn các đoạn trích source trước khi render.
+## Quay lại nguồn đầy đủ
 
-Để train lượt mới: `.venv/bin/python scripts/package_kaggle_equal_epochs.py`, upload ZIP code và ba CSV nguồn thành hai Dataset Private, import notebook 08 hoặc 09, bật GPU + Internet. Chạy theo [hướng dẫn Kaggle](docs/kaggle_equal_epochs.md). Không cần train lại để dùng các kết quả hiện có.
-
-## Giới hạn và việc còn lại
-
-Điền tên/MSSV/phân công và thông tin lớp trước khi nộp; làm rõ việc chấp nhận supplied split. Final đã có metric test, paper/PDF và AI-assisted audit đủ 62 ca; không có independent human adjudication và giới hạn này được công bố trong paper. Oral defence và gói nộp còn làm. Weights và thresholds giữ nguyên sau đánh giá; không có sweep learning rate. Một seed và style heuristic còn hạn chế.
-
-Notebook 01/02/07 phục vụ kiểm tra dữ liệu, EDA và audit split; notebook 03–06 nằm trong [archive/notebooks](archive/notebooks/), config 25/20 cũ trong [archive/configs](archive/configs/). Các snapshot và tài liệu chuẩn bị cũ nằm trong [archive/](archive/README.md). Config/run JSON và bảng model cũ còn được script/test tham chiếu được giữ nguyên vị trí; kết quả chính chỉ lấy từ thư mục Kaggle 20 epoch. [Mục lục reports](reports/README.md).
+Dùng nhánh `feature/final28-report` để làm submission hoặc chạy workflow đầy đủ. Commit `289f2fb` giữ toàn bộ nội dung trước khi dọn; nhánh nguồn không bị thay đổi. Tài liệu ôn có thể đọc offline; công việc còn lại là nhóm luyện nói và xác nhận lịch, ngôn ngữ, thời lượng, phân công thật.
