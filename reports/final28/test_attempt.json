@@ -1,0 +1,20 @@
+{
+  "status": "completed",
+  "lock_sha256": "3e3cd31f61a77db654abd96aeeee6af020d6e6b282d0ca71a7ee699e81a893a9",
+  "attempts": 1,
+  "raw_probabilities_sha256": "417121614e8f92b59893535e1f0db7754aced8fbb57021305046b50e2f4c4c53",
+  "runtime": {
+    "device": "cuda",
+    "packages": {
+      "python": "3.13.16",
+      "torch": "2.11.0+cu130",
+      "transformers": "4.57.3",
+      "py-vncorenlp": "0.1.4",
+      "numpy": "2.1.3",
+      "safetensors": "0.8.0"
+    },
+    "segmentation": "train_neural.segmented_texts",
+    "prediction": "train_neural.predict"
+  },
+  "predictions_sha256": "842ee969a876d85de9b1e4c0900f0138ec3de53114fdf68bed32fcbda7fc9547"
+}

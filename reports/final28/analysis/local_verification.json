@@ -1,0 +1,45 @@
+{
+  "checked_on": "2026-11-16T03:49:10.703947+00:00",
+  "source_archive_sha256": "d9735a29c6500f2b527c2eff773d71665ec650c8ce6b301ef669f32acab35e73",
+  "imported_artifacts": {
+    "count": 21,
+    "all_original_member_hashes_match": true
+  },
+  "frozen_study_lock": "PASS using Study().verify_lock() after import and reporting changes",
+  "protected_existing_files": {
+    "count": 141,
+    "all_unchanged": true
+  },
+  "figures": {
+    "png_count": 4,
+    "single_page_vector_pdf_count": 4,
+    "visually_reviewed": true,
+    "provenance_hashes_match": true
+  },
+  "numeric_report_tables": {
+    "count": 7,
+    "all_match_source_csvs_to_displayed_precision": true
+  },
+  "focused_reporting_tests": {
+    "total": 4,
+    "passed": 4
+  },
+  "full_suite": {
+    "total": 138,
+    "passed": 136,
+    "errors": 2,
+    "skipped": 0,
+    "error_tests": [
+      "test_neutral_28_labels.Neutral28Tests.test_gru_real_backward_checkpoint_and_reload",
+      "test_neutral_28_labels.Neutral28Tests.test_phobert_tiny_offline_full_finetune_and_reload"
+    ],
+    "reason": "Pre-existing local torch dependency is missing; tests were not skipped or weakened"
+  },
+  "inference_performed_during_import_or_reporting": false,
+  "human_error_audit": "pending; automatic statistics do not count as completed human reviews",
+  "not_submission_ready": [
+    "human error audit",
+    "full paper and PDF",
+    "team details and oral defence"
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "status": "verified",
+  "sources_sha256": {
+    "docs/final_protocol.md": "b64ff58ebb41bb81426f83284ad8483cf2b2367afa9323a36c121b422984151f",
+    "docs/final_label_tiers.csv": "99493d5e13d20ccb4c96e25a01b8465063e3ab66cd24ed086e575f1a97f7e56d",
+    "configs/kaggle_equal_20ep.json": "4ed223ffa8f7ed3dc6656fc975c2ed74f037491e21133a4c5b7f48f34c9c6244",
+    "reports/kaggle_equal20_2026-11-05/provenance.json": "fad942a3058a5f9c57e2ceb83bb5a23b246e6ae9a06453009853d44e6308fcc5",
+    "reports/kaggle_equal20_2026-11-05/evidence/28/phobert/val_predictions.npz": "3691497855f6447375cb8c91d05a636710cd0ce5684c1f76727414e1b119b467",
+    "reports/kaggle_equal20_2026-11-05/evidence/28/manifest.json": "f64c46532399d473d291f81c152e7e15a6af4c3bb050f1ec7f5d9dfb1781a1af",
+    "reports/kaggle_equal20_2026-11-05/evidence/28/phobert/run.json": "cdad3d8c0e98ef1481f4e9617c5c65279f3e5b232da500e9a199c28d87bd3422",
+    "scripts/common.py": "976a5ccb14b0582acf82d83e775fe3f2f09a0717997344f028653f732ec1dd99",
+    "scripts/train_neural.py": "5551c9be8d4b466c43ed155cc062c45e24317054d0cd53a22a3f1ad9153eeb8a",
+    "scripts/neutral_28_labels.py": "495551e41a3aeb4a761afa8f542501cd791df8741c6145f68a8f18d62d2492c1",
+    "scripts/import_equal20_results.py": "44b6ba218aef648b71d90d393db8ed9939c875938825c0b06ebf386132c09ed9",
+    "scripts/q1_difficulty_common.py": "233b19594679c69a63b7aa9f6bb20647a38eae01bdfaf015609eece50e758e51",
+    "scripts/final_threshold_core.py": "8e1bd5431952517e80cd79889a9e2d231031a90f6d85757583f62532fb5d44ea",
+    "scripts/final_study.py": "548a4b251d17283b90c46b95199b82992190cac45dcf64f01f3cd6d19758d5a1",
+    "scripts/final_inference.py": "3e20bf25b489f4d0d2709bf7fade01a7acc144d20791c97600cae4fc39ac800a",
+    "scripts/final_thresholds.py": "a2839725fdbf4162f978b4e2a0a7dd593133b1bb8aecea778135edd9478063ed",
+    "splits/train.csv": "f3aaeeda0733d2365c54da43a616d888847f3047466fd6801b01a22f00b53c1e",
+    "splits/val.csv": "35726b954109e9424efb980001865d709bc00412fb3ec59e8e0f467c5186fb5b",
+    "splits/test.csv": "325758a8edc65457cb966fed2557e3c7b02db1965992df651cf5d2e50186e842",
+    "final_config": "9147fc246fb72c914e2cfd370215a3e767cf4f598e07538c2cdab00f04f56a16",
+    "private_source/train.csv": "9abcb2b7d9fadd9da043a3af43e8ee569f7099d87d20daf39a69e7e1a76c5624",
+    "private_source/val.csv": "d3a473a65bf10d3d07423306a4324e94c9979d42d58f6a05cceb4cc1cc4fcab0"
+  },
+  "prediction_sha256": "deeb4f68d9fec8da17664521f91a299f4865f04bc0095c974062b16fb5b30374",
+  "checkpoint_sha256": "30e09d73bd474c6c1a9d2455519af7256ce96ed12576dde9aafcff45a301c835",
+  "assets": {
+    "archive_sha256": "b753e1a764d87562334e46bbd8f91bbd8e4b5c8b176c5739d8239364ac724dd6",
+    "files_sha256": {
+      "pretrained/config.json": "dad3694ef73daf94546de78ed0f3ce8da2e32469b75fbb266382fdb9941d5928",
+      "pretrained/model.safetensors": "30e09d73bd474c6c1a9d2455519af7256ce96ed12576dde9aafcff45a301c835",
+      "tokenizer/special_tokens_map.json": "d05497f1da52c5e09554c0cd874037a083e1dc1b9cfd48034d1c717f1afc07a7",
+      "tokenizer/tokenizer_config.json": "1ab8f3d8190e83c58f68a33888cb62e8e535e99c33383f4c4e0e8531abb08051",
+      "tokenizer/added_tokens.json": "956163bbe8b0625fcc779207447308285eab218ffe0551d3e0deeae5538da326",
+      "tokenizer/bpe.codes": "9dfe53fb8abbddd3387da99641c36e00bee757a3679aad9cf0a7cdc4b30f6ef8",
+      "tokenizer/vocab.txt": "dffd7543c401fb6567253ae7c3313004532c33d062525250049c616544bad777",
+      "vncorenlp/VnCoreNLP-1.2.jar": "9e2811cdbc2ddfc71d04be5dc36e185c88dcd1ad4d5d69e4ff2e1369dccf7793",
+      "vncorenlp/models/wordsegmenter/wordsegmenter.rdr": "9e62f96bd93e37a24f364238e8d8ae986fa5dad6dbc9f4eae622ab3651b7fa06",
+      "vncorenlp/models/wordsegmenter/vi-vocab": "0a47c5b55bbce163029d37730a67b9479740388695c29c106c112b815613eaa5",
+      "vncorenlp/models/dep/vi-dep.xz": "266e4a3a55d5edd1607d5f036c2f95b70c0a6c80f58b57fd9962677a6ef331b7",
+      "vncorenlp/models/ner/vi-500brownclusters.xz": "d30f9cfdf0af193a69e185d1acda0306a9fbe1321f8a700f7c66557a90f92b8c",
+      "vncorenlp/models/ner/vi-ner.xz": "f04c5e752d7f99a6313b758fc2607a2c3906e58b1d60a37eb0192aead73d61f7",
+      "vncorenlp/models/ner/vi-pretrainedembeddings.xz": "00d3d034f1b23a8bfe5168195741fde845808c212e6dfcd4c94bead1665eb0fc",
+      "vncorenlp/models/postagger/vi-tagger": "a95608a5982db89c11353b451154ec396eccc0ff1f5b22874935ecdf4e0ace01"
+    }
+  },
+  "max_absolute_error": 0.0,
+  "absolute_tolerance": 0.0001,
+  "relative_tolerance": 0,
+  "fixed_decisions_identical": true,
+  "runtime": {
+    "device": "cuda",
+    "packages": {
+      "python": "3.13.16",
+      "torch": "2.11.0+cu130",
+      "transformers": "4.57.3",
+      "py-vncorenlp": "0.1.4",
+      "numpy": "2.1.3",
+      "safetensors": "0.8.0"
+    },
+    "segmentation": "train_neural.segmented_texts",
+    "prediction": "train_neural.predict"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "protocol_id": "vigoemotions_final_rq1_28_v2",
+  "imported_on": "2026-11-16T03:37:10.039565+00:00",
+  "source_archive": "vigoemotions_final28_results.zip",
+  "source_archive_sha256": "d9735a29c6500f2b527c2eff773d71665ec650c8ce6b301ef669f32acab35e73",
+  "imported_members_sha256": {
+    "thresholds.json": "d9fc977d5b7156e95bccfb52d24c3bba99d3d673ef0aadf8fa4414aec5ff5cb9",
+    "validation_reproduction.json": "dbfa5804766c82fb40fe710adcb3de4ae331cc210d4fd226cbd3e178c1868c6e",
+    "test_attempt.json": "3fa95a07cc4973d41b877d586cc2274451e21b54811bc3b2a357c460f12abc2f",
+    "pre_test_lock.json": "3e3cd31f61a77db654abd96aeeee6af020d6e6b282d0ca71a7ee699e81a893a9",
+    "predictions/val_reproduced.npz": "deeb4f68d9fec8da17664521f91a299f4865f04bc0095c974062b16fb5b30374",
+    "predictions/val.npz": "d936e9b956554c86778996e65eab4346228bacb8c65917c42c436c439df00808",
+    "predictions/test.npz": "842ee969a876d85de9b1e4c0900f0138ec3de53114fdf68bed32fcbda7fc9547",
+    "predictions/test_probabilities.npz": "417121614e8f92b59893535e1f0db7754aced8fbb57021305046b50e2f4c4c53",
+    "tables/test_per_label.csv": "1513bf9924b345407e5920b26ab66e85ec5bcd8cdcad8c5a2dfee729c0332395",
+    "tables/val_comparison.csv": "a451248583706d4fab604c70047b54128d74d9b3b535b530ac08f353362a46b3",
+    "tables/val_cardinality.csv": "5d0a399e9bb8f3c6d69a63933014b60d52606cd13e2ecdf9dfbff70f6d814184",
+    "tables/val_neutral.csv": "5ea6b02fd93d8d59ae2bfe24adaf84fefca46113851e3730bc4baa932e19b941",
+    "tables/val_frequency_tiers.csv": "588e5848459b44add51c24ae066a1ee458df72db59211ca9ac86c1b6bb016e9c",
+    "tables/test_frequency_tiers.csv": "f2ec4213f9ff99e0a2bf5640df9716f6596fb9c153072eecd408eb2950a7b319",
+    "tables/generalization_gap.csv": "800521d3e2f13c5e62272be2a08aba7e6157201a68f36c13d5447fa3a4089b88",
+    "tables/global_sweep.csv": "2d1c4be3c17a2a0af7e5f100511cf095048f9ed830de8e432b9385d84b2eec38",
+    "tables/test_comparison.csv": "771a7c14ea0bbca38c62af0e58e127172465bd930180b9f9c2e9d9ba3f4a0577",
+    "tables/val_per_label.csv": "ef85b58a4f2304b0e56f49ebc3c61b3490e7877d4d20c5afa38daf7923004185",
+    "tables/test_neutral.csv": "74875c5eb1e8ca0352610de6dcbebc60b645498a870941b0922f036fe5a230c2",
+    "tables/threshold_profile.csv": "668aa37ee44faf83cdc0684fb8d2d6741a7a72e1b6e276039f4fd97663a932f0",
+    "tables/test_cardinality.csv": "4dbb725cdb9ea133c70a0870d2fe2e086b734a7a74301b473288521a189ee86e"
+  },
+  "verification": {
+    "archive_crc_and_allowlist": "PASS",
+    "original_test_csv_checksum_ids_targets_and_both_cardinalities": "PASS; 2067 x 28",
+    "validation_reproduction": "PASS; max absolute error 0.0",
+    "protocol_source_config_and_current_lock": "PASS",
+    "checkpoint_tokenizer_segmenter_assets": "PASS; original restored local assets",
+    "test_attempt_raw_decoded_score_hashes_and_runtime": "PASS; completed, same CUDA runtime",
+    "validation_and_test_tables_plus_gap": "PASS; all 11 tables recomputed during review",
+    "inference_during_local_review_or_import": false
+  },
+  "prior_validation_archive_comparison": {
+    "archive": "vigoemotions_final28_validation.zip",
+    "thresholds_and_reproduction": "byte-identical",
+    "val_npz": "all internal .npy member bytes identical; archive member order differs",
+    "lock": "only validation_predictions_sha256 differs; current test binds current lock",
+    "full_execution_history": "archive records one completed attempt; ZIP artifacts do not independently establish all earlier session activity"
+  },
+  "human_error_audit": {
+    "status": "pending",
+    "completed_fn_pairs": 0,
+    "completed_fp_pairs": 0
+  },
+  "historical_implementation_snapshot": "implementation_verification.json records pre-Kaggle implementation checks; execution status is in this file and imported artifacts"
+}
