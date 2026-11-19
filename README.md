@@ -6,6 +6,7 @@ Test all28 Macro-F1: fixed **0,589964**, global 0,4 **0,591254**, per-label **0,
 
 - [Protocol Final](docs/final_protocol.md), [config](configs/final_thresholds.json), [train-only tiers](docs/final_label_tiers.csv).
 - [Chạy pipeline Final](docs/final_execution.md), [notebook validation Kaggle 10](notebooks/10_kaggle_final_validation.ipynb). Tạo `vigoemotions_final28_code.zip` bằng `.venv/bin/python scripts/package_final.py`; notebook dừng sau validation/lock. Dùng ZIP weights **28 nhãn**, output ở `reports/final28/`.
+- [Extension 3 (RQ4)](docs/rq4_noise_robustness.md) và [notebook Kaggle 11](notebooks/11_kaggle_rq4_noise_robustness.ipynb) đánh giá bỏ dấu và lỗi gõ trên PhoBERT-28 đã khóa.
 - [Checklist việc cần làm](tasks/todo.md) và [kế hoạch Final/oral defence](tasks/plan.md).
 - [Mục lục archive](archive/README.md): notebook 03–06 và tài liệu chuẩn bị cũ đã được chuyển khỏi thư mục làm việc chính.
 
