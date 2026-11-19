@@ -1,6 +1,21 @@
 # Checklist Final và oral defence — 28 class
 
-Cập nhật 18/11/2026: **PhoBERT 28 outputs (gồm Neutral), epoch 15**. Validation/test và AI-assisted audit đã hoàn tất; [paper tiếng Anh PDF](../reports/final_report.pdf) / [Markdown](../reports/final_report.md). Deadline dự kiến cuối tháng 11, mục tiêu nội bộ 27/11. [Protocol v2](../docs/final_protocol.md), [plan](plan.md), [execution](../docs/final_execution.md).
+Cập nhật 19/11/2026: **PhoBERT 28 outputs (gồm Neutral), epoch 15**. Validation/test và AI-assisted audit đã hoàn tất; [paper tiếng Anh PDF](../reports/final_report.pdf) / [Markdown](../reports/final_report.md). Deadline dự kiến cuối tháng 11, mục tiêu nội bộ 27/11. [Protocol v2](../docs/final_protocol.md), [plan](plan.md), [execution](../docs/final_execution.md).
+
+## Yêu cầu nộp mới — ưu tiên theo guide/template 19/11
+
+Nguồn: [Submission Guide](../docs/ATI_Submission_Guide.pdf), [Word template](../docs/ATI_Final_Report_Template.docx), [checklist chi tiết](../docs/submission_requirements.md). Nộp một ZIP chung trước oral, không tách Midterm/Final; report DOCX, slides chỉ Midterm.
+
+- [ ] Chốt mã lớp và số nhóm thật; PREFIX `<CLASS>_G<NN>_P02`, không dùng MIDTERM/FINAL trong tên ZIP.
+- [ ] Xác nhận deck Midterm đúng bản đã trình chiếu (develop: 15 trang; nhánh docs/midterm-18-slides: 18 trang); bổ sung/kiểm cover theo yêu cầu.
+- [x] Chuyển report sang [Word template](../reports/final_report_ati.docx), tiếng Anh, đúng styles; thân Sections 1–7 là 17 trang trong bản render kiểm tra. Kiểm lại trong Word sau khi điền.
+- [x] Abstract 180 từ, 5 keywords; 10 IEEE references, native captions/equations và TOC theo template.
+- [ ] Appendix A reproducibility; Appendix B mọi thành viên, % nguyên tổng 100, đại diện *; Appendix C công cụ GenAI theo yêu cầu template.
+- [ ] Lấy Final notebook đã chạy từ lượt Kaggle hoàn tất, giữ outputs; không dùng notebook10 template thay execution proof hoặc rerun test để tạo output.
+- [ ] Code README có setup/data terms/run order/table-figure mapping/GitHub; đủ configs, splits, predictions mọi model/condition và results/environment.md.
+- [ ] Đóng đúng một root PREFIX với slides/, code/, report/; slides PDF và report DOCX đúng tên, loại raw data/weights/secrets/caches.
+- [ ] Dùng packaging submission riêng: công cụ code ZIP hiện tại xóa notebook outputs nên chưa phù hợp.
+- [ ] Kiểm Word body pages/TOC và ZIP (khuyến nghị dưới 50 MB), đại diện nộp trước hạn chính thức.
 
 ## Đã hoàn tất: validation và khóa trước test
 
@@ -31,14 +46,14 @@ Human confirmation thực tế vẫn là 0/62; không đánh dấu worksheet c�
 
 ## Paper, tái lập và oral
 
-- [x] Paper tiếng Anh và PDF 11 trang đủ mục, references, limitations, AI-assisted failure cases và phụ lục đủ 28 nhãn; đã kiểm tra PDF thật.
+- [x] Đã có bản nháp phân tích tiếng Anh, PDF 11 trang và DOCX từ evidence; chưa đạt template/length/phụ lục theo yêu cầu nộp mới.
 - [x] Bản nháp Results/Discussion nêu RQ27 và mở rộng28, epoch selection emotion27 khác threshold objective all28, một seed và giới hạn thống kê.
 - [x] README/setup/run/report, code/config/split IDs/outputs/runtime metadata và paper builder đầy đủ trong repo; private data/weights không public. Archive nộp cuối cùng còn đóng gói sau.
 - [x] Chạy tests liên quan và regression suite: 156/158 pass, gồm sáu paper tests; hai neural tests cũ lỗi do local thiếu torch, đã ghi rõ; không skip hoặc hạ kiểm tra.
 - [ ] Điền tên/MSSV/phân công; xác nhận deadline/thời lượng/ngôn ngữ oral.
-- [ ] Deck Final và appendix, Q&A về metrics/threshold/leakage/Neutral/cardinality/overfit.
+- [ ] Ôn oral bằng notes/Q&A về metrics/threshold/leakage/Neutral/cardinality/overfit; guide mới không có slides Final.
 - [ ] Hai mock defence có bấm giờ và phản biện chéo; mỗi người hiểu pipeline chung và phần đóng góp.
-- [ ] **Checkpoint 3:** package/PDF/slide/README thống nhất, sẵn sàng trước 27/11 theo lịch nội bộ.
+- [ ] **Checkpoint 3:** DOCX theo template, slides Midterm đúng nguồn và ZIP/README nhất quán; nộp trước oral theo hạn chính thức. 27/11 chỉ là mục tiêu nội bộ.
 
 ## Sau phần bắt buộc
 

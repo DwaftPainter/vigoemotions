@@ -1,6 +1,10 @@
 # Kế hoạch Final và oral defence — hướng 28 class
 
-Cập nhật 18/11/2026: **28 outputs gồm Neutral**, checkpoint PhoBERT epoch 15. Validation/test, AI-assisted audit và [paper tiếng Anh PDF](../reports/final_report.pdf) / [Markdown](../reports/final_report.md) đã hoàn tất. Nhóm chốt dùng AI-assisted audit và công bố giới hạn chưa có independent human adjudication. Deadline chính thức chưa rõ; dự kiến cuối tháng 11. Mục tiêu nội bộ: sẵn sàng 27/11, dự phòng 28–30/11.
+Cập nhật 19/11/2026: **28 outputs gồm Neutral**, checkpoint PhoBERT epoch 15. Validation/test và AI-assisted audit đã hoàn tất; [bản nháp báo cáo PDF](../reports/final_report.pdf) / [Markdown](../reports/final_report.md) cần chuyển sang template nộp mới. Nhóm chốt dùng AI-assisted audit và công bố giới hạn chưa có independent human adjudication. Deadline chính thức chưa rõ; dự kiến cuối tháng 11. Mục tiêu nội bộ: sẵn sàng 27/11, dự phòng 28–30/11.
+
+## Quy định nộp mới
+
+[Submission Guide](../docs/ATI_Submission_Guide.pdf) và [Word template](../docs/ATI_Final_Report_Template.docx) mới được bổ sung, xem [checklist nguồn và khoảng cách hiện tại](../docs/submission_requirements.md). Nộp một ZIP `<CLASS>_G<NN>_P02.zip` với một root cùng PREFIX, gồm slides/, code/, report/. Slides là đúng bản Midterm tiếng Anh PDF đã trình chiếu; không có slides Final. Report nộp DOCX theo template, phần thân Sections 1–7 dài 15–20 trang, có Appendix A/B/C, phần đóng góp tổng 100 và kê khai công cụ GenAI. Giữ outputs của executed notebooks. Bản report 11 trang hiện tại là bản nháp tham khảo, chưa phải bản nộp đạt chuẩn mới.
 
 ## Mục tiêu và các quyết định
 
@@ -80,19 +84,21 @@ Câu hỏi chính: global/per-label thresholds tối ưu trên validation có c�
 
 ### T7 — Paper
 
-**Đầu ra:** report Markdown/PDF, figures và references. Có abstract/introduction/data/method/experiments/results/discussion/limitations/conclusion. Mô tả 28-label extension và baseline selection gốc; so điểm cùng scope/split. **Phụ thuộc:** outline từ T1, chốt sau T5/T6. **Xác minh:** mỗi số truy về artifact, đọc PDF thật.
+**Đầu ra:** DOCX theo ATI_Final_Report_Template.docx, phần thân 15–20 trang, baseline Midterm và Final RQ1, đủ References/Appendix A reproducibility/B contributions/C GenAI. **Phụ thuộc:** T5/T6 và metadata thật. **Xác minh:** số liệu truy về artifact, đúng template/styles, Word body pages và TOC; không dùng PDF 11 trang cũ làm proof đạt length.
 
-**Hoàn tất 18/11:** paper tiếng Anh 11 trang, 10 bảng sinh từ evidence, ba hình, sáu references và hai phụ lục. `scripts/build_final_paper.py` tạo Markdown/PDF/verification từ nguồn đã kiểm hash; thông tin tác giả/nhóm/lớp còn chờ điền trong `docs/final_paper_metadata.json`.
+**Bản nháp 18/11:** đã có paper tiếng Anh PDF 11 trang và DOCX, 10 bảng sinh từ evidence, ba hình, sáu references và hai phụ lục; cần chuyển cấu trúc/định dạng theo guide mới ngày 19/11, chưa hoàn tất bản nộp. `scripts/build_final_paper.py` tạo Markdown/PDF/verification từ nguồn đã kiểm hash; thông tin tác giả/nhóm/lớp còn chờ điền trong `docs/final_paper_metadata.json`.
+
+**Chuyển template 19/11:** [final_report_ati.docx](../reports/final_report_ati.docx) tích hợp sáu baseline và Final RQ1; thân 17 trang trong bản render kiểm tra, Tables 1–5 theo template, ba hình, tám phương trình và Appendix A/B/C. [Thông tin chưa biết](../docs/ati_report_fill_in.md) để nhóm điền; chưa xác nhận sẵn sàng nộp.
 
 ### T8 — Gói tái lập
 
-**Đầu ra:** README/code/notebook/config/split IDs/probabilities/tables/figures/runtime metadata. Code ZIP hiện là `vigoemotions_final28_code.zip`; model/data riêng tư. **Phụ thuộc:** T5–T7. **Xác minh:** unit/regression tests và đường `report`; không ghi actual inference PASS nếu chưa chạy.
+**Đầu ra:** một ZIP theo PREFIX và đúng slides/code/report layout, notebooks đã chạy giữ outputs, predictions mọi model/condition, code README và results/environment.md. Code ZIP `vigoemotions_final28_code.zip` là bundle chạy Kaggle, chưa phải submission archive. Packaging hiện xóa outputs nên cần workflow đóng gói riêng. **Phụ thuộc:** T7, metadata và deck Midterm đúng nguồn. **Xác minh:** unzip/layout, exclusions, repro paths và Word requirements; không inference lại study đã hoàn thành.
 
 ### T9 — Oral defence
 
-**Đầu ra:** slide Final, notes/Q&A, hai lượt mock defence. Mỗi thành viên giải thích được sigmoid/BCE, vì sao 28 outputs, Neutral mixed, model epoch 15 được chọn bằng emotion27 trước đây, objective threshold all28 hiện tại, hai cardinality definitions và threshold overfitting. **Phụ thuộc:** ôn từ T1, chốt số sau T5–T7. **Xác minh:** nói đúng scope/metric/support, chỉ đúng evidence, bấm giờ và phản biện chéo.
+**Đầu ra:** notes/Q&A và hai lượt mock defence; không tạo slides Final theo submission guide mới. Mỗi thành viên giải thích được sigmoid/BCE, vì sao 28 outputs, Neutral mixed, model epoch 15 được chọn bằng emotion27 trước đây, objective threshold all28 hiện tại, hai cardinality definitions và threshold overfitting. **Phụ thuộc:** ôn từ T1, chốt số sau T5–T7. **Xác minh:** nói đúng scope/metric/support, chỉ đúng evidence, bấm giờ và phản biện chéo.
 
-**Checkpoint 3:** report/package nhất quán, công bố đúng AI-assisted audit, metadata nhóm đầy đủ và đã luyện bảo vệ, sẵn sàng nộp.
+**Checkpoint 3:** DOCX đúng template và body length, slides Midterm đúng bản đã trình chiếu, ZIP đúng PREFIX/layout, metadata/contributions đầy đủ và đã luyện oral; hạn theo thông báo giảng viên.
 
 ## Lịch đề xuất
 
@@ -100,7 +106,7 @@ Câu hỏi chính: global/per-label thresholds tối ưu trên validation có c�
 | --- | --- |
 | 11–16/11 | T1–T3: migrate 28, actual validation reproduction, fit và lock |
 | 17–20/11 | T4–T6: test, breakdowns và human audit |
-| 21–24/11 | T7–T8, deck T9 |
+| 21–24/11 | Chuyển T7 sang Word template, chuẩn bị T8 và notes oral T9 |
 | 25–27/11 | Chốt package và hai mock defence |
 | 28–30/11 | Dự phòng kỹ thuật/format theo lịch giảng viên; giữ nguyên quyết định đã chấm test |
 

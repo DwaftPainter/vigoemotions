@@ -1,6 +1,8 @@
 # Đọc kết quả ViGoEmotions
 
-Final hiện theo **28 class gồm Neutral**, checkpoint PhoBERT epoch 15: [thiết kế v2](../docs/final_protocol.md), [checklist](../tasks/todo.md), [pipeline](../docs/final_execution.md). **Paper tiếng Anh hoàn chỉnh:** [PDF](final_report.pdf), [Word DOCX](final_report.docx), [Markdown](final_report.md), [verification](final_report_verification.json). [Artifacts validation/test](final28/README.md), [phân tích tiếng Việt](final28/results_discussion.md), bảng và hình nằm trong `final28/`; báo đủ all28/emotion27/Neutral. Audit 62 ca là AI-assisted, không có independent human adjudication; thông tin nhóm và oral defence còn bổ sung. Prototype 27 và workflow notebook 03–06 đã có [archive](../archive/README.md).
+Final hiện theo **28 class gồm Neutral**, checkpoint PhoBERT epoch 15: [thiết kế v2](../docs/final_protocol.md), [checklist](../tasks/todo.md), [pipeline](../docs/final_execution.md). **Bản nháp báo cáo tiếng Anh:** [PDF](final_report.pdf), [Word DOCX](final_report.docx), [Markdown](final_report.md), [verification](final_report_verification.json). [Artifacts validation/test](final28/README.md), [phân tích tiếng Việt](final28/results_discussion.md), bảng và hình nằm trong `final28/`; báo đủ all28/emotion27/Neutral. Audit 62 ca là AI-assisted, không có independent human adjudication; thông tin nhóm và oral defence còn bổ sung. Prototype 27 và workflow notebook 03–06 đã có [archive](../archive/README.md).
+
+**Report theo template mới:** [Word DOCX](final_report_ati.docx), [Markdown](final_report_ati.md), [verification](final_report_ati_verification.json), [các ô cần điền](../docs/ati_report_fill_in.md). Sections 1–7 chiếm 17 trang trong bản render kiểm tra. Giữ các thông tin chưa biết dưới dạng placeholders; chưa phải bản sẵn sàng nộp. Nộp slides Midterm PDF, không có slides Final, theo [checklist](../docs/submission_requirements.md).
 
 **Nguồn chính hiện tại là Kaggle 20 epoch, notebook 08/09 executed.**
 
