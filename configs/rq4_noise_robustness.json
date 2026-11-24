@@ -1,0 +1,7 @@
+{
+  "protocol_id": "vigoemotions_rq4_noise_v1",
+  "seed": 42,
+  "qwerty_letter_probability": 0.05,
+  "clean_probability_atol": 0.0001,
+  "conditions": ["original", "no_diacritics", "qwerty_typo"]
+}

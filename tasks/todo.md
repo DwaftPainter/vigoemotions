@@ -8,10 +8,11 @@ Nguồn: [Submission Guide](../docs/ATI_Submission_Guide.pdf), [Word template](.
 
 - [ ] Chốt mã lớp và số nhóm thật; PREFIX `<CLASS>_G<NN>_P02`, không dùng MIDTERM/FINAL trong tên ZIP.
 - [ ] Xác nhận deck Midterm đúng bản đã trình chiếu (develop: 15 trang; nhánh docs/midterm-18-slides: 18 trang); bổ sung/kiểm cover theo yêu cầu.
-- [x] Chuyển report sang [Word template](../reports/final_report_ati.docx), tiếng Anh, đúng styles; thân Sections 1–7 là 17 trang trong bản render kiểm tra. Kiểm lại trong Word sau khi điền.
-- [x] Abstract 180 từ, 5 keywords; 10 IEEE references, native captions/equations và TOC theo template.
+- [x] Chuyển report sang [Word template](../reports/final_report_ati.docx), tiếng Anh, đúng styles; thân Sections 1–7 là 18 trang trong bản render kiểm tra. Kiểm lại trong Word sau khi điền.
+- [x] Abstract 182 từ, 5 keywords, 11 IEEE references, native captions/equations và TOC theo template.
 - [ ] Appendix A reproducibility; Appendix B mọi thành viên, % nguyên tổng 100, đại diện *; Appendix C công cụ GenAI theo yêu cầu template.
-- [ ] Lấy Final notebook đã chạy từ lượt Kaggle hoàn tất, giữ outputs; không dùng notebook10 template thay execution proof hoặc rerun test để tạo output.
+- [x] Nhập kết quả RQ4 đã kiểm chứng và cập nhật mục 5.3, Figure 3 và Table A.13.
+- [ ] Export notebook Final RQ1 và RQ4 từ lượt Kaggle đã hoàn tất, giữ outputs để nộp.
 - [ ] Code README có setup/data terms/run order/table-figure mapping/GitHub; đủ configs, splits, predictions mọi model/condition và results/environment.md.
 - [ ] Đóng đúng một root PREFIX với slides/, code/, report/; slides PDF và report DOCX đúng tên, loại raw data/weights/secrets/caches.
 - [ ] Dùng packaging submission riêng: công cụ code ZIP hiện tại xóa notebook outputs nên chưa phù hợp.

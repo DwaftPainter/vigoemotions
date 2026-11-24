@@ -104,11 +104,11 @@ Không đưa vào ZIP: virtualenv, caches, `.git`, OS/IDE files, `.env`, tokens/
 
 | Hạng mục | Tình trạng đã kiểm tra | Việc tiếp theo |
 | --- | --- | --- |
-| Report | Đã tạo [DOCX theo template](../reports/final_report_ati.docx), tích hợp baseline/Final, thân 17 trang trong bản render kiểm tra, đủ Appendix A/B/C | Điền [metadata và kê khai](ati_report_fill_in.md), cập nhật TOC và kiểm lại phân trang trong Word sau khi điền |
+| Report | Đã tạo [DOCX theo template](../reports/final_report_ati.docx), tích hợp baseline, Final RQ1 và RQ4 ở mục 5.3, thân 18 trang trong bản render kiểm tra, đủ Appendix A/B/C | Điền [metadata và kê khai](ati_report_fill_in.md), cập nhật TOC và kiểm lại phân trang trong Word sau khi điền |
 | Metadata | Chưa có lớp/nhóm/tên/MSSV/đóng góp được cung cấp | Lấy thông tin thật, không suy từ Git author hoặc ví dụ G05 |
 | Slides | Có hai deck 15/18 trang ở hai nhánh | Xác nhận bản đã trình chiếu và cách đáp ứng cover metadata |
 | Midterm notebooks | Executed 08/09 có outputs; 01/02/07 cũng có executed outputs | Giữ outputs cần thiết, kiểm privacy và mapping report |
-| Final notebook | Notebook10 trong repo hiện là template, không có execution counts/outputs | Lấy exported executed notebook từ lượt Kaggle đã hoàn thành; không rerun test chỉ để tạo output |
+| Final notebooks | Đã nhập kết quả RQ1 và RQ4; notebook 10 và 11 trong repo là bản chạy mẫu | Export notebook đã chạy từ các lượt Kaggle, giữ outputs cho gói nộp |
 | Predictions | Các NPZ Midterm/Final đã có | Gom đủ mọi model/condition vào layout nộp, xuất CSV từ saved scores nếu cần |
 | ZIP builder | `submission_package.py` hiện xóa outputs; `package_final.py` tạo code ZIP chạy Kaggle | Làm packaging riêng cho submission, không dùng hai công cụ này nguyên trạng |
 | Repro paths | Frozen artifacts/code bind các paths hiện tại | Mapping layout nộp phải bảo toàn source/gates và chạy được; không sửa hashes để ép gói mới qua kiểm tra |

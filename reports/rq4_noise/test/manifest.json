@@ -1,0 +1,74 @@
+{
+  "status": "completed",
+  "split": "test",
+  "conditions": [
+    "original",
+    "no_diacritics",
+    "qwerty_typo"
+  ],
+  "n": 2067,
+  "runtime": {
+    "device": "cuda",
+    "packages": {
+      "python": "3.13.16",
+      "torch": "2.11.0+cu130",
+      "transformers": "4.57.3",
+      "py-vncorenlp": "0.1.4",
+      "numpy": "2.1.3",
+      "safetensors": "0.8.0"
+    },
+    "segmentation": "train_neural.segmented_texts",
+    "prediction": "train_neural.predict"
+  },
+  "clean_vs_rq1": {
+    "max_absolute_error": 2.384185791015625e-06,
+    "absolute_tolerance": 0.0001,
+    "decisions_identical_to_rq1": {
+      "fixed": true,
+      "global": true,
+      "per_label": true
+    }
+  },
+  "protocol_sha256": {
+    "scripts/rq4_noise.py": "340a4e8c1054be542888d18aafcc142f1c69408678991a13b763ecfcb76d87a3",
+    "scripts/rq4_robustness.py": "f25238f14dbe23c27247d743cb52be9a2a52b26f19bec506cc0cffa09b7bcaab",
+    "configs/rq4_noise_robustness.json": "259c824df2df699826c6c2f77196e97b5020958e98352e0f7f8c6e8db00f9047",
+    "docs/rq4_noise_robustness.md": "ef6a1bdf6ff46a2c823457fe0290a5ae602fc51a95954ea8d95fa7c0fd0c4470"
+  },
+  "rq1_sha256": {
+    "pre_test_lock.json": "3e3cd31f61a77db654abd96aeeee6af020d6e6b282d0ca71a7ee699e81a893a9",
+    "thresholds.json": "d9fc977d5b7156e95bccfb52d24c3bba99d3d673ef0aadf8fa4414aec5ff5cb9",
+    "validation_reproduction.json": "dbfa5804766c82fb40fe710adcb3de4ae331cc210d4fd226cbd3e178c1868c6e",
+    "test_attempt.json": "3fa95a07cc4973d41b877d586cc2274451e21b54811bc3b2a357c460f12abc2f",
+    "predictions/val.npz": "d936e9b956554c86778996e65eab4346228bacb8c65917c42c436c439df00808",
+    "predictions/test.npz": "842ee969a876d85de9b1e4c0900f0138ec3de53114fdf68bed32fcbda7fc9547"
+  },
+  "rq4_validation_manifest_sha256": "947c558f21f19c0317775ac3d2e7ac335ce48454877d7c005cb19ab05f256bfa",
+  "output_sha256": {
+    "figures/macro_f1_delta.pdf": "e317b53c182db492421b73204e13b354f5fd8544748ee828ac6427604a0beabd",
+    "figures/macro_f1_delta.png": "050eb171028d385997ecf5d2fc467800e22a1df6c64af0d46f745fea30dfc955",
+    "predictions/no_diacritics.npz": "4e72e91a3d1cae38abf001e1d6c240045088a3bdf341f2cead6a7c076c64c7b8",
+    "predictions/original.npz": "bb8c1d685fa4090959db865ba3da2c868baf1fe65eb08a9dc395ffb388ce0766",
+    "predictions/qwerty_typo.npz": "b55040be57d50dfb7d3cafd41a7a7c51ac6c86f5a36a1a6c8e91bb6ae2eb77c0",
+    "tables/comparison.csv": "f6254cd8a7f86c719426609eca0b57d4b1383d43bd3fd2162a5d64fd80a69c48",
+    "tables/frequency_tiers.csv": "82c56bbad2bf9e048bfeb1021fbe806deb9e02732a50c3c46f21a488e1cf1e96",
+    "tables/neutral.csv": "b69a0f899b95adae3f4e4068d283f9d9cadc069dd5657d324fd5176fbe3a42a4",
+    "tables/no_diacritics_cardinality.csv": "d6db37cedf2fd600291efe966e3845fe99ea1e90840ab24950f036960701bb02",
+    "tables/no_diacritics_comparison.csv": "d90813961c9a2452dbbc711f37d800a8bbb62111381ccd69abb152a9345e3702",
+    "tables/no_diacritics_frequency_tiers.csv": "48798006b31e055cd3bfcd9c637f2208a54b3b48f2cd77ecc4cd61a9b5a769d4",
+    "tables/no_diacritics_neutral.csv": "7f00ce0517dc7eae000c517dbce586a7db6837418c432c0b4c5f3bdf441755ad",
+    "tables/no_diacritics_per_label.csv": "31c01843bb608b68e93d849bdbe6b0cfa9504c352329486afa90f08b2259d7dc",
+    "tables/noise_coverage.csv": "833963b5cb70adcb86dd9091df930cd383efffd4d9f075d4772ff53e627eea05",
+    "tables/original_cardinality.csv": "882e4f1952fa6c5033d0ea0171d4ead9f4dab5de458e2f4a5933652a3bdaa390",
+    "tables/original_comparison.csv": "d0c9bfdc8a88a6c9a727cf57a2da54007521d82b680df21d41a20894c73297a5",
+    "tables/original_frequency_tiers.csv": "33eba3616233a996ff01fa9a4e5677875e3b4c9dbf2d567185a3837aaa51cead",
+    "tables/original_neutral.csv": "ec41df6e0394fdf1a81de5712cd6b39cd8b1723cd67223ec474b3a839a960438",
+    "tables/original_per_label.csv": "94fc9ff06fddaf2bdcb9dde51f515decd0324d2319e9eceba7e8705b120956f1",
+    "tables/per_label.csv": "838b5b8c13ddffb4a62feec13bbeb480a6985bcb18595897b23058f2535a6f1f",
+    "tables/qwerty_typo_cardinality.csv": "c763c3b3185a4676520eedb25b6c04878f80c33cdbd271dae4b71f78d2c0382f",
+    "tables/qwerty_typo_comparison.csv": "cb3c32b027618439e82bcb07c511ec786c875ba68e8e76563dce145596f47c03",
+    "tables/qwerty_typo_frequency_tiers.csv": "c0fe7954914c384d2713cfdcc8abce38ac016713cfa07f909899bc5a0beafa08",
+    "tables/qwerty_typo_neutral.csv": "6e4cd9f48e1ba027e5ba7cb1ec177ff1946668222fbc67c45b4e8b29cd54a915",
+    "tables/qwerty_typo_per_label.csv": "4bd39dcc946286270ebe135f2ca9805fe0e4e22d26c7fe886e1489210f326f5d"
+  }
+}

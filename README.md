@@ -4,10 +4,11 @@ Midterm đã hoàn tất. Final theo quyết định nhóm dùng **PhoBERT 28 nh
 
 Test all28 Macro-F1: fixed **0,589964**, global 0,4 **0,591254**, per-label **0,585415**. Lợi ích per-label trên validation không giữ được trên test; fixed có Hamming Loss thấp nhất. **Bản nháp báo cáo tiếng Anh (chưa theo template nộp mới):** [PDF 11 trang](reports/final_report.pdf) / [Word DOCX](reports/final_report.docx) / [Markdown](reports/final_report.md). [Kết quả và provenance](reports/final28/README.md), [phân tích tiếng Việt](reports/final28/results_discussion.md). Audit 62 ca được ghi rõ AI-assisted theo lựa chọn của nhóm; còn bổ sung thông tin định danh, gói nộp và oral defence.
 
-- **Report theo template mới:** [Word DOCX](reports/final_report_ati.docx), [Markdown](reports/final_report_ati.md), [các ô cần điền](docs/ati_report_fill_in.md). Thân Sections 1–7: 17 trang trong bản render kiểm tra; thông tin nhóm và phụ lục kê khai còn chờ điền.
+- **Report theo template mới:** [Word DOCX](reports/final_report_ati.docx), [Markdown](reports/final_report_ati.md), [các ô cần điền](docs/ati_report_fill_in.md). Thân Sections 1–7: 18 trang trong bản render kiểm tra; thông tin nhóm và phụ lục kê khai còn chờ điền.
 - **Nộp bài theo hướng dẫn mới ngày 19/11:** [Submission Guide](docs/ATI_Submission_Guide.pdf), [Word template](docs/ATI_Final_Report_Template.docx), [checklist chi tiết](docs/submission_requirements.md). Một ZIP chung; report DOCX, thân 15–20 trang; slides chỉ Midterm, không có slides Final.
 - [Protocol Final](docs/final_protocol.md), [config](configs/final_thresholds.json), [train-only tiers](docs/final_label_tiers.csv).
 - [Chạy pipeline Final](docs/final_execution.md), [notebook validation Kaggle 10](notebooks/10_kaggle_final_validation.ipynb). Tạo `vigoemotions_final28_code.zip` bằng `.venv/bin/python scripts/package_final.py`; notebook dừng sau validation/lock. Dùng ZIP weights **28 nhãn**, output ở `reports/final28/`.
+- **RQ4 đã hoàn tất:** bỏ dấu và lỗi gõ làm giảm Macro-F1 test lần lượt 26,02 và 3,94 điểm phần trăm ở ngưỡng 0,5. Kết quả nằm ở mục 5.3. [Protocol và notebook 11](docs/rq4_noise_robustness.md), [kiểm chứng](reports/rq4_noise/verification.json).
 - [Checklist việc cần làm](tasks/todo.md) và [kế hoạch Final/oral defence](tasks/plan.md).
 - [Mục lục archive](archive/README.md): notebook 03–06 và tài liệu chuẩn bị cũ đã được chuyển khỏi thư mục làm việc chính.
 

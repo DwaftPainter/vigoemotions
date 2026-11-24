@@ -88,7 +88,7 @@ Câu hỏi chính: global/per-label thresholds tối ưu trên validation có c�
 
 **Bản nháp 18/11:** đã có paper tiếng Anh PDF 11 trang và DOCX, 10 bảng sinh từ evidence, ba hình, sáu references và hai phụ lục; cần chuyển cấu trúc/định dạng theo guide mới ngày 19/11, chưa hoàn tất bản nộp. `scripts/build_final_paper.py` tạo Markdown/PDF/verification từ nguồn đã kiểm hash; thông tin tác giả/nhóm/lớp còn chờ điền trong `docs/final_paper_metadata.json`.
 
-**Chuyển template 19/11:** [final_report_ati.docx](../reports/final_report_ati.docx) tích hợp sáu baseline và Final RQ1; thân 17 trang trong bản render kiểm tra, Tables 1–5 theo template, ba hình, tám phương trình và Appendix A/B/C. [Thông tin chưa biết](../docs/ati_report_fill_in.md) để nhóm điền; chưa xác nhận sẵn sàng nộp.
+**Chuyển template 19/11:** [final_report_ati.docx](../reports/final_report_ati.docx) tích hợp sáu baseline, Final RQ1 và kết quả RQ4 ở mục 5.3. Bản render có 18 trang thân, bốn hình, tám phương trình và Appendix A/B/C. [Thông tin chưa biết](../docs/ati_report_fill_in.md) để nhóm điền; chưa xác nhận sẵn sàng nộp.
 
 ### T8 — Gói tái lập
 

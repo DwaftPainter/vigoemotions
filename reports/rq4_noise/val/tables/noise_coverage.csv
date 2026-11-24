@@ -1,0 +1,4 @@
+split,condition,samples,changed_samples,eligible_characters,edited_characters
+val,original,2066,0,0,0
+val,no_diacritics,2066,2022,28346,28346
+val,qwerty_typo,2066,1433,72564,3674

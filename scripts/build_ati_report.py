@@ -4,6 +4,7 @@ from copy import deepcopy
 import json
 from pathlib import Path
 import re
+import shutil
 
 import matplotlib
 matplotlib.use('Agg')
@@ -25,6 +26,75 @@ from common import scores
 TEMPLATE = ROOT/'docs/ATI_Final_Report_Template.docx'
 CONTENT = ROOT/'docs/ati_report_content.md'
 BASELINE = ROOT/'reports/kaggle_equal20_2026-11-05'
+RQ4 = ROOT/'reports/rq4_noise'
+
+
+def verify_rq4_evidence():
+    """Bind the report to the imported paired run without running inference."""
+    path = RQ4/'verification.json'
+    proof = read_json(path)
+    if proof['status'] != 'verified_and_imported':
+        raise ValueError('RQ4 results must be verified before report generation')
+    inputs = {str(path): checksum(path)}
+
+    def bind(source, expected):
+        if checksum(source) != expected:
+            raise ValueError(f'RQ4 evidence hash mismatch: {source}')
+        inputs[str(source)] = expected
+
+    for name, expected in proof['rq1_sha256'].items():
+        bind(OUT/name, expected)
+    for name in ('scripts/rq4_noise.py', 'scripts/rq4_robustness.py', 'configs/rq4_noise_robustness.json'):
+        bind(ROOT/name, proof['protocol_sha256'][name])
+    # The run binds the original protocol notes. Later edits document checkpoint restoration.
+    for split, size in (('val', 2066), ('test', 2067)):
+        record = proof[split]
+        manifest_file = RQ4/split/'manifest.json'
+        bind(manifest_file, record['manifest_sha256'])
+        manifest = read_json(manifest_file)
+        val_hash = proof['val']['manifest_sha256'] if split == 'test' else None
+        if (manifest['status'] != 'completed' or manifest['split'] != split or manifest['n'] != size
+                or manifest['rq1_sha256'] != proof['rq1_sha256'] or manifest['runtime'] != proof['runtime']
+                or manifest['protocol_sha256'] != proof['protocol_sha256']
+                or manifest['rq4_validation_manifest_sha256'] != val_hash
+                or manifest['clean_vs_rq1'] != record['clean_vs_rq1']
+                or not all(record[k] for k in ('paired_ids_and_targets_verified', 'decoded_predictions_verified',
+                                             'coverage_regenerated_from_original_csv'))):
+            raise ValueError(f'RQ4 {split} evidence does not match the verified paired run')
+        for name, expected in manifest['output_sha256'].items():
+            source = (RQ4/split/name).resolve()
+            if not source.is_relative_to(RQ4/split):
+                raise ValueError(f'Invalid RQ4 output path: {name}')
+            bind(source, expected)
+    return inputs
+
+
+def rq4_report_values():
+    conditions = {'original': 'Original', 'no_diacritics': 'No diacritics', 'qwerty_typo': 'QWERTY typos'}
+    decoders = {'fixed': 'Fixed 0.5', 'global': 'Global 0.4', 'per_label': 'Per-label'}
+    rows = []
+    for split in ('val', 'test'):
+        comparison = pd.read_csv(RQ4/split/'tables/comparison.csv').query("scope == 'all28'")
+        for row in comparison.itertuples():
+            rows.append({'Split': 'Validation' if split == 'val' else 'Test',
+                         'Condition': conditions[row.condition], 'Decoder': decoders[row.strategy],
+                         'Macro-F1': row.macro_f1, 'Micro-F1': row.micro_f1,
+                         'Δ Macro (pp)': f'{row.delta_macro_f1_pp_vs_original:+.2f}',
+                         'Δ Micro (pp)': f'{row.delta_micro_f1_pp_vs_original:+.2f}'})
+    fixed = comparison.query("strategy == 'fixed'").set_index('condition')
+    coverage = pd.read_csv(RQ4/'test/tables/noise_coverage.csv').set_index('condition')
+    tier = pd.read_csv(RQ4/'test/tables/frequency_tiers.csv').query("strategy == 'fixed' and tier == 'tail'")
+    tier = tier.set_index('condition')
+    values = {'rq4_results': markdown_table(pd.DataFrame(rows)),
+              'rq4_original_macro': f"{fixed.loc['original', 'macro_f1']:.6f}"}
+    for condition, key in (('no_diacritics', 'diacritics'), ('qwerty_typo', 'typo')):
+        result = fixed.loc[condition]
+        values.update({f'rq4_{key}_macro': f'{result.macro_f1:.6f}',
+                       f'rq4_{key}_micro': f'{result.micro_f1:.6f}',
+                       f'rq4_{key}_loss': f'{-result.delta_macro_f1_pp_vs_original:.2f}',
+                       f'rq4_{key}_tail_loss': f"{-tier.loc[condition, 'delta_macro_f1_pp_vs_original']:.2f}",
+                       f'rq4_{key}_changed': f"{coverage.loc[condition, 'changed_samples']:,}"})
+    return values
 
 
 def dataset_split_table():
@@ -54,6 +124,7 @@ def dataset_split_table():
 def report_values():
     meta = read_json(ROOT/'docs/final_paper_metadata.json')
     values = manuscript_values(meta)
+    values.update(rq4_report_values())
     values['data_summary'] = dataset_split_table()
     baseline = pd.read_csv(BASELINE/'model_comparison.csv')
     names = {'tfidf_lr':'TF-IDF + LR', 'gru':'BiGRU', 'phobert':'PhoBERT'}
@@ -79,7 +150,10 @@ def report_values():
     values['rq_table'] = markdown_table(pd.DataFrame([{
         'RQ':'RQ1', 'Question':'Does validation-selected threshold tuning improve held-out all28 Macro-F1?',
         'Hypothesis':'Global/per-label tuning improves test F1 over fixed 0.5.',
-        'Control (Midterm)':'Midterm PhoBERT-28 checkpoint, fixed threshold 0.5 for all outputs.'}]))
+        'Control (Midterm)':'Midterm PhoBERT-28 checkpoint, fixed threshold 0.5 for all outputs.'}, {
+        'RQ':'RQ4', 'Question':'How do diacritic removal and simulated QWERTY typos change held-out all28 Macro-F1?',
+        'Hypothesis':'Both perturbations reduce test Macro-F1 at fixed 0.5.',
+        'Control (Midterm)':'The same PhoBERT-28 checkpoint and evaluation IDs with the original input text.'}]))
     all28 = pd.read_csv(OUT/'tables/test_comparison.csv').query("scope == 'all28'").set_index('strategy')
     fixed = all28.loc['fixed', 'macro_f1']
     best = all28['macro_f1'].max()
@@ -156,6 +230,8 @@ def figures(destination):
         fig.tight_layout()
         for ext in ('png','pdf'):fig.savefig(assets/f'threshold_profile_bw.{ext}',dpi=220)
         plt.close(fig)
+    for ext in ('png', 'pdf'):
+        shutil.copyfile(RQ4/f'test/figures/macro_f1_delta.{ext}', assets/f'rq4_macro_f1_delta.{ext}')
     return sorted(assets.iterdir())
 
 
@@ -341,7 +417,7 @@ def render_word(markdown,destination,asset_base):
 
 def build(destination=ROOT/'reports'):
     destination=Path(destination);destination.mkdir(parents=True,exist_ok=True)
-    inputs,audit=evidence();inputs.update(verify_baselines())
+    inputs,audit=evidence();inputs.update(verify_baselines());inputs.update(verify_rq4_evidence())
     for path in (TEMPLATE,CONTENT,ROOT/'docs/final_paper_metadata.json',Path(__file__).resolve(),ROOT/'scripts/build_final_paper.py'):
         inputs[str(path)]=checksum(path)
     text=fill_template(CONTENT.read_text(),report_values())
@@ -353,7 +429,8 @@ def build(destination=ROOT/'reports'):
     result=dict(template_used=str(TEMPLATE.relative_to(ROOT)),submission_ready=False,model_inference_performed=False,
                 body_pages=None,body_page_check='Requires document-layout rendering',
                 missing_fields=['authors','group_name','course_section','representative','contribution_percentages',
-                                'generative_ai_declaration','private_asset_links','final_executed_notebook','submission_prefix'],
+                                'generative_ai_declaration','private_asset_links','final_executed_notebook',
+                                'rq4_executed_notebook','submission_prefix'],
                 input_sha256={str(Path(p).relative_to(ROOT)):value for p,value in inputs.items()},
                 generated_sha256={p.name:checksum(p) for p in (md,docx)},
                 figure_sha256={str(p.relative_to(destination)):checksum(p) for p in assets})

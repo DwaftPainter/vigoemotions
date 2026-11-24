@@ -25,6 +25,11 @@ class ATIReportTests(unittest.TestCase):
         self.assertIn('0.591254', values['primary_results'])
         self.assertIn('0.585415', values['primary_results'])
         self.assertNotIn('0.597410', values['primary_results'])
+        self.assertEqual(values['rq4_original_macro'], '0.589964')
+        self.assertEqual(values['rq4_diacritics_macro'], '0.329749')
+        self.assertEqual(values['rq4_typo_macro'], '0.550578')
+        self.assertEqual(values['rq4_diacritics_loss'], '26.02')
+        self.assertEqual(values['rq4_typo_loss'], '3.94')
         for sample in ('you003220', 'tik017852', 'you001985', '247', '18169'):
             self.assertIn(sample, values['failure_examples'])
 
@@ -49,8 +54,7 @@ class ATIReportTests(unittest.TestCase):
             self.assertEqual([h.split()[0] for h in main], list('1234567'))
             template = Document(protected[0])
             expected_subsections = [p.text for p in template.paragraphs
-                                    if p.style and p.style.style_id == 'Heading2' and p.text[:1].isdigit()
-                                    and not p.text.startswith('5.3')]
+                                    if p.style and p.style.style_id == 'Heading2' and p.text[:1].isdigit()]
             actual_subsections = [p.text for p in doc.paragraphs
                                   if p.style and p.style.style_id == 'Heading2' and p.text[:1].isdigit()]
             self.assertEqual(actual_subsections, expected_subsections)
@@ -90,7 +94,10 @@ class ATIReportTests(unittest.TestCase):
             self.assertFalse(result['submission_ready'])
             self.assertFalse(result['model_inference_performed'])
             self.assertIn('authors', result['missing_fields'])
-            self.assertGreaterEqual(len(doc.inline_shapes), 3)
+            self.assertIn('rq4_executed_notebook', result['missing_fields'])
+            self.assertIn('reports/rq4_noise/test/tables/comparison.csv', result['input_sha256'])
+            self.assertTrue(any(c.startswith('Figure 3: Change in all28 test Macro-F1') for c in captions))
+            self.assertGreaterEqual(len(doc.inline_shapes), 4)
         self.assertEqual(before, {p:hashlib.sha256(p.read_bytes()).hexdigest() for p in protected})
 
 

@@ -2,9 +2,9 @@
 
 ## Abstract
 
-Decision thresholds affect multi-label predictions without changing the learned representation. This project studies fine-grained Vietnamese emotion recognition through Midterm baseline experiments and a controlled Final comparison of threshold decoders. The baselines are TF-IDF with One-vs-Rest Logistic Regression, BiGRU and fully fine-tuned PhoBERT under 27- and 28-output label encodings. For the Final, a single PhoBERT checkpoint with 28 independent outputs, including Neutral, is frozen. Fixed 0.5, validation-tuned global and per-label thresholds share the same probability matrices. Selection uses 2,066 validation comments, followed by evaluation on 2,067 held-out test comments. Global tuning selects 0.4 and increases all28 test Macro-F1 from 0.589964 to 0.591254, an observed gain of 0.1289 percentage points. Per-label tuning reaches validation Macro-F1 of 0.595555 but reduces test Macro-F1 to 0.585415. Fixed thresholding retains the lowest Hamming Loss. Frequency-tier, cardinality, Neutral and qualitative analyses show that gains depend on the metric and subgroup. The main limitation is evaluation of one checkpoint, seed and split, without significance testing or independent adjudication of qualitative observations. The study demonstrates that validation improvements from more flexible threshold selection do not guarantee better test F1.
+This project studies fine-grained Vietnamese emotion recognition through baseline experiments, threshold selection and a text noise extension. The Midterm compares TF-IDF with One-vs-Rest Logistic Regression, BiGRU and fine-tuned PhoBERT under 27- and 28-output encodings. The Final freezes one PhoBERT checkpoint with 28 independent outputs, including Neutral. Fixed 0.5, validation-tuned global and per-label decoders share the same probability matrices. Thresholds are selected on 2,066 validation comments and evaluated on 2,067 held-out test comments. Global tuning selects 0.4 and increases test Macro-F1 from 0.589964 to 0.591254. Per-label tuning reaches validation Macro-F1 of 0.595555 and yields 0.585415 on test. The fixed decoder has the lowest Hamming Loss. The extension reuses all three decoders and compares the same comments under original text, diacritic removal and simulated QWERTY substitutions. At fixed 0.5, the two perturbations reduce test Macro-F1 by 26.02 and 3.94 percentage points, respectively. Both experiments evaluate one checkpoint, seed and split. The two noise conditions differ in severity, and the extension was designed after RQ1 test results were available. The results quantify threshold transfer and the sensitivity of this model to the specified text perturbations.
 
-**Keywords:** Vietnamese emotion recognition, multi-label classification, PhoBERT, threshold selection, reproducibility
+**Keywords:** Vietnamese emotion recognition, multi-label classification, PhoBERT, threshold selection, text noise
 
 ## 1  Introduction
 
@@ -22,13 +22,14 @@ The practical objective is not to obtain a higher test score by repeatedly adapt
 
 The track brief asks: “Is a single uniform decision threshold (τ = 0.5) optimal across all 27 emotion labels in the presence of severe class imbalance?” We retain this motivation and disclose the group's extension to 28 outputs. The primary Final objective is Macro-F1 over all 28 labels, including Neutral. A supplementary emotion27 projection removes the Neutral column from the same scores and thresholds, without a second tuning procedure.
 
-The operational question is whether global or per-label thresholds selected by validation F1 improve held-out all28 Macro-F1 over fixed 0.5 on a frozen PhoBERT-28 checkpoint. Optimality is restricted to the recorded validation grid; no claim is made about every possible real-valued threshold. Table 1 identifies the hypothesis and control. The hypothesis organizes the comparison; it is not presented as a preregistration preceding all Midterm observations.
+The operational RQ1 asks whether global or per-label thresholds selected by validation F1 improve held-out all28 Macro-F1 over fixed 0.5 on a frozen PhoBERT-28 checkpoint. The comparison is restricted to the recorded validation grid. The supplementary RQ4 asks how diacritic removal and simulated QWERTY errors affect performance on the same comments under the fixed decoder. Table 1 lists both hypotheses and controls.
 
 **Table 1. Research questions, hypotheses and controls.**
 
 | RQ | Question | Hypothesis | Control (Midterm) |
 | --- | --- | --- | --- |
 | RQ1 | Does validation-selected threshold tuning improve held-out all28 Macro-F1? | Global/per-label tuning improves test F1 over fixed 0.5. | Midterm PhoBERT-28 checkpoint, fixed threshold 0.5 for all outputs. |
+| RQ4 | How do diacritic removal and simulated QWERTY typos change held-out all28 Macro-F1? | Both perturbations reduce test Macro-F1 at fixed 0.5. | The same PhoBERT-28 checkpoint and evaluation IDs with the original input text. |
 
 The observed answer is qualified. A global cutoff yields a small test Macro-F1 increase, whereas independent per-label optimization loses its larger validation advantage. The fixed decoder has lower Hamming Loss. These results do not support a uniform benefit from replacing the default threshold with more flexible validation-selected cutoffs.
 
@@ -38,9 +39,9 @@ The observed answer is qualified. A global cutoff yields a small test Macro-F1 i
 
 - Compare three threshold decoders on one frozen PhoBERT-28 checkpoint using the same prediction scores for each split.
 
-- Analyze generalization gaps, label-frequency tiers, cardinality, individual labels and Neutral using text-free prediction artifacts and executable reporting code.
+- Analyze generalization gaps and label-level errors, then measure the effect of two text perturbations on the same checkpoint and evaluation samples. Preserve text-free predictions and executable reporting code for both studies.
 
-The report integrates the Midterm as baseline evidence and treats Final RQ1 as the main experiment. It includes negative results and selected failure observations. Dependency-aware models, alternative loss functions, noise-robustness benchmarks and multi-seed training are not claimed as completed experiments.
+The report integrates the Midterm as baseline evidence, treats RQ1 as the main experiment, and reports RQ4 as a follow-up after RQ1.
 
 ## 2  Background and Related Work
 
@@ -120,7 +121,7 @@ The common normalization applies Unicode NFC, collapses whitespace and trims the
 
 PhoBERT sequences are padded and truncated to 256 tokens, using a batch size of 16 for the Final inference path. Token IDs and attention masks form the encoder input. Inference preserves comment order and uses evaluation mode, without dropout or gradient updates. The tokenizer, segmentation assets and model configuration are restored from the same archived run as the classifier.
 
-The Final loader does not replace the trained classifier with a freshly initialized head or download a different backbone. Model, tokenizer, label mapping and preprocessing are treated as a bound set. A change in any of them could alter scores before thresholding, which would defeat the purpose of isolating the decoder.
+The Final loader restores the saved classifier, tokenizer and canonical label mapping. RQ4 changes only the normalized input text before VnCoreNLP segmentation and PhoBERT tokenization. It uses the same segmentation assets, tokenizer, sequence length and classifier across conditions.
 
 ### 4.2  Models and Training
 
@@ -232,9 +233,23 @@ Table A.9 removes the Neutral column while keeping the same selected thresholds.
 
 Figure A.1 shows the fitted cutoff profile, and Appendix A provides the complete label inventory with test F1. Some cutoffs are far from 0.5, but a larger movement does not itself indicate a better test decision. The profile is a validation-selected artifact, not a new rule fitted from the observed test errors.
 
+### 5.3  Extension RQ Results
+
+RQ4 follows the text noise extension in the project brief [11]. For each split, the experiment evaluates three versions of the same comments in the same order: original input, diacritics removed, and simulated QWERTY typos. The second condition removes Vietnamese vowel marks and maps đ/Đ to d/D. The third independently replaces eligible ASCII letters with neighboring alphabetic keys at probability 0.05, using a deterministic draw from seed 42, sample ID and character position. It leaves accented characters unchanged. The original input contains any naturally occurring noise already present in the dataset.
+
+Each condition keeps the same 2,066 validation or 2,067 test IDs, reference targets, epoch-15 checkpoint, and three locked RQ1 decoders. Fixed 0.5 is the primary comparison. The untouched input was inferred alongside both noisy versions in the same CUDA runtime. Its binary decisions matched the archived RQ1 results for all three decoders. The analysis includes comments that the operation leaves unchanged. On test, diacritic removal changed 2,024 comments and QWERTY substitution changed 1,450.
+
+At fixed 0.5, test Macro-F1 falls from 0.589964 on original input to 0.329749 after diacritic removal and 0.550578 with QWERTY typos. These are decreases of 26.02 and 3.94 percentage points. Test Micro-F1 is 0.357939 and 0.562088 in the corresponding noisy conditions. Figure 3 shows that both perturbations reduce test Macro-F1 for each of the three frozen decoders. Table A.13 gives the paired validation and test comparisons.
+
+![Figure 3. Change in all28 test Macro-F1 under diacritic removal and QWERTY typos, relative to original input for each frozen decoder.](ati_report_assets/rq4_macro_f1_delta.png)
+
+Among the three emotion-frequency tiers, the tail has the largest Macro-F1 decrease under fixed 0.5 for both perturbations: 31.53 points with diacritics removed and 5.41 points with QWERTY substitutions. The two perturbations differ in coverage and severity, so the comparison describes the specified settings. It does not isolate how one equally severe alteration of each type would affect the model.
+
 ### 5.4  Answer to the Research Questions
 
 On held-out data, global tuning gains 0.1289 Macro-F1 percentage points over fixed 0.5, while per-label tuning loses 0.4549 points and fixed gives the lowest Hamming Loss. The results provide limited support for a global improvement in this single run and fail to support a consistent benefit from tuning across both approaches.
+
+For RQ4, both perturbations reduce test Macro-F1 at fixed 0.5, supporting the stated hypothesis for this checkpoint and split. Full diacritic removal produces the larger observed decrease under the tested conditions.
 
 ## 6  Error Analysis
 
@@ -274,6 +289,8 @@ Validation has several roles across the project: original checkpoint selection, 
 
 Qualitative judgments are exploratory and unadjudicated. Reference-label ambiguities remain unresolved, and selected cases mix target-level and whole-comment observations. A checksum proves consistency of saved bytes, not semantic correctness or a complete history of interactive actions. Likewise, a distribution audit does not certify the original stratification algorithm.
 
+RQ4 was designed after the RQ1 test results were available and uses the same held-out split. The simulation covers two transformations and one typo rate. Removing accents or substituting letters can change the meaning of a comment, while the experiment keeps its original annotation. The resulting differences describe robustness under the simulated conditions and do not estimate degradation under the distribution of naturally occurring errors.
+
 ### 7.2  Ethical Considerations
 
 The course brief restricts use of the dataset to non-commercial academic research and education and prohibits public redistribution of raw comments. Derived artifacts are separated from private data, tokenizer assets and model weights. Failure examples use abstract descriptions and label sets. The group provides authorized dataset and checkpoint access details in the execution README.
@@ -282,7 +299,7 @@ The reported labels and scores should not be treated as authoritative judgments 
 
 ### 7.3  Conclusion
 
-This project establishes lexical, recurrent and pretrained baselines and then isolates threshold decoding on one frozen PhoBERT-28 checkpoint. Validation-selected global threshold 0.4 improves all28 test Macro-F1 by 0.1289 percentage points over fixed 0.5, whereas per-label tuning reduces it by 0.4549 points despite its better validation score. Fixed retains the lowest Hamming Loss. Frequency-tier, cardinality, Neutral and failure analyses show why a validation gain should not be assumed to transfer uniformly. The main lesson is to evaluate threshold transfer and metric trade-offs under fixed split and checkpoint controls, while reporting the limits of single-run and qualitative evidence.
+This project establishes lexical, recurrent and pretrained baselines and then isolates threshold decoding on one frozen PhoBERT-28 checkpoint. Validation-selected global threshold 0.4 increases all28 test Macro-F1 by 0.1289 percentage points, while per-label tuning reduces it by 0.4549 points despite a higher validation score. Fixed 0.5 gives the lowest Hamming Loss. Under that same decoder, removing diacritics and introducing QWERTY typos reduce test Macro-F1 by 26.02 and 3.94 points, respectively. Comparing each intervention against matched controls makes these effects interpretable within this checkpoint, split and set of perturbations.
 
 ## References
 
@@ -306,6 +323,8 @@ This project establishes lexical, recurrent and pretrained baselines and then is
 
 [10] T. Wolf et al., “Transformers: State-of-the-Art Natural Language Processing,” in Proc. EMNLP: System Demonstrations, 2020, pp. 38–45, doi: 10.18653/v1/2020.emnlp-demos.6.
 
+[11] “Project 2 – ViGoEmotions 2026: Fine-Grained Multi-Label Vietnamese Emotion Recognition,” Advanced Topics in Information Technology, Hanoi University, course project brief, 2026, pp. 3–4.
+
 ## Appendix A  Reproducibility
 
 ### A.1  Artifact Inventory and Execution
@@ -317,6 +336,8 @@ The two executed Midterm notebooks are notebooks/08_kaggle_equal_20ep_27_labels_
 Table 1 summarizes the declared RQ and control in docs/final_protocol.md. Table 2 uses the frozen split sizes and label support. Table 3 and Tables A.1–A.3 use the Midterm model_comparison.csv and saved run records. Table 4 and Table A.4 use val_comparison.csv and test_comparison.csv in reports/final28/tables/. Tables A.5–A.9 use generalization_gap.csv, test_frequency_tiers.csv, test_cardinality.csv, test_neutral.csv and the emotion27 rows of test_comparison.csv, respectively.
 
 Table A.10 uses the target-error comparisons in the qualitative packet. Table A.11 uses the five selected rows of human_audit/cases.csv. Table A.12 joins threshold_profile.csv with test_per_label.csv. Figures 1 and A.1 use threshold_profile.csv. Figure 2 uses val_comparison.csv and test_comparison.csv. The report builder checks the source evidence, recomputes baseline metrics from saved scores and renders the tables and grayscale figures.
+
+Notebook notebooks/11_kaggle_rq4_noise_robustness.ipynb prepares the RQ4 conditions and invokes scripts/rq4_robustness.py with verify, validate and test. The run used configs/rq4_noise_robustness.json, verified RQ1 assets, and the same CUDA package versions for both splits. Each condition saves an aligned, text-free prediction NPZ. The manifest in reports/rq4_noise/test/ binds the exact validation manifest. The imported scores, decoded decisions and regenerated tables were checked as recorded in reports/rq4_noise/verification.json. Table A.13 uses the split comparison CSVs, and Figure 3 uses the verified test figure from the same run. Executed RQ4 notebook in the submission: [RQ4 EXECUTED NOTEBOOK PATH].
 
 ```bash
 python -m pip install -r requirements.txt
@@ -472,6 +493,31 @@ Dataset access is provided through https://huggingface.co/datasets/uitnlp/vigoem
 | annoyance | head | 2662 | 0.05 | 0.538071 | 0.565854 | 0.574333 |
 | disapproval | mid | 969 | 0.45 | 0.367713 | 0.364407 | 0.366812 |
 | neutral | neutral | 821 | 0.75 | 0.433628 | 0.435897 | 0.422111 |
+
+### A.4  Noise Robustness Results
+
+**Table A.13. RQ4 all28 Macro-F1 and Micro-F1 on validation and test. Changes are relative to original input for the same split and decoder.**
+
+| Split | Condition | Decoder | Macro-F1 | Micro-F1 | Δ Macro (pp) | Δ Micro (pp) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Validation | Original | Fixed 0.5 | 0.578341 | 0.582894 | +0.00 | +0.00 |
+| Validation | Original | Global 0.4 | 0.582941 | 0.584656 | +0.00 | +0.00 |
+| Validation | Original | Per-label | 0.595555 | 0.598435 | +0.00 | +0.00 |
+| Validation | No diacritics | Fixed 0.5 | 0.312470 | 0.345226 | -26.59 | -23.77 |
+| Validation | No diacritics | Global 0.4 | 0.318634 | 0.349901 | -26.43 | -23.48 |
+| Validation | No diacritics | Per-label | 0.322862 | 0.355943 | -27.27 | -24.25 |
+| Validation | QWERTY typos | Fixed 0.5 | 0.544404 | 0.549798 | -3.39 | -3.31 |
+| Validation | QWERTY typos | Global 0.4 | 0.548567 | 0.550847 | -3.44 | -3.38 |
+| Validation | QWERTY typos | Per-label | 0.554253 | 0.557554 | -4.13 | -4.09 |
+| Test | Original | Fixed 0.5 | 0.589964 | 0.597350 | +0.00 | +0.00 |
+| Test | Original | Global 0.4 | 0.591254 | 0.598233 | +0.00 | +0.00 |
+| Test | Original | Per-label | 0.585415 | 0.594666 | +0.00 | +0.00 |
+| Test | No diacritics | Fixed 0.5 | 0.329749 | 0.357939 | -26.02 | -23.94 |
+| Test | No diacritics | Global 0.4 | 0.336926 | 0.363886 | -25.43 | -23.43 |
+| Test | No diacritics | Per-label | 0.338700 | 0.362819 | -24.67 | -23.18 |
+| Test | QWERTY typos | Fixed 0.5 | 0.550578 | 0.562088 | -3.94 | -3.53 |
+| Test | QWERTY typos | Global 0.4 | 0.553352 | 0.563309 | -3.79 | -3.49 |
+| Test | QWERTY typos | Per-label | 0.556180 | 0.566510 | -2.92 | -2.82 |
 
 ## Appendix B  Member Contributions
 

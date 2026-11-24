@@ -11,15 +11,16 @@ Bản làm việc: [final_report_ati.docx](../reports/final_report_ati.docx). Đ
 | Running header | Thay `[PREFIX]` bằng `<CLASS>_G<NN>_P02` ở header của phần thân/phụ lục |
 | Appendix A | `[CHECKPOINT LINK, IF REQUIRED]`: link riêng đã cấp quyền cho giảng viên nếu cần |
 | Appendix A | `[FINAL EXECUTED NOTEBOOK PATH]`: đường dẫn notebook Final đã chạy, giữ outputs, trong gói nộp |
+| Appendix A | `[RQ4 EXECUTED NOTEBOOK PATH]`: đường dẫn bản notebook 11 đã chạy trên Kaggle, giữ outputs. |
 | Appendix B | MSSV, họ tên, nhiệm vụ, tỷ lệ đóng góp số nguyên của mọi thành viên; tổng 100, cả nhóm thống nhất |
 | Appendix C | Công cụ/phiên bản, mục đích, các sections/files thực tế bị tác động; điền theo việc nhóm đã sử dụng |
 | Tên file khi đóng gói | `<PREFIX>_report.docx` trong `<PREFIX>/report/` |
 
 ## Kiểm sau khi điền
 
-Mở bằng Word, cập nhật toàn bộ mục lục và các fields (Update entire table), rồi lưu DOCX. Kiểm lại phần thân Sections 1–7 vẫn 15–20 trang, không tính cover/abstract/TOC/references/appendices. Bản render kiểm tra hiện có 17 trang thân; Word hoặc nội dung bổ sung có thể làm phân trang thay đổi. PDF kèm theo chỉ để đọc và kiểm bố cục, file nộp là DOCX.
+Mở bằng Word, cập nhật toàn bộ mục lục và các fields (Update entire table), rồi lưu DOCX. Kiểm lại phần thân Sections 1–7 vẫn 15–20 trang, không tính cover/abstract/TOC/references/appendices. Bản render kiểm tra hiện có 18 trang thân; Word hoặc nội dung bổ sung có thể làm phân trang thay đổi. PDF kèm theo chỉ để đọc và kiểm bố cục, file nộp là DOCX.
 
-Report giữ nguyên các kết quả đã có; không train, inference hoặc fit lại thresholds để tạo báo cáo. Thông tin chưa biết còn trong dấu ngoặc vuông; numeric citations `[1]`–`[10]` là trích dẫn hợp lệ, không xóa khi tìm placeholders.
+Report giữ nguyên các kết quả đã có; không train, inference hoặc fit lại thresholds để tạo báo cáo. Thông tin chưa biết còn trong dấu ngoặc vuông; trích dẫn `[1]`–`[11]` là trích dẫn hợp lệ, không xóa khi tìm placeholders.
 
 ## Nguồn và dựng lại
 
