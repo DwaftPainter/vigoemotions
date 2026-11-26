@@ -1,0 +1,72 @@
+{
+  "status": "verified_and_imported",
+  "inference_performed_during_import": false,
+  "matched_protocol_source_commit": "97b8403f8683fb3ebaacee8b86f98cfcafa69a3c",
+  "protocol_sha256": {
+    "scripts/rq4_noise.py": "340a4e8c1054be542888d18aafcc142f1c69408678991a13b763ecfcb76d87a3",
+    "scripts/rq4_robustness.py": "f25238f14dbe23c27247d743cb52be9a2a52b26f19bec506cc0cffa09b7bcaab",
+    "configs/rq4_noise_robustness.json": "259c824df2df699826c6c2f77196e97b5020958e98352e0f7f8c6e8db00f9047",
+    "docs/rq4_noise_robustness.md": "ef6a1bdf6ff46a2c823457fe0290a5ae602fc51a95954ea8d95fa7c0fd0c4470"
+  },
+  "rq1_sha256": {
+    "pre_test_lock.json": "3e3cd31f61a77db654abd96aeeee6af020d6e6b282d0ca71a7ee699e81a893a9",
+    "thresholds.json": "d9fc977d5b7156e95bccfb52d24c3bba99d3d673ef0aadf8fa4414aec5ff5cb9",
+    "validation_reproduction.json": "dbfa5804766c82fb40fe710adcb3de4ae331cc210d4fd226cbd3e178c1868c6e",
+    "test_attempt.json": "3fa95a07cc4973d41b877d586cc2274451e21b54811bc3b2a357c460f12abc2f",
+    "predictions/val.npz": "d936e9b956554c86778996e65eab4346228bacb8c65917c42c436c439df00808",
+    "predictions/test.npz": "842ee969a876d85de9b1e4c0900f0138ec3de53114fdf68bed32fcbda7fc9547"
+  },
+  "runtime": {
+    "device": "cuda",
+    "packages": {
+      "python": "3.13.16",
+      "torch": "2.11.0+cu130",
+      "transformers": "4.57.3",
+      "py-vncorenlp": "0.1.4",
+      "numpy": "2.1.3",
+      "safetensors": "0.8.0"
+    },
+    "segmentation": "train_neural.segmented_texts",
+    "prediction": "train_neural.predict"
+  },
+  "val": {
+    "n": 2066,
+    "archive_name": "vigoemotions_rq4_val.zip",
+    "archive_sha256": "a3c53876bef48227ecbaba565ce5fd7d831e47ae29670f85f9b44b373fc0ce84",
+    "manifest_sha256": "947c558f21f19c0317775ac3d2e7ac335ce48454877d7c005cb19ab05f256bfa",
+    "verified_output_files": 25,
+    "regenerated_metric_tables": 19,
+    "coverage_regenerated_from_original_csv": true,
+    "paired_ids_and_targets_verified": true,
+    "decoded_predictions_verified": true,
+    "clean_vs_rq1": {
+      "max_absolute_error": 1.601874828338623e-07,
+      "absolute_tolerance": 0.0001,
+      "decisions_identical_to_rq1": {
+        "fixed": true,
+        "global": true,
+        "per_label": true
+      }
+    }
+  },
+  "test": {
+    "n": 2067,
+    "archive_name": "vigoemotions_rq4_test.zip",
+    "archive_sha256": "8e0aa1ae52331809877146ea7dfdc18787703f1525565f508bfdc351ce7f2c44",
+    "manifest_sha256": "cff756af2711b90fddd3bc292229ea973f0d0099ce884018f60e574a72eacaaf",
+    "verified_output_files": 25,
+    "regenerated_metric_tables": 19,
+    "coverage_regenerated_from_original_csv": true,
+    "paired_ids_and_targets_verified": true,
+    "decoded_predictions_verified": true,
+    "clean_vs_rq1": {
+      "max_absolute_error": 2.384185791015625e-06,
+      "absolute_tolerance": 0.0001,
+      "decisions_identical_to_rq1": {
+        "fixed": true,
+        "global": true,
+        "per_label": true
+      }
+    }
+  }
+}

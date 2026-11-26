@@ -118,5 +118,15 @@
     "splits/val.csv": "35726b954109e9424efb980001865d709bc00412fb3ec59e8e0f467c5186fb5b",
     "tests/test_final_thresholds.py": "1d246b43ebee26c16228a43449f42925525c7d422ea0910dd03cd5e4b0d0692b",
     "archive/final27_prototype_2026-11-11/snapshot.json": "0bbdb9951fbf3d0e33a7d744a8b0c728ce2be47669c4b463947f1159807d5aa1"
+  },
+  "rq4_source_commit": "cb0ea5cc0cfb19e9499afee00dcf45917866a49b",
+  "rq4_source_sha256": {
+    "reports/rq4_noise/test/tables/comparison.csv": "f6254cd8a7f86c719426609eca0b57d4b1383d43bd3fd2162a5d64fd80a69c48",
+    "reports/rq4_noise/test/tables/frequency_tiers.csv": "82c56bbad2bf9e048bfeb1021fbe806deb9e02732a50c3c46f21a488e1cf1e96",
+    "reports/rq4_noise/test/tables/noise_coverage.csv": "833963b5cb70adcb86dd9091df930cd383efffd4d9f075d4772ff53e627eea05",
+    "reports/rq4_noise/test/figures/macro_f1_delta.png": "050eb171028d385997ecf5d2fc467800e22a1df6c64af0d46f745fea30dfc955",
+    "reports/rq4_noise/test/manifest.json": "cff756af2711b90fddd3bc292229ea973f0d0099ce884018f60e574a72eacaaf",
+    "reports/rq4_noise/val/manifest.json": "947c558f21f19c0317775ac3d2e7ac335ce48454877d7c005cb19ab05f256bfa",
+    "reports/rq4_noise/verification.json": "0b58ddbddc692d2452f537c6d3441cf73cf8c5cb3c8534fd6cfe77a7c85c46fa"
   }
 }

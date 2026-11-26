@@ -42,7 +42,7 @@ Cho một output có p=0.8. Nếu y=1, loss=-log(0.8)≈0.2231. Nếu y=0, loss=
 
 Gradient descent trừ learning_rate×gradient: gradient âm làm logit tăng, gradient dương làm logit giảm. Với mean loss trên batch và nhãn có thêm hệ số chuẩn hóa. Không dùng gradient của loss như thể đó là ngưỡng quyết định cuối cùng.
 
-**Hỏi thêm:** Khi model.eval và no_grad để inference, optimizer có cập nhật weights không? Đáp: không; Final chỉ lấy scores của checkpoint đã học rồi đổi decision rule.
+**Hỏi thêm:** Khi chạy inference với `model.eval()` và `no_grad`, optimizer có cập nhật weights không? Không. RQ1 đổi ngưỡng trên cùng điểm số. RQ4 đổi đầu vào rồi lấy điểm số mới bằng cùng checkpoint.
 
 ## 4. Đọc một kết quả thật trong 90 giây
 
@@ -51,6 +51,12 @@ Chọn một dòng trong `reports/final28/tables/test_per_label.csv` và đối 
 Ví dụ nervousness: fixed TP=41, FP=26, FN=55; per-label TP=51, FP=81, FN=45. Tính F1 fixed = 82/163≈0.503067; per-label = 102/228≈0.447368. Recall tăng từ 41/96 lên 51/96 nhưng F1 giảm khoảng 5.5699 pp vì FP tăng mạnh. Phân biệt tính toán quan sát với giả thuyết nguyên nhân ngôn ngữ.
 
 Tiếp theo đọc một tier và một cardinality group. Hỏi lại: tier phân nhóm nhãn hay phân nhóm comment? N trong bảng là số comment hay số positives? Bảng hiện đang all28 hay emotion27?
+
+### Tính chênh lệch RQ4 và giải thích đối chứng
+
+Dùng Macro-F1 test all28 ở fixed 0.5. Từ văn bản gốc {{test_fixed_macro}}, bỏ dấu còn {{rq4_diacritics_macro}} và lỗi gõ QWERTY còn {{rq4_typo_macro}}. Lấy điểm từng điều kiện trừ điểm gốc và nhân 100. Đáp án là giảm {{rq4_diacritics_drop_pp}} và {{rq4_typo_drop_pp}} điểm phần trăm.
+
+Người hỏi đổi tình huống: “Nếu nhóm hạ ngưỡng riêng cho mỗi loại nhiễu thì so sánh còn trả lời cùng câu hỏi không?” Giải thích rằng kết quả khi đó gộp ảnh hưởng của đổi văn bản và đổi ngưỡng. Sau đó nêu một lý do không thể suy rộng mức giảm thành so sánh của hai dạng nhiễu ở cùng độ nặng.
 
 ## 5. Mock defence buổi 1 — kiến thức và pipeline
 
@@ -71,10 +77,11 @@ Thời gian gợi ý 20–30 phút mỗi người; đây là bài tập luyện,
 - Trình bày kết quả all28 và một kết quả không thuận lợi cho giả thuyết ban đầu.
 - Trả lời ba phản biện liên tiếp: vì sao 28; vì sao epoch15; vì sao không tune lại test để cứu per-label.
 - Giải thích gap âm, tail decline và precision/recall trade-off của Neutral.
+- Trình bày RQ4 trong 30 giây: đầu vào đổi ở đâu, đối chứng giữ gì, kết quả chính và một giới hạn.
 - Nêu một điều artifacts chứng minh được và một điều chưa chứng minh được.
 - Mỗi người chỉ ra đóng góp thật của mình, cách đã kiểm tra và điều còn chưa chắc chắn.
 
-Người hỏi chọn ngẫu nhiên 5 trong 30 câu Q&A. Mỗi câu thử một đáp án 20–40 giây, sau đó trả lời câu hỏi đổi điều kiện. Có thể dùng writing/diagram khi luyện; quy định được dùng tài liệu khi thi phải theo thông báo giảng viên.
+Người hỏi chọn 5 trong 34 câu Q&A, gồm ít nhất một câu RQ4. Mỗi câu thử một đáp án 20–40 giây rồi xử lý một câu hỏi đổi điều kiện. Có thể viết hoặc vẽ sơ đồ khi luyện. Quy định sử dụng tài liệu khi thi theo thông báo của giảng viên.
 
 ## 7. Phiếu tự đánh giá
 
@@ -85,6 +92,7 @@ Người hỏi chọn ngẫu nhiên 5 trong 30 câu Q&A. Mỗi câu thử một 
 | Tính được Macro/Micro/Hamming và decoding | Điền sau buổi luyện |
 | Nhớ đúng epoch criterion và tuning objective | Điền sau buổi luyện |
 | Đọc đúng scope, support, pp và gap | Điền sau buổi luyện |
+| Phân biệt đổi ngưỡng ở RQ1 với đổi đầu vào ở RQ4 | Điền sau buổi luyện |
 | Phản biện mà không thêm claim vượt evidence | Điền sau buổi luyện |
 | Mở đúng file để chứng minh đóng góp | Điền sau buổi luyện |
 

@@ -10,4 +10,4 @@
 - [x] Kiểm số liệu, hashes, links, PDF và tests liên quan.
 - [x] README và lộ trình ôn hoàn chỉnh.
 
-Nhánh nộp chưa tạo. Tên/MSSV/phân công, lịch và thời lượng oral cần thông tin thật; lịch luyện trong notes là gợi ý nội bộ.
+Report Final và hồ sơ RQ4 nằm trên `submission/ati-final-rq4`. Phân công, lịch và thời lượng oral theo thông tin nhóm và giảng viên xác nhận.

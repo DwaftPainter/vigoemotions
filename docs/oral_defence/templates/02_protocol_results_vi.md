@@ -2,7 +2,7 @@
 
 ## 1. Câu hỏi và thiết kế đã làm
 
-RQ chính: global/per-label cutoff chọn trên validation có cải thiện test Macro-F1 **all28** so với fixed 0.5 trên cùng frozen PhoBERT checkpoint không? Đề gốc nêu 27 emotions; nhóm mở rộng thành 28 gồm Neutral và báo emotion27 projection bổ sung.
+RQ1 hỏi ngưỡng chung và ngưỡng riêng từng nhãn chọn trên validation có cải thiện test Macro-F1 **all28** so với fixed 0.5 trên cùng checkpoint PhoBERT không. Đề gốc nêu 27 cảm xúc. Nhóm mở rộng thành 28 đầu ra gồm Neutral và báo thêm phép chiếu emotion27. RQ4 hỏi hiệu năng thay đổi thế nào khi thêm nhiễu vào cùng các bình luận.
 
 Midterm đã huấn luyện ba mô hình ở cả 27/28 outputs. Final giữ checkpoint PhoBERT-28 epoch 15 từ run 20 epoch. Tiêu chí chọn checkpoint gốc là emotion27 Macro-F1 tại 0.5, tie chọn epoch sớm hơn. Không thay lịch sử đó thành chọn epoch bằng all28.
 
@@ -34,7 +34,7 @@ verify -> restore -> reproduce-val -> fit -> lock -> infer-test -> report
 
 Lock bind config, protocol, code, source scores, reproduction và thresholds. Test artifact ghi completed và dùng một shared score matrix cho cả ba decoder. Hashes chứng minh liên kết/nhất quán của artifacts được giữ, không độc lập chứng minh mọi thao tác trong session tương tác trước đó.
 
-Sau test, chỉ đọc saved outputs để phân tích. Không đổi cutoff, thêm epoch, chọn checkpoint hay quay lại test để tìm cấu hình tốt hơn. Trong nhánh ôn, chỉ cần dựng notes/PDF và đọc evidence.
+Kết quả RQ1 được phân tích từ đầu ra đã lưu, với ngưỡng và checkpoint đã khóa. RQ4 có lượt inference riêng để so sánh đầu vào gốc với đầu vào nhiễu trên cùng split. Trong nhánh ôn, các bảng được dựng từ kết quả đã kiểm chứng.
 
 ## 4. Kết quả all28 và câu trả lời cho RQ
 
@@ -84,13 +84,30 @@ Ba cặp train thường gặp là disappointment–sadness (904), anger–annoy
 
 Ví dụ từ counts: nervousness ở fixed có TP=41, FP=26, FN=55; per-label có TP=51, FP=81, FN=45. Recall tăng nhưng FP tăng mạnh, làm F1 giảm. Đây là đánh đổi quyết định từ scores đã lưu; không xác định được cơ chế ngôn ngữ chỉ bằng các counts này.
 
-Một seed, một checkpoint, một grid và một split hạn chế khả năng khái quát. Validation đã dùng chọn epoch và khảo sát Midterm; protocol Final không phải preregistration trước mọi quan sát. Graph/loss/noise robustness/multi-seed là extensions, chưa được thực hiện trong kết quả này.
+Một seed, một checkpoint, một grid và một split hạn chế khả năng khái quát. Validation đã được dùng để chọn epoch và khảo sát trong Midterm trước khi chốt RQ1. Các hướng đồ thị nhãn, thay loss và chạy nhiều seed vẫn là việc có thể nghiên cứu thêm.
 
-## 9. Bản đồ code để mở khi được hỏi
+## 9. RQ4 — Độ bền với nhiễu văn bản
+
+So sánh ba phiên bản của cùng 2,066 mẫu validation và 2,067 mẫu test. Mỗi phiên bản giữ nguyên ID, thứ tự, nhãn, checkpoint epoch 15, tokenizer và ba bộ ngưỡng RQ1. Văn bản gốc là đối chứng chạy cùng lượt inference. Quyết định trên đối chứng khớp RQ1 ở cả ba bộ ngưỡng.
+
+- **Bỏ dấu:** bỏ dấu trên nguyên âm tiếng Việt, đổi đ/Đ thành d/D và giữ chữ hoa/thường, dấu câu, emoji. Phép này làm thay đổi {{rq4_diacritics_changed}} trong 2,067 bình luận test.
+- **Lỗi gõ QWERTY:** mỗi chữ cái ASCII đủ điều kiện có xác suất 5% bị thay bằng phím chữ lân cận. Seed 42, ID mẫu và vị trí ký tự quyết định phép thay. Có {{rq4_typo_changed}} bình luận test thay đổi.
+
+Nhiễu được tạo sau chuẩn hóa NFC và khoảng trắng, trước VnCoreNLP và BPE. Bảng dùng toàn bộ mẫu test, gồm cả mẫu mà phép biến đổi giữ nguyên. Cột Δ lấy điểm của điều kiện trừ điểm văn bản gốc ở cùng decoder và nhân 100.
+
+{{rq4_table}}
+
+![RQ4: thay đổi Macro-F1 test all28 của ba decoder so với văn bản gốc.](../../reports/rq4_noise/test/figures/macro_f1_delta.png)
+
+Ở fixed 0.5, bỏ dấu giảm {{rq4_diacritics_drop_pp}} pp và lỗi gõ giảm {{rq4_typo_drop_pp}} pp. Tail giảm nhiều nhất trong ba tiers ở cả hai điều kiện, lần lượt {{rq4_diacritics_tail_drop_pp}} và {{rq4_typo_tail_drop_pp}} pp. Hai mức giảm mô tả cách tạo nhiễu đã chọn, vì mức độ và số mẫu bị sửa khác nhau. RQ4 được thiết kế sau khi có kết quả RQ1, dùng lại cùng held-out split. Giữ nhãn gốc cả khi phép sửa có thể làm câu đổi nghĩa là một giới hạn.
+
+Mở bảng [điểm theo điều kiện](../../reports/rq4_noise/test/tables/comparison.csv), [mức thay đổi đầu vào](../../reports/rq4_noise/test/tables/noise_coverage.csv) hoặc [biên bản kiểm chứng val và test](../../reports/rq4_noise/verification.json) khi cần giải thích nguồn số liệu.
+
+## 10. Bản đồ code để mở khi được hỏi
 
 {{code_map}}
 
-Đọc source để giải thích đầu vào/đầu ra, điều kiện và quyết định. Nhánh ôn giữ code gốc và decoder tests; workflow đầy đủ, report builders và nghiên cứu lịch sử nằm ở nhánh nguồn `feature/final28-report`.
+Với RQ4, xem `prepare_conditions` trong [rq4_noise.py](https://github.com/DwaftPainter/vigoemotions/blob/cb0ea5c/scripts/rq4_noise.py) và `run_split` trong [rq4_robustness.py](https://github.com/DwaftPainter/vigoemotions/blob/cb0ea5c/scripts/rq4_robustness.py). Tài liệu này dùng bảng RQ4 đã kiểm chứng từ nhánh `submission/ati-final-rq4`.
 
 ## Phụ lục: 28 cutoffs đã fit
 

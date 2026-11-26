@@ -104,11 +104,11 @@ Trên cùng scores, hạ cutoff không giảm số dự đoán dương; recall k
 
 **English:** Lowering a threshold can recover positives and introduce false positives. Recall cannot decrease on fixed scores, but precision and F1 may worsen.
 
-### 17. Tại sao LRAP của ba decoder giống nhau?
+### 17. Tại sao LRAP của ba decoder giống nhau trong cùng một điều kiện?
 
-Chỉ đổi cutoff, không đổi continuous scores hoặc thứ hạng nhãn. LRAP là ranking metric, không tính từ các ma trận binary đã threshold.
+Khi ba decoder dùng cùng điểm số, thứ hạng nhãn giữ nguyên nên LRAP bằng nhau. Trong RQ4, đầu vào khác có thể làm điểm số và thứ hạng đổi, vì vậy LRAP có thể khác giữa các điều kiện nhiễu.
 
-**English:** The score rankings are unchanged, so the ranking metric is unchanged. Threshold tuning only changes binary decisions.
+**English:** The three decoders share score rankings within a condition, so their LRAP is equal. Perturbing the input can change the scores and the resulting rankings.
 
 ### 18. Có phải đã calibration xác suất không?
 
@@ -124,7 +124,7 @@ Dương vì dùng >=. Tie-break chọn cutoff cao hơn khi computed F1 bằng nh
 
 ## D. Kết quả và phản biện
 
-### 20. Kết luận chính của Final?
+### 20. Kết luận chính của RQ1?
 
 Test all28 Macro-F1: fixed 0.589964, global 0.591254, per-label 0.585415. Global gain +0.1289 pp nhỏ; per-label đổi -0.4549 pp dù validation tốt hơn. Không có lợi ích đồng đều từ tuning linh hoạt hơn.
 
@@ -166,17 +166,17 @@ Không suy được tỷ lệ population từ mẫu chọn có chủ đích. Not
 
 **English:** The qualitative sample is purposive and unadjudicated. It generates hypotheses rather than an estimate of annotation error prevalence.
 
-### 27. Có chắc đã test đúng một lần?
+### 27. Phân biệt lượt test RQ1 và RQ4 thế nào?
 
-Artifacts ghi một completed attempt, shared score matrix và lock bindings. Các kiểm tra xác minh records được giữ và tính nhất quán của chúng; không độc lập chứng minh mọi hoạt động ở notebook session trước đó. Không chạy lại inference để luyện oral.
+RQ1 có một lượt test hoàn tất trong hồ sơ, với một ma trận điểm chung cho ba decoder và ngưỡng đã khóa. RQ4 có lượt inference riêng trên cùng split để so phiên bản gốc với hai phiên bản nhiễu. RQ4 dùng lại checkpoint và ngưỡng RQ1. Các hash xác nhận những file và liên kết được lưu trong hồ sơ.
 
-**English:** The retained artifacts record one completed attempt bound to the lock. Hash checks establish consistency, not a complete history of every interactive action.
+**English:** RQ1 records one completed test attempt using the locked thresholds. RQ4 runs a separate paired comparison on the same split with those thresholds and the same checkpoint.
 
-### 28. Nếu muốn làm tốt hơn, extension nào hợp lý?
+### 28. Nhóm đã làm extension nào và còn hướng nào để nghiên cứu thêm?
 
-Sau RQ1 có thể thử dependency modeling, imbalance-aware loss, noise robustness hoặc nhiều seed. Mỗi hướng cần hypothesis, controls, validation selection và đánh giá phù hợp. Các hướng đó chưa phải kết quả đã làm của paper này.
+Nhóm đã làm Extension 3 về độ bền với nhiễu văn bản, tức RQ4. Có thể mở rộng bằng nhiễu gõ thực tế, thêm mức nhiễu hoặc chạy nhiều seed. Các hướng đồ thị nhãn và loss cho dữ liệu lệch cũng có thể thành thí nghiệm riêng.
 
-**English:** Future work could test label dependencies, imbalance-aware losses, robustness or multiple seeds under a separate controlled protocol.
+**English:** We completed Extension 3 on text noise. Future work could study naturally occurring errors, more noise levels, or multiple seeds.
 
 ### 29. Điểm của nhóm có so trực tiếp với paper gốc được không?
 
@@ -189,3 +189,29 @@ Chỉ so trực tiếp khi cùng label scope, split, preprocessing và metric pr
 Chỉ ra một phần mình thật sự làm, source/commit hoặc artifact liên quan, và cách mình xác minh nó. Tự trace một sample giả lập, tính metric hoặc giải thích nếu đổi cutoff thì chuyện gì xảy ra. Không dùng câu trả lời mẫu để nhận thay công việc của người khác.
 
 **English:** I would show the specific component I completed, its evidence and the checks I performed, then explain a practical example myself.
+
+## E. RQ4 — Nhiễu văn bản
+
+### 31. RQ4 thay đổi gì và giữ nguyên gì?
+
+RQ4 thay đổi đầu vào và chạy inference lại để lấy điểm số cho văn bản gốc, bỏ dấu và lỗi gõ. Ba điều kiện giữ nguyên ID, nhãn, checkpoint epoch 15, pipeline xử lý còn lại và cả ba bộ ngưỡng. Văn bản gốc chạy cùng lượt là đối chứng. Fixed 0.5 là so sánh chính.
+
+**English:** RQ4 changes the input text while holding sample IDs, labels, the checkpoint, and all three threshold rules fixed. Original text is the control.
+
+### 32. Xác suất lỗi gõ 5% áp dụng cho cái gì?
+
+Mỗi chữ cái ASCII đủ điều kiện có xác suất 5% bị thay bằng phím chữ lân cận. Seed 42, ID và vị trí ký tự giúp lặp lại phép tạo nhiễu. Trên test có 1,450 trong 2,067 bình luận đổi ít nhất một ký tự. Tỷ lệ 5% áp dụng ở mức ký tự, còn số bình luận bị ảnh hưởng phụ thuộc vào độ dài và số ký tự đủ điều kiện.
+
+**English:** The five percent rate applies to eligible ASCII letters independently. We report the fraction of comments changed separately.
+
+### 33. Kết quả test chính và kết quả ở nhóm tail là gì?
+
+Ở fixed 0.5, Macro-F1 all28 giảm từ 0.589964 xuống 0.329749 khi bỏ dấu và 0.550578 khi tạo lỗi gõ. Hai mức giảm là 26.02 và 3.94 điểm phần trăm. Tail giảm nhiều nhất trong ba nhóm ở cả hai điều kiện, lần lượt 31.53 và 5.41 điểm.
+
+**English:** Diacritic removal and keyboard typos lower fixed-threshold test Macro-F1 by 26.02 and 3.94 percentage points. The tail tier shows the largest decrease under both perturbations.
+
+### 34. Có thể kết luận bỏ dấu luôn gây hại hơn lỗi gõ không?
+
+Kết quả chỉ cho thấy bỏ toàn bộ dấu làm giảm F1 nhiều hơn mức lỗi gõ 5% đã chọn. Hai phép thử tác động lên số mẫu và số ký tự khác nhau. RQ4 dùng một split sau khi đã có kết quả RQ1, và một phép sửa có thể làm câu đổi nghĩa dù nhãn gốc được giữ lại.
+
+**English:** Full diacritic removal causes the larger drop under the tested settings. The perturbations differ in severity and coverage, which limits generalization to real-world noise.

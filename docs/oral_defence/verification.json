@@ -1,12 +1,13 @@
 {
   "base_commit": "289f2fbf2a5e7bdbb965f71b938f219a1cc70067",
+  "rq4_source_commit": "cb0ea5cc0cfb19e9499afee00dcf45917866a49b",
   "documents": [
     {
       "markdown": "00_quick_revision_vi.md",
       "pdf": "00_quick_revision_vi.pdf",
       "pages": 2,
-      "markdown_sha256": "66fe15d94b68ef93eebdaa2f15a6535437903c00186c8c738f59704806340525",
-      "pdf_sha256": "ae93562f5a8add0145fa914913c42564c8d24c813a1d66ab552342e29a38953f"
+      "markdown_sha256": "c522534786c917ae16982911d0d0ba425da1206acdb5d9b1c05997614941f87a",
+      "pdf_sha256": "0d2223c133d42f85176051b99a3f5716c962ecbe4415690362dc87dcbe05365a"
     },
     {
       "markdown": "01_foundations_vi.md",
@@ -18,23 +19,23 @@
     {
       "markdown": "02_protocol_results_vi.md",
       "pdf": "02_protocol_results_vi.pdf",
-      "pages": 4,
-      "markdown_sha256": "74f8710b5e3dc8ebe569d144a2cde628b42547d911c5ad138bd149aa0fa4199a",
-      "pdf_sha256": "60062413809d3c79e0638bb5758f86a49bb17cdae0f90fe134959b3ae51a08d1"
+      "pages": 5,
+      "markdown_sha256": "9c9a664476a76510a28da8fd8baae742fa5f79c8af9d18e30c2f5bfa8a129fc9",
+      "pdf_sha256": "bdb0cd1cd78ff30ec8bc4a249b4632f58d0f8b2c28f7efb7031addca4db19c11"
     },
     {
       "markdown": "03_questions_answers_vi.md",
       "pdf": "03_questions_answers_vi.pdf",
-      "pages": 4,
-      "markdown_sha256": "4aef3ca65424dc85b7a47254aec6894cc5e9e9759d86e09be297e055a4e03b18",
-      "pdf_sha256": "d4bea9e01d16001cbf404506d778d6ade7103a86dc7c101da219793e429bc4ac"
+      "pages": 5,
+      "markdown_sha256": "89551cdc79960b2d24c2cabc6ea6412c491ae04785db1b72e93d2425e8a36e17",
+      "pdf_sha256": "8fcde7c138c9e55488bce506fac91a2c3f946dbb503409645e216ef875774147"
     },
     {
       "markdown": "04_practice_vi.md",
       "pdf": "04_practice_vi.pdf",
-      "pages": 2,
-      "markdown_sha256": "ae5aa02bf27d003ad5b07c1116389ff6fed8edef57506b80a0b41a17c254dde7",
-      "pdf_sha256": "5df17765164c5c3a3ac5d70c57d082d99902e7a68080bdb90f70d9f5bd6de9dc"
+      "pages": 3,
+      "markdown_sha256": "f909346f8bd462a7c228bf165a6d62fb752a73e1a99d3e08e7d96d50aaf39bd7",
+      "pdf_sha256": "916c22f6d6798ef7c61a2118ba445135e2a334e65fb8ca6c594b93d4824a446e"
     }
   ],
   "model_inference_performed": false,
@@ -158,28 +159,29 @@
     "tests/test_final_thresholds.py": "1d246b43ebee26c16228a43449f42925525c7d422ea0910dd03cd5e4b0d0692b",
     "archive/final27_prototype_2026-11-11/snapshot.json": "0bbdb9951fbf3d0e33a7d744a8b0c728ce2be47669c4b463947f1159807d5aa1"
   },
+  "rq4_source_sha256": {
+    "reports/rq4_noise/test/tables/comparison.csv": "f6254cd8a7f86c719426609eca0b57d4b1383d43bd3fd2162a5d64fd80a69c48",
+    "reports/rq4_noise/test/tables/frequency_tiers.csv": "82c56bbad2bf9e048bfeb1021fbe806deb9e02732a50c3c46f21a488e1cf1e96",
+    "reports/rq4_noise/test/tables/noise_coverage.csv": "833963b5cb70adcb86dd9091df930cd383efffd4d9f075d4772ff53e627eea05",
+    "reports/rq4_noise/test/figures/macro_f1_delta.png": "050eb171028d385997ecf5d2fc467800e22a1df6c64af0d46f745fea30dfc955",
+    "reports/rq4_noise/test/manifest.json": "cff756af2711b90fddd3bc292229ea973f0d0099ce884018f60e574a72eacaaf",
+    "reports/rq4_noise/val/manifest.json": "947c558f21f19c0317775ac3d2e7ac335ce48454877d7c005cb19ab05f256bfa",
+    "reports/rq4_noise/verification.json": "0b58ddbddc692d2452f537c6d3441cf73cf8c5cb3c8534fd6cfe77a7c85c46fa"
+  },
   "builder_inputs_sha256": {
-    "docs/oral_defence/templates/00_quick_revision_vi.md": "48ec9cc5c13cf2c3337eb5ace9aa009e0180dfd0b72453af9c134f9304945009",
+    "docs/oral_defence/templates/00_quick_revision_vi.md": "cf83d4b02f4b11fbd14f3e8862b123900d327d4e3d92e599b280e1da53f97129",
     "docs/oral_defence/templates/01_foundations_vi.md": "30ac8d297dc2dbc287ddc3a86f9c23403432fad8f97f92cb8dfa3192491fc607",
-    "docs/oral_defence/templates/02_protocol_results_vi.md": "46dc3178da7ff46601e415289ef1c901fe5a8a8c5371026b780063d77ea95d16",
-    "docs/oral_defence/templates/03_questions_answers_vi.md": "0ea5effd9c460085cbbdde8aec19806797383b411cfca7127b29689cef08a7b0",
-    "docs/oral_defence/templates/04_practice_vi.md": "ae5aa02bf27d003ad5b07c1116389ff6fed8edef57506b80a0b41a17c254dde7",
-    "scripts/build_oral_defence.py": "f3051f24a93333bd13aa63fef2b151570d068c5e70f1df09be0fd9446fa82819",
+    "docs/oral_defence/templates/02_protocol_results_vi.md": "086b1741f6dfd6bd70141e3a3c1533b648a017809aa062865eaff3b8cd1f742c",
+    "docs/oral_defence/templates/03_questions_answers_vi.md": "5d2a630492bd46736a53c3aa2ace80a1e804e273b0289b93c9e9eed22416113d",
+    "docs/oral_defence/templates/04_practice_vi.md": "6232daa5ee9e81643c5abf3a41b2abb0762634687b60ca45b1cde51c7f86699e",
+    "scripts/build_oral_defence.py": "c8860f3a22deb2f8e7f25347be382030052526b519f910521d3cd1a1b2b2a0b1",
     "requirements-study.txt": "c4148eb665d54e11baf06445a242fe68d252015d0d58ff8fcebb5d05194636af",
-    "docs/oral_defence/source_manifest.json": "0f495f750c93da2574e511638545d485cac374aa8b9af9d68ef5ae318ed43652",
+    "docs/oral_defence/source_manifest.json": "68c114bcc4dba9db97b26fa5baeda27bc631379d81319cbb79687491f7965856",
     "docs/oral_defence/cleanup_manifest.json": "ec7a325c0893d0a5f6ae8ff7c54974e2956b3adff7b37a9636502e85f7f94d53"
   },
   "packages": {
     "reportlab": "5.0.1",
     "matplotlib": "3.11.2",
     "pypdf": "6.20.1"
-  },
-  "review_checks": {
-    "retained_study_suite_passed": 32,
-    "notes_tests_after_layout_change_passed": 3,
-    "local_markdown_links": "all resolve",
-    "hand_calculations": "verified with exact fractions",
-    "pdf_review": "native PDFKit previews, Vietnamese text extraction and all five documents checked",
-    "original_branch_unchanged": true
   }
 }

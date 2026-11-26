@@ -32,7 +32,7 @@ def sha(path):
 
 def verify_sources(root=ROOT):
     manifest = json.loads((root/'docs/oral_defence/source_manifest.json').read_text())
-    sources = manifest['retained_original_sha256']
+    sources = {**manifest['retained_original_sha256'], **manifest.get('rq4_source_sha256', {})}
     for relative, expected in sources.items():
         path = root / relative
         if not path.is_file() or sha(path) != expected:
@@ -66,6 +66,25 @@ def substitutions(root=ROOT):
     values['primary_table'] = table(['Decoder', 'Val Macro', 'Test Macro', 'Test Micro', 'Hamming', 'Δ Macro pp'], [
         [NAMES[s], number(val[s]['macro_f1']), number(test[s]['macro_f1']), number(test[s]['micro_f1']),
          number(test[s]['hamming_loss']), f"{100*(float(test[s]['macro_f1'])-fixed):+.4f}"] for s in METHODS])
+    rq4_tables = 'reports/rq4_noise/test/tables'
+    rq4 = {(r['condition'], r['strategy']): r for r in csv_rows(f'{rq4_tables}/comparison.csv')
+           if r['scope'] == 'all28'}
+    coverage = {r['condition']: r for r in csv_rows(f'{rq4_tables}/noise_coverage.csv')}
+    tail = {r['condition']: r for r in csv_rows(f'{rq4_tables}/frequency_tiers.csv')
+            if r['strategy'] == 'fixed' and r['tier'] == 'tail'}
+    conditions = {'original': 'Văn bản gốc', 'no_diacritics': 'Bỏ dấu', 'qwerty_typo': 'Lỗi gõ QWERTY'}
+
+    def delta(row):
+        return float(row['delta_macro_f1_pp_vs_original'])
+
+    values['rq4_table'] = table(['Điều kiện', 'Fixed Macro', 'Global Macro', 'Per-label Macro', 'Δ Fixed pp'], [
+        [name, *[number(rq4[condition, s]['macro_f1']) for s in METHODS], f'{delta(rq4[condition, "fixed"]):+.2f}']
+        for condition, name in conditions.items()])
+    for key, condition in (('diacritics', 'no_diacritics'), ('typo', 'qwerty_typo')):
+        values[f'rq4_{key}_macro'] = number(rq4[condition, 'fixed']['macro_f1'])
+        values[f'rq4_{key}_drop_pp'] = f'{-delta(rq4[condition, "fixed"]):.2f}'
+        values[f'rq4_{key}_tail_drop_pp'] = f'{-delta(tail[condition]):.2f}'
+        values[f'rq4_{key}_changed'] = f"{int(coverage[condition]['changed_samples']):,}"
     values['emotion27_table'] = table(['Decoder', 'Test Macro27', 'Test Micro27', 'Hamming27'], [
         [NAMES[s], *[number(emotion[s][key]) for key in ('macro_f1', 'micro_f1', 'hamming_loss')]] for s in METHODS])
     gaps = {r['strategy']: r for r in csv_rows('reports/final28/tables/generalization_gap.csv')
@@ -199,9 +218,12 @@ def build(destination=NOTES):
                               markdown_sha256=sha(md), pdf_sha256=sha(pdf)))
     if before != verify_sources() or any(sha(ROOT/p) != value for p, value in inputs.items()):
         raise ValueError('Source changed while exporting study notes')
-    result = dict(base_commit=json.loads((NOTES/'source_manifest.json').read_text())['base_commit'],
+    manifest = json.loads((NOTES/'source_manifest.json').read_text())
+    rq4_sources = manifest['rq4_source_sha256']
+    result = dict(base_commit=manifest['base_commit'], rq4_source_commit=manifest['rq4_source_commit'],
                   documents=documents, model_inference_performed=False, private_text_read=False,
-                  retained_original_sha256=before, builder_inputs_sha256=inputs,
+                  retained_original_sha256={p: h for p, h in before.items() if p not in rq4_sources},
+                  rq4_source_sha256=rq4_sources, builder_inputs_sha256=inputs,
                   packages={name: importlib.metadata.version(name) for name in ('reportlab', 'matplotlib', 'pypdf')})
     (destination/'verification.json').write_text(json.dumps(result, ensure_ascii=False, indent=2)+'\n')
     return result

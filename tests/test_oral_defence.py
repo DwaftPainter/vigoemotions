@@ -25,6 +25,16 @@ class OralDefenceTests(unittest.TestCase):
         self.assertNotIn('0.595755', values['primary_table'])
         self.assertIn('0.595755', values['emotion27_table'])
 
+    def test_rq4_results_compare_noise_against_the_same_fixed_control(self):
+        values = substitutions()
+        self.assertIn('0.589964', values['rq4_table'])
+        self.assertIn('0.329749', values['rq4_table'])
+        self.assertIn('0.550578', values['rq4_table'])
+        self.assertEqual(values['rq4_diacritics_drop_pp'], '26.02')
+        self.assertEqual(values['rq4_typo_drop_pp'], '3.94')
+        self.assertEqual(values['rq4_diacritics_tail_drop_pp'], '31.53')
+        self.assertEqual(values['rq4_typo_tail_drop_pp'], '5.41')
+
     def test_changed_retained_source_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); (root/'docs/oral_defence').mkdir(parents=True)
@@ -51,7 +61,13 @@ class OralDefenceTests(unittest.TestCase):
                 self.assertGreater(item['pages'], 0)
                 self.assertEqual(hashlib.sha256(pdf.read_bytes()).hexdigest(), item['pdf_sha256'])
             questions = (Path(tmp)/'03_questions_answers_vi.md').read_text()
-            self.assertEqual(questions.count('**English:**'), 30)
+            self.assertEqual(questions.count('**English:**'), 34)
+            self.assertIn('### 34.', questions)
+            for prefix in ('00', '02', '03', '04'):
+                note = next(item for item in result['documents'] if item['markdown'].startswith(prefix))
+                pdf_text = '\n'.join(p.extract_text() or '' for p in PdfReader(Path(tmp)/note['pdf']).pages)
+                self.assertIn('RQ4', pdf_text)
+            self.assertIn('reports/rq4_noise/test/tables/comparison.csv', result['rq4_source_sha256'])
             practice = (Path(tmp)/'04_practice_vi.md').read_text()
             self.assertIn('5/9', practice)
             self.assertFalse(result['model_inference_performed'])
